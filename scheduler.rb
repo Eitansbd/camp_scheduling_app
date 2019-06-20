@@ -94,5 +94,3 @@ class Calendar
 end
 
 DailySchedule.new("June 16, 2019")
-
-
