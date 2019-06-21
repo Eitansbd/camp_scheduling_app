@@ -164,8 +164,3 @@ BUNKS = (1..10).to_a.map { |num| Bunk.new("B#{num}") }
 TIME_SLOTS = (7..17).to_a
 todays_schedule = DailySchedule.new("June 16, 2019")
 todays_schedule.display_schedule
-
-
-
-
-
