@@ -180,8 +180,3 @@ TIME_SLOTS = (7..12).to_a + (1..6).to_a
 
 todays_schedule = DailySchedule.new("June 16, 2019")
 todays_schedule.display_schedule
-
-
-
-
-
