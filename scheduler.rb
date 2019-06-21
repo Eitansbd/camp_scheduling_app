@@ -170,13 +170,14 @@ class Calendar
   end
 end
 
-activity_names = ("Lake Toys,Drama,Basketball,Art,Music,Softball,Tennis," +
-                  "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
-                  "a1, a2, a3, a4, a5, a6").split(",")
+ # List of activity names
+       # ("Lake Toys,Drama,Basketball,Art,Music,Softball,Tennis," +
+       #  "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
+       #  "a1, a2, a3, a4, a5, a6").split(",")
 
-ACTIVITES = activity_names.map { |name| Activity.new(name) }
-BUNKS = (1..10).to_a.map { |num| Bunk.new("B#{num}") }
-TIME_SLOTS = (7..12).to_a + (1..6).to_a
+ACTIVITES = all_activities.map { |name| Activity.new(name) }  # Calls the 'all_activities' method from the API
+BUNKS = all_bunks.to_a.map { |name| Bunk.new(name) } # Calls the bunks_names method from the API
+TIME_SLOTS = all_time_slots # Calls the all_time_slots method from API
 
 todays_schedule = DailySchedule.new("June 16, 2019")
 todays_schedule.display_schedule
