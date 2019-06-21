@@ -400,4 +400,3 @@ ALTER TABLE ONLY public.schedule
 --
 -- PostgreSQL database dump complete
 --
-
