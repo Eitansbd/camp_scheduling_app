@@ -1,11 +1,5 @@
 require 'pry'
 
-module Defaultable
-  def default_lunch(start_time)
-    @default_activities[start_time] = lunch_activity
-  end
-end
-
 class Bunk
   attr_reader :name, :todays_schedule, :division
 
@@ -13,10 +7,9 @@ class Bunk
     @name = name
     @division = division
     @gender = gender
-    @default_activities = { 12 => Activity.new("Lunch"),
-                            10 => Activity.new("Shiur"),
-                            18 => Activity.new("Dinner")
-    }
+    @default_activities = { 7  => Activity.new("Shacharit"),
+                            12 => Activity.new("Lunch"),
+                            10 => Activity.new("Shiur") }
     @todays_schedule = {}
   end
 
@@ -33,10 +26,6 @@ class Bunk
     !@todays_schedule.include?(activity)
   end
 
-  def add_activity(activity)
-    @todays_schedule << activity
-  end
-
   def add_to_schedule(time, activity)
     @todays_schedule[time] = activity
   end
@@ -51,20 +40,26 @@ class Bunk
     end
   end
 
+  def has_activity_scheduled?(time_slot)
+    !!activity_at(time_slot)
+  end
+
   def display_schedule
     printing_schedule_format = @todays_schedule.map do |time, activity|
-      time.to_s + " : " + (activity ? activity.name : "")
+      (activity ? activity.name : "").rjust(12)
     end.join(", ")
-    puts "#{name}: #{printing_schedule_format}"
+    puts "#{name.rjust(3)}: #{printing_schedule_format}"
   end
 end
 
 class Activity
   attr_reader :name
 
-  def initialize(name, appropriate_divisions = "Hey")
+  def initialize(name, location = "", youngest_division = "Hey",
+                 oldest_division = "Daled",  max_bunks = 1)
     @name = name
-    @appropriate_divisions = appropriate_divisions
+    @appropriate_divisions = divisions_between(youngest_division, oldest_division)
+    @location = location
   end
 
   def for_division?(division)
@@ -74,9 +69,23 @@ class Activity
   def to_s
     @name
   end
+
+  def ==(other_activity)
+    self.name == other_activity.name
+  end
+
+  private
+
+  def divisions_between(youngest_division, oldest_division)
+    divisions = ["Hey", "Alpeh", "Bet", "Gimmel", "Daled"]
+    youngest_index = divisions.index(youngest_division)
+    oldest_index = divisions.index(oldest_division)
+    divisions[youngest_index..oldest_index]
+  end
 end
 
 class DailySchedule
+
   def initialize(date)
     @date = date
     @time_slots = TIME_SLOTS
@@ -98,9 +107,11 @@ class DailySchedule
     insert_all_default_activities
     @bunks.each do |bunk|
       @time_slots.each do |time_slot|
+        next if bunk.has_activity_scheduled?(time_slot)
         activity_to_schedule = select_activity(bunk, time_slot)
 
         bunk.add_to_schedule(time_slot, activity_to_schedule)
+
         # Schedule similiar bunks based on the assignment
       end
     end
@@ -127,7 +138,10 @@ class DailySchedule
 
   def remove_activities_time_slot_constraints!(activities, time_slot)
     activities.reject! do |activity|
-      @bunks.map { |b| b.activity_at(time_slot) }.include? activity
+      @bunks.map { |b| b.activity_at(time_slot) }.any? do |scheduled_activity|
+        scheduled_activity.equal? (activity)
+        # Allows for basketballs at different locations to be scheduled simultaneosly
+      end
     end
   end
 
@@ -138,6 +152,7 @@ class DailySchedule
   end
 
   def display_schedule
+    puts "  " + @time_slots.map { |slot| slot.to_s.rjust(14) }.join
     @bunks.each do |bunk|
       bunk.display_schedule
     end
@@ -156,12 +171,13 @@ class Calendar
 end
 
 activity_names = ("Lake Toys,Drama,Basketball,Art,Music,Softball,Tennis," +
-                  "Taboon,Chavaya Yisraelit,Hockey,Biking,Volleyball" +
+                  "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
                   "a1, a2, a3, a4, a5, a6").split(",")
 
 ACTIVITES = activity_names.map { |name| Activity.new(name) }
 BUNKS = (1..10).to_a.map { |num| Bunk.new("B#{num}") }
-TIME_SLOTS = (7..17).to_a
+TIME_SLOTS = (7..12).to_a + (1..6).to_a
+
 todays_schedule = DailySchedule.new("June 16, 2019")
 todays_schedule.display_schedule
 
