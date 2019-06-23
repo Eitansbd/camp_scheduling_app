@@ -6,8 +6,16 @@ class ScheduleDatabase
     @logger = logger   # Logger to log database activity
   end
 
+<<<<<<< HEAD:schedule_database.rb
   # add a bunk to the bunk table
   # def add_bunk(name, division, gender)
+=======
+  # def add_bunk(name, division, gender)
+  #   sql = "INSERT INTO bunks (name, division, gender) VALUES ($1, $2, $3);"
+  #   query(sql, name, division, gender)
+  # end
+
+>>>>>>> master:lib/schedule_database.rb
   def add_bunk(bunk)
     name = bunk.name
     division = bunk.division
@@ -16,7 +24,19 @@ class ScheduleDatabase
     query(sql, name, division, gender)
   end
 
+<<<<<<< HEAD:schedule_database.rb
   # Add an activity to the activities table
+=======
+  def load_bunk(id)
+    sql = "SELECT * FROM bunks WHERE id = $1"
+    result = query(sql, id)
+
+    tuple = result.first
+
+    Bunk.new(tuple["id"], tuple["name"], tuple["division"], tuple["gender"])
+  end
+
+>>>>>>> master:lib/schedule_database.rb
   def add_activity(name, location)
     sql = "INSERT INTO activities (name, location) VALUES ($1, $2);"
     query(sql, name, location)
@@ -85,6 +105,7 @@ class ScheduleDatabase
         WHERE day_id = $1
         ORDER BY b.name;
       SQL
+<<<<<<< HEAD:schedule_database.rb
       results = query(sql, date)
       results.map do |tuple|
         { bunk_name: tuple["bunk_name"],
@@ -126,6 +147,9 @@ class ScheduleDatabase
       time_slots << [tuple["start_time"], tuple["end_time"]]
     end
     time_slots
+=======
+    query(sql, date)
+>>>>>>> master:lib/schedule_database.rb
   end
 
   private

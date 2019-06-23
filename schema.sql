@@ -55,7 +55,7 @@ ALTER SEQUENCE public.activities_id_seq OWNED BY public.activities.id;
 -- Name: bunks; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.bunks (
+CREATE TABLE bunks (
     id integer NOT NULL,
     name character varying(10) NOT NULL,
     division character varying(20) NOT NULL,

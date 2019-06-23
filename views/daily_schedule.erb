@@ -1,0 +1,11 @@
+<div>
+
+</div>
+
+<div>
+  <% @todays_schedule.bunks.each do |bunk| %>
+    <p>
+      <%= bunk.display_schedule %>
+    </p>
+  <% end %>
+</div>
