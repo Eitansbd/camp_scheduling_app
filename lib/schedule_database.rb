@@ -6,9 +6,26 @@ class ScheduleDatabase
     @logger = logger
   end
 
-  def add_bunk(name, division, gender)
+  # def add_bunk(name, division, gender)
+  #   sql = "INSERT INTO bunks (name, division, gender) VALUES ($1, $2, $3);"
+  #   query(sql, name, division, gender)
+  # end
+
+  def add_bunk(bunk)
+    name = bunk.name
+    division = bunk.division
+    gender = bunk.gender
     sql = "INSERT INTO bunks (name, division, gender) VALUES ($1, $2, $3);"
     query(sql, name, division, gender)
+  end
+
+  def load_bunk(id)
+    sql = "SELECT * FROM bunks WHERE id = $1"
+    result = query(sql, id)
+
+    tuple = result.first
+
+    Bunk.new(tuple["id"], tuple["name"], tuple["division"], tuple["gender"])
   end
 
   def add_activity(name, location)
@@ -69,8 +86,8 @@ class ScheduleDatabase
         WHERE day_id = $1
         ORDER BY b.name;
       SQL
-      query(sql, date)
-    end
+    query(sql, date)
+  end
 
   private
 
