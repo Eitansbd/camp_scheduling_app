@@ -1,9 +1,11 @@
 require 'pry'
 
-class Bunk
-  attr_reader :name, :todays_schedule, :division
+require_relative 'schedule_database'
 
-  def initialize(name, division = "Hey", gender = "Male")
+class Bunk
+  attr_reader :name, :todays_schedule, :division, :gender
+
+  def initialize(name, division = "Hey", gender = "M")
     @name = name
     @division = division
     @gender = gender
@@ -175,9 +177,13 @@ end
        #  "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
        #  "a1, a2, a3, a4, a5, a6").split(",")
 
-ACTIVITES = all_activities.map { |name| Activity.new(name) }  # Calls the 'all_activities' method from the API
-BUNKS = all_bunks.to_a.map { |name| Bunk.new(name) } # Calls the bunks_names method from the API
-TIME_SLOTS = all_time_slots # Calls the all_time_slots method from API
+# ACTIVITES = all_activities.map { |name| Activity.new(name) }  # Calls the 'all_activities' method from the API
+# BUNKS = all_bunks.to_a.map { |name| Bunk.new(name) } # Calls the bunks_names method from the API
+# TIME_SLOTS = all_time_slots # Calls the all_time_slots method from API
+#
+# todays_schedule = DailySchedule.new("June 16, 2019")
+# todays_schedule.display_schedule
 
-todays_schedule = DailySchedule.new("June 16, 2019")
-todays_schedule.display_schedule
+db = ScheduleDatabase.new(nil)
+#db.add_bunk(Bunk.new("b2"))
+p db.all_bunks

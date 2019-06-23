@@ -7,7 +7,11 @@ class ScheduleDatabase
   end
 
   # add a bunk to the bunk table
-  def add_bunk(name, division, gender)
+  # def add_bunk(name, division, gender)
+  def add_bunk(bunk)
+    name = bunk.name
+    division = bunk.division
+    gender = bunk.gender
     sql = "INSERT INTO bunks (name, division, gender) VALUES ($1, $2, $3);"
     query(sql, name, division, gender)
   end
@@ -132,4 +136,4 @@ class ScheduleDatabase
   end
 end
 
-p ScheduleDatabase.new(nil).get_daily_schedule(3)
+# p ScheduleDatabase.new(nil).get_daily_schedule(3)
