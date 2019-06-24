@@ -16,6 +16,7 @@ end
 
 helpers do
   def divisions
+    # @database.all_divisions
     ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should be changed to draw from DB
   end
 end
@@ -53,7 +54,18 @@ post '/time_slot/new' do
 end
 
 get '/calendar/new' do
-  erb :new_calendar
+  erb :new_calendar  # work in progress
+end
+
+get '/division/new' do
+  erb :new_division
+end
+
+post '/division/new' do
+  name, age = params[:name], params[:age]
+
+  @database.add_division(name, age)
+
 end
 
 get '/bunk/new' do

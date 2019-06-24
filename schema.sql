@@ -117,6 +117,37 @@ ALTER SEQUENCE public.days_id_seq OWNED BY public.days.id;
 
 
 --
+-- Name: divisions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.divisions (
+    id integer NOT NULL,
+    name character varying(25) NOT NULL,
+    age integer NOT NULL
+);
+
+
+--
+-- Name: divisions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.divisions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: divisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.divisions_id_seq OWNED BY public.divisions.id;
+
+
+--
 -- Name: schedule; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -203,6 +234,13 @@ ALTER TABLE ONLY public.days ALTER COLUMN id SET DEFAULT nextval('public.days_id
 
 
 --
+-- Name: divisions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.divisions ALTER COLUMN id SET DEFAULT nextval('public.divisions_id_seq'::regclass);
+
+
+--
 -- Name: schedule id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -246,6 +284,22 @@ ALTER TABLE ONLY public.bunks
 
 ALTER TABLE ONLY public.days
     ADD CONSTRAINT days_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: divisions divisions_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.divisions
+    ADD CONSTRAINT divisions_name_key UNIQUE (name);
+
+
+--
+-- Name: divisions divisions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.divisions
+    ADD CONSTRAINT divisions_pkey PRIMARY KEY (id);
 
 
 --
@@ -315,3 +369,4 @@ ALTER TABLE ONLY public.schedule
 --
 -- PostgreSQL database dump complete
 --
+
