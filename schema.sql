@@ -21,20 +21,21 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: activities; Type: TABLE; Schema: public; Owner: jresnick3
+-- Name: activities; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.activities (
     id integer NOT NULL,
     name character varying(50) NOT NULL,
-    location character varying(50) NOT NULL
+    location character varying(50) NOT NULL,
+    youngest_division character varying(25),
+    oldest_division character varying(25),
+    max_bunks integer
 );
 
 
-ALTER TABLE public.activities OWNER TO jresnick3;
-
 --
--- Name: activities_id_seq; Type: SEQUENCE; Schema: public; Owner: jresnick3
+-- Name: activities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.activities_id_seq
@@ -46,20 +47,18 @@ CREATE SEQUENCE public.activities_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.activities_id_seq OWNER TO jresnick3;
-
 --
--- Name: activities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jresnick3
+-- Name: activities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.activities_id_seq OWNED BY public.activities.id;
 
 
 --
--- Name: bunks; Type: TABLE; Schema: public; Owner: jresnick3
+-- Name: bunks; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE bunks (
+CREATE TABLE public.bunks (
     id integer NOT NULL,
     name character varying(10) NOT NULL,
     division character varying(20) NOT NULL,
@@ -67,10 +66,8 @@ CREATE TABLE bunks (
 );
 
 
-ALTER TABLE public.bunks OWNER TO jresnick3;
-
 --
--- Name: bunks_id_seq; Type: SEQUENCE; Schema: public; Owner: jresnick3
+-- Name: bunks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.bunks_id_seq
@@ -82,17 +79,15 @@ CREATE SEQUENCE public.bunks_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.bunks_id_seq OWNER TO jresnick3;
-
 --
--- Name: bunks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jresnick3
+-- Name: bunks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.bunks_id_seq OWNED BY public.bunks.id;
 
 
 --
--- Name: days; Type: TABLE; Schema: public; Owner: jresnick3
+-- Name: days; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.days (
@@ -101,10 +96,8 @@ CREATE TABLE public.days (
 );
 
 
-ALTER TABLE public.days OWNER TO jresnick3;
-
 --
--- Name: days_id_seq; Type: SEQUENCE; Schema: public; Owner: jresnick3
+-- Name: days_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.days_id_seq
@@ -116,17 +109,15 @@ CREATE SEQUENCE public.days_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.days_id_seq OWNER TO jresnick3;
-
 --
--- Name: days_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jresnick3
+-- Name: days_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.days_id_seq OWNED BY public.days.id;
 
 
 --
--- Name: schedule; Type: TABLE; Schema: public; Owner: jresnick3
+-- Name: schedule; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.schedule (
@@ -138,10 +129,8 @@ CREATE TABLE public.schedule (
 );
 
 
-ALTER TABLE public.schedule OWNER TO jresnick3;
-
 --
--- Name: schedule_id_seq; Type: SEQUENCE; Schema: public; Owner: jresnick3
+-- Name: schedule_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.schedule_id_seq
@@ -153,17 +142,15 @@ CREATE SEQUENCE public.schedule_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.schedule_id_seq OWNER TO jresnick3;
-
 --
--- Name: schedule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jresnick3
+-- Name: schedule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.schedule_id_seq OWNED BY public.schedule.id;
 
 
 --
--- Name: time_slots; Type: TABLE; Schema: public; Owner: jresnick3
+-- Name: time_slots; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.time_slots (
@@ -173,10 +160,8 @@ CREATE TABLE public.time_slots (
 );
 
 
-ALTER TABLE public.time_slots OWNER TO jresnick3;
-
 --
--- Name: time_slot_id_seq; Type: SEQUENCE; Schema: public; Owner: jresnick3
+-- Name: time_slot_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.time_slot_id_seq
@@ -188,129 +173,50 @@ CREATE SEQUENCE public.time_slot_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.time_slot_id_seq OWNER TO jresnick3;
-
 --
--- Name: time_slot_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jresnick3
+-- Name: time_slot_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.time_slot_id_seq OWNED BY public.time_slots.id;
 
 
 --
--- Name: activities id; Type: DEFAULT; Schema: public; Owner: jresnick3
+-- Name: activities id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.activities ALTER COLUMN id SET DEFAULT nextval('public.activities_id_seq'::regclass);
 
 
 --
--- Name: bunks id; Type: DEFAULT; Schema: public; Owner: jresnick3
+-- Name: bunks id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.bunks ALTER COLUMN id SET DEFAULT nextval('public.bunks_id_seq'::regclass);
 
 
 --
--- Name: days id; Type: DEFAULT; Schema: public; Owner: jresnick3
+-- Name: days id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.days ALTER COLUMN id SET DEFAULT nextval('public.days_id_seq'::regclass);
 
 
 --
--- Name: schedule id; Type: DEFAULT; Schema: public; Owner: jresnick3
+-- Name: schedule id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.schedule ALTER COLUMN id SET DEFAULT nextval('public.schedule_id_seq'::regclass);
 
 
 --
--- Name: time_slots id; Type: DEFAULT; Schema: public; Owner: jresnick3
+-- Name: time_slots id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.time_slots ALTER COLUMN id SET DEFAULT nextval('public.time_slot_id_seq'::regclass);
 
 
 --
--- Data for Name: activities; Type: TABLE DATA; Schema: public; Owner: jresnick3
---
-
-COPY public.activities (id, name, location) FROM stdin;
-3	basketball	gym
-\.
-
-
---
--- Data for Name: bunks; Type: TABLE DATA; Schema: public; Owner: jresnick3
---
-
-COPY public.bunks (id, name, division, gender) FROM stdin;
-4	b1	2	M
-\.
-
-
---
--- Data for Name: days; Type: TABLE DATA; Schema: public; Owner: jresnick3
---
-
-COPY public.days (id, calendar_date) FROM stdin;
-\.
-
-
---
--- Data for Name: schedule; Type: TABLE DATA; Schema: public; Owner: jresnick3
---
-
-COPY public.schedule (id, bunk_id, activity_id, time_slot_id, day_id) FROM stdin;
-\.
-
-
---
--- Data for Name: time_slots; Type: TABLE DATA; Schema: public; Owner: jresnick3
---
-
-COPY public.time_slots (id, start_time, end_time) FROM stdin;
-\.
-
-
---
--- Name: activities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jresnick3
---
-
-SELECT pg_catalog.setval('public.activities_id_seq', 3, true);
-
-
---
--- Name: bunks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jresnick3
---
-
-SELECT pg_catalog.setval('public.bunks_id_seq', 4, true);
-
-
---
--- Name: days_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jresnick3
---
-
-SELECT pg_catalog.setval('public.days_id_seq', 2, true);
-
-
---
--- Name: schedule_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jresnick3
---
-
-SELECT pg_catalog.setval('public.schedule_id_seq', 7, true);
-
-
---
--- Name: time_slot_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jresnick3
---
-
-SELECT pg_catalog.setval('public.time_slot_id_seq', 4, true);
-
-
---
--- Name: activities activities_pkey; Type: CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: activities activities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.activities
@@ -318,7 +224,7 @@ ALTER TABLE ONLY public.activities
 
 
 --
--- Name: bunks bunks_name_key; Type: CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: bunks bunks_name_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.bunks
@@ -326,7 +232,7 @@ ALTER TABLE ONLY public.bunks
 
 
 --
--- Name: bunks bunks_pkey; Type: CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: bunks bunks_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.bunks
@@ -334,7 +240,7 @@ ALTER TABLE ONLY public.bunks
 
 
 --
--- Name: days days_pkey; Type: CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: days days_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.days
@@ -342,7 +248,7 @@ ALTER TABLE ONLY public.days
 
 
 --
--- Name: schedule schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: schedule schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.schedule
@@ -350,7 +256,7 @@ ALTER TABLE ONLY public.schedule
 
 
 --
--- Name: time_slots time_slot_pkey; Type: CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: time_slots time_slot_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.time_slots
@@ -358,7 +264,7 @@ ALTER TABLE ONLY public.time_slots
 
 
 --
--- Name: time_slots time_slots_start_time_end_time_key; Type: CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: time_slots time_slots_start_time_end_time_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.time_slots
@@ -366,7 +272,7 @@ ALTER TABLE ONLY public.time_slots
 
 
 --
--- Name: schedule schedule_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: schedule schedule_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.schedule
@@ -374,7 +280,7 @@ ALTER TABLE ONLY public.schedule
 
 
 --
--- Name: schedule schedule_bunk_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: schedule schedule_bunk_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.schedule
@@ -382,7 +288,7 @@ ALTER TABLE ONLY public.schedule
 
 
 --
--- Name: schedule schedule_day_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: schedule schedule_day_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.schedule
@@ -390,7 +296,7 @@ ALTER TABLE ONLY public.schedule
 
 
 --
--- Name: schedule schedule_time_slot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jresnick3
+-- Name: schedule schedule_time_slot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.schedule

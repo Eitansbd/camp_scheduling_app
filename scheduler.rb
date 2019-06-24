@@ -14,13 +14,46 @@ before do
   @database = ScheduleDatabase.new(logger)
 end
 
+helpers do
+  def divisions
+    ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should be changed to draw from DB
+  end
+end
+
 get '/' do
 
   erb :daily_schedule
 end
 
-get '/bunk/:bunk_id' do
-  # renders page for each bunk
+get '/activity/new' do
+  erb :new_activity
+end
+
+post '/activity/new' do
+  # instantiates a new activity object
+  binding.pry
+  activity = Activity.new(params[:name], params[:location], params[:youngest_division], params[:oldest_division], params[:max_bunks])
+  # adds the activity to the database
+  @database.add_activity(activity)
+  redirect '/'
+end
+
+get '/time_slot/new' do
+  # renders page to add new time slot
+  erb :new_time_slot
+end
+
+# adds a new time slot to the database
+post '/time_slot/new' do
+  name = params[:name]
+  start_time = params[:start_time]
+  end_time = params[:end_time]
+
+  @database.add_time_slot(name, start_time, end_time)
+end
+
+get '/calendar/new' do
+  erb :new_calendar
 end
 
 get '/bunk/new' do
@@ -76,4 +109,3 @@ post '/dailyshchedule/new' do
   # in anything that is defined by the user in the post. Then calls the schedule
   # all activities method to assign the rest of the schedule
 end
-

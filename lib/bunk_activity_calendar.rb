@@ -3,8 +3,8 @@ require 'pry'
 class Bunk
   attr_reader :name, :todays_schedule, :division, :gender
 
-  def initialize(id, name, division = "Hey", gender = "Male")
-    @id = id
+  def initialize(name, division = "Hey", gender = "Male", id = nil)
+    @id = id  # Why is this a attribute?
     @name = name
     @division = division
     @gender = gender
@@ -27,8 +27,8 @@ class Bunk
     !@todays_schedule.include?(activity)
   end
 
-  def add_to_schedule(time, activity)
-    @todays_schedule[time] = activity
+  def add_to_schedule(time_slot, activity)
+    @todays_schedule[time_slot] = activity
   end
 
   def activity_at(time_slot)
@@ -55,13 +55,16 @@ class Bunk
 end
 
 class Activity
-  attr_reader :name
+  attr_reader :name, :location, :youngest_division, :oldest_division, :max_bunks
 
   def initialize(name, location = "", youngest_division = "Hey",
                  oldest_division = "Daled",  max_bunks = 1)
     @name = name
     @appropriate_divisions = divisions_between(youngest_division, oldest_division)
     @location = location
+    @oldest_division = oldest_division
+    @youngest_division = youngest_division
+    @max_bunks = max_bunks
   end
 
   def for_division?(division)
@@ -83,7 +86,7 @@ class Activity
   private
 
   def divisions_between(youngest_division, oldest_division)
-    divisions = ["Hey", "Alpeh", "Bet", "Gimmel", "Daled"]
+    divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"]
     youngest_index = divisions.index(youngest_division)
     oldest_index = divisions.index(oldest_division)
     divisions[youngest_index..oldest_index]
@@ -189,5 +192,3 @@ end
 # ACTIVITES = activity_names.map { |name| Activity.new(name) }
 # BUNKS = (1..10).to_a.map { |num| Bunk.new("B#{num}") }
 # TIME_SLOTS = (7..12).to_a + (1..6).to_a
-
-
