@@ -21,7 +21,12 @@ helpers do
 end
 
 get '/' do
-
+  date = "June 24th"
+  time_slots = @database.all_time_slots
+  activities = @database.all_activities
+  bunks = @database.all_bunks
+  @todays_schedule = DailySchedule.new(date, time_slots, activities, bunks)
+  @todays_schedule.schedule_all_activities
   erb :daily_schedule
 end
 
@@ -31,7 +36,6 @@ end
 
 post '/activity/new' do
   # instantiates a new activity object
-  binding.pry
   activity = Activity.new(params[:name], params[:location], params[:youngest_division], params[:oldest_division], params[:max_bunks])
   # adds the activity to the database
   @database.add_activity(activity)

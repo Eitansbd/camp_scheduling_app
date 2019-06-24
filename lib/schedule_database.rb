@@ -13,19 +13,30 @@ class ScheduleDatabase
     name = bunk.name
     division = bunk.division
     gender = bunk.gender
-    sql = "INSERT INTO bunks (name, division, gender) VALUES ($1, $2, $3);"
-    query(sql, name, division, gender)
+
+    result = query("SELECT id FROM divisions WHERE name = $1;", division)
+    division_id = result.values[0][0]
+
+    sql = "INSERT INTO bunks (name, division_id, gender) VALUES ($1, $2, $3);"
+    query(sql, name, division_id, gender)
   end
 
   # accesses a bunk form the db and returns a new bunk object.
   # Works
   def load_bunk(id)
-    sql = "SELECT * FROM bunks WHERE id = $1"
+    sql = <<~SQL
+        SELECT b.id, b.name, d.name AS division, b.gender
+        FROM bunks AS b
+        JOIN divisions AS d
+          ON b.division_id = d.id
+        WHERE b.id = $1;
+      SQL
+
     result = query(sql, id)
 
     tuple = result.first
 
-    Bunk.new(tuple["id"], tuple["name"], tuple["division"], tuple["gender"])
+    Bunk.new(tuple["name"], tuple["division"], tuple["gender"], tuple["id"])
   end
 
   def add_activity(activity)
@@ -34,8 +45,15 @@ class ScheduleDatabase
     youngest_division = activity.youngest_division
     oldest_division = activity.oldest_division
     max_bunks = activity.max_bunks
-    sql = "INSERT INTO activities (name, location, youngest_division, oldest_division, max_bunks) VALUES ($1, $2, $3, $4, $5);"
-    query(sql, name, location, youngest_division, oldest_division, max_bunks)
+
+    youngest_division_result = query("SELECT id FROM divisions WHERE name = $1;", youngest_division)
+    youngest_division_id = youngest_division_result.values[0][0]
+
+    oldest_division_result = query("SELECT id FROM divisions WHERE name = $1;", oldest_division)
+    oldest_division_id = oldest_division_result.values[0][0]
+
+    sql = "INSERT INTO activities (name, location, youngest_division_id, oldest_division_id, max_bunks) VALUES ($1, $2, $3, $4, $5);"
+    query(sql, name, location, youngest_division_id, oldest_division_id, max_bunks)
   end
 
   # Add a time slot to the time_slot table
@@ -89,8 +107,12 @@ class ScheduleDatabase
   # Retrieve a schedule for a specified day, returns an array of hashes
   #  containing all of the activity details in order of bunk name
   def get_daily_schedule(date)
+
+    date_result = query("SELECT id FROM days WHERE calendar_date = $1", date)
+    day_id = date_result.values[0][0]
+
     sql = <<~SQL
-        SELECT b.name AS bunk_name, b.division,
+        SELECT b.name AS bunk_name, div.name AS division,
                b.gender, a.name AS activity,
                a.location, t.start_time, t.end_time
         FROM schedule AS s
@@ -98,10 +120,12 @@ class ScheduleDatabase
         JOIN activities AS a ON s.activity_id = a.id
         JOIN time_slots AS t ON s.time_slot_id = t.id
         JOIN days AS d ON s.day_id = d.id
+        JOIN divisions AS div ON b.division_id = div.id
         WHERE day_id = $1
         ORDER BY b.name;
       SQL
-      results = query(sql, date)
+
+      results = query(sql, day_id)
       results.map do |tuple|
         { bunk_name: tuple["bunk_name"],
           division: tuple["division"],
@@ -117,7 +141,7 @@ class ScheduleDatabase
   # Get a list of all of the activites, return an array of activity objects
   # Works
   def all_activities
-    result = query("SELECT * FROM activities;")
+    result = query("SELECT * FROM activities;") # Needs serious fixing
     activities = []
     result.each do |tuple|
       activities << Activity.new(tuple["name"], tuple["location"], tuple["youngest_division"], tuple["oldest_division"], tuple["max_bunks"])
@@ -128,10 +152,17 @@ class ScheduleDatabase
   # Get a list of all of the bunks, returns an array of all of the bunk objects.
   # Works
   def all_bunks
-    results = query("SELECT * FROM bunks;")
+  sql = <<~SQL
+      SELECT b.name, d.name AS division, b.gender, b.id
+      FROM bunks AS b
+      JOIN divisions AS d
+        ON b.division_id = d.id;
+    SQL
+
+    results = query(sql) 
     bunks = []
     results.each do |tuple|
-      bunks << Bunk.new(tuple["id"], tuple["name"], tuple["division"], tuple["gender"])
+      bunks << Bunk.new(tuple["name"], tuple["division"], tuple["gender"], tuple["id"])
     end
     bunks
   end
