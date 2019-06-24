@@ -1,21 +1,14 @@
 require 'pg'
+require 'pry'
 
 class ScheduleDatabase
   def initialize(logger)
-    @db = PG.connect(dbname: "camp")  # Opens the connection to the database
+    @db = PG.connect(dbname: "camp")  # Opens the connection to the local database
     @logger = logger   # Logger to log database activity
   end
 
-<<<<<<< HEAD:schedule_database.rb
-  # add a bunk to the bunk table
-  # def add_bunk(name, division, gender)
-=======
-  # def add_bunk(name, division, gender)
-  #   sql = "INSERT INTO bunks (name, division, gender) VALUES ($1, $2, $3);"
-  #   query(sql, name, division, gender)
-  # end
-
->>>>>>> master:lib/schedule_database.rb
+  # Add a bunk into the database. Bunk object is passed in.
+  # Works
   def add_bunk(bunk)
     name = bunk.name
     division = bunk.division
@@ -24,9 +17,8 @@ class ScheduleDatabase
     query(sql, name, division, gender)
   end
 
-<<<<<<< HEAD:schedule_database.rb
-  # Add an activity to the activities table
-=======
+  # accesses a bunk form the db and returns a new bunk object.
+  # Works
   def load_bunk(id)
     sql = "SELECT * FROM bunks WHERE id = $1"
     result = query(sql, id)
@@ -36,16 +28,20 @@ class ScheduleDatabase
     Bunk.new(tuple["id"], tuple["name"], tuple["division"], tuple["gender"])
   end
 
->>>>>>> master:lib/schedule_database.rb
-  def add_activity(name, location)
-    sql = "INSERT INTO activities (name, location) VALUES ($1, $2);"
-    query(sql, name, location)
+  def add_activity(activity)
+    name = activity.name
+    location = activity.location
+    youngest_division = activity.youngest_division
+    oldest_division = activity.oldest_division
+    max_bunks = activity.max_bunks
+    sql = "INSERT INTO activities (name, location, youngest_division, oldest_division, max_bunks) VALUES ($1, $2, $3, $4, $5);"
+    query(sql, name, location, youngest_division, oldest_division, max_bunks)
   end
 
   # Add a time slot to the time_slot table
-  def add_time_slot(start_time, end_time)
-    sql = "INSERT INTO time_slots (start_time, end_time) VALUES ($1, $2);"
-    query(sql, start_time, end_time)
+  def add_time_slot(name, start_time, end_time)
+    sql = "INSERT INTO time_slots (name, start_time, end_time) VALUES ($1, $2, $3);"
+    query(sql, name, start_time, end_time)
   end
 
   # Add a date to the days table
@@ -61,15 +57,15 @@ class ScheduleDatabase
   end
 
   # Remove a bunk from the list
-  def remove_bunk(name)
+  def remove_bunk(id)
     sql = "DELETE FROM bunks WHERE name = $1;"
-    query(sql, name)
+    query(sql, id)
   end
 
   #Remove an activity from the list
-  def remove_activity(name)
+  def remove_activity(id)
     sql = "DELETE FROM activities WHERE name = $1;"
-    query(sql, name)
+    query(sql, id)
   end
 
   # Remove a schedule entry
@@ -105,7 +101,6 @@ class ScheduleDatabase
         WHERE day_id = $1
         ORDER BY b.name;
       SQL
-<<<<<<< HEAD:schedule_database.rb
       results = query(sql, date)
       results.map do |tuple|
         { bunk_name: tuple["bunk_name"],
@@ -119,24 +114,26 @@ class ScheduleDatabase
     end
   end
 
-  # Get a list of all of the activites, return an array of activity names
+  # Get a list of all of the activites, return an array of activity objects
+  # Works
   def all_activities
     result = query("SELECT * FROM activities;")
     activities = []
     result.each do |tuple|
-      activities << tuple["name"]
+      activities << Activity.new(tuple["name"], tuple["location"], tuple["youngest_division"], tuple["oldest_division"], tuple["max_bunks"])
     end
     activities
   end
 
-  # Get a list of all of the bunks, returns an array of all of the bunk names
+  # Get a list of all of the bunks, returns an array of all of the bunk objects.
+  # Works
   def all_bunks
     results = query("SELECT * FROM bunks;")
-    bunk_names = []
+    bunks = []
     results.each do |tuple|
-      bunk_names << tuple["name"]
+      bunks << Bunk.new(tuple["id"], tuple["name"], tuple["division"], tuple["gender"])
     end
-    bunk_names
+    bunks
   end
 
   # Gets list of all of the time slots, returns a nested array with the starting and ending time
@@ -147,9 +144,6 @@ class ScheduleDatabase
       time_slots << [tuple["start_time"], tuple["end_time"]]
     end
     time_slots
-=======
-    query(sql, date)
->>>>>>> master:lib/schedule_database.rb
   end
 
   private
@@ -159,5 +153,3 @@ class ScheduleDatabase
     @db.exec_params(statement, params)
   end
 end
-
-# p ScheduleDatabase.new(nil).get_daily_schedule(3)

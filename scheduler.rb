@@ -10,63 +10,14 @@ configure(:development) do
   also_reload './lib/schedule_database.rb'
 end
 
-<<<<<<< HEAD
-require_relative 'schedule_database'
-
-class Bunk
-  attr_reader :name, :todays_schedule, :division, :gender
-
-  def initialize(name, division = "Hey", gender = "M")
-    @name = name
-    @division = division
-    @gender = gender
-    @default_activities = { 7  => Activity.new("Shacharit"),
-                            12 => Activity.new("Lunch"),
-                            10 => Activity.new("Shiur") }
-    @todays_schedule = {}
-  end
-
-  def default_activity(start_time)
-    @default_activities[start_time]
-  end
-
-  def default_activity=(start_time, activity)
-    #change the default activity for a bunk
-  end
-
-  def valid_activity?(activity)
-    # determine if an activity is valid, based on
-    !@todays_schedule.include?(activity)
-  end
-
-  def add_to_schedule(time, activity)
-    @todays_schedule[time] = activity
-  end
-
-  def activity_at(time_slot)
-    @todays_schedule[time_slot]
-  end
-
-  def schedule_default_activities
-    @default_activities.each do |time, activity|
-      self.add_to_schedule(time, activity)
-    end
-  end
-
-  def has_activity_scheduled?(time_slot)
-    !!activity_at(time_slot)
-  end
-
-  def display_schedule
-    printing_schedule_format = @todays_schedule.map do |time, activity|
-      (activity ? activity.name : "").rjust(12)
-    end.join(", ")
-    puts "#{name.rjust(3)}: #{printing_schedule_format}"
-  end
-=======
 before do
   @database = ScheduleDatabase.new(logger)
->>>>>>> master
+end
+
+helpers do
+  def divisions
+    ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should be changed to draw from DB
+  end
 end
 
 get '/' do
@@ -74,8 +25,35 @@ get '/' do
   erb :daily_schedule
 end
 
-get '/bunk/:bunk_id' do
-  # renders page for each bunk
+get '/activity/new' do
+  erb :new_activity
+end
+
+post '/activity/new' do
+  # instantiates a new activity object
+  binding.pry
+  activity = Activity.new(params[:name], params[:location], params[:youngest_division], params[:oldest_division], params[:max_bunks])
+  # adds the activity to the database
+  @database.add_activity(activity)
+  redirect '/'
+end
+
+get '/time_slot/new' do
+  # renders page to add new time slot
+  erb :new_time_slot
+end
+
+# adds a new time slot to the database
+post '/time_slot/new' do
+  name = params[:name]
+  start_time = params[:start_time]
+  end_time = params[:end_time]
+
+  @database.add_time_slot(name, start_time, end_time)
+end
+
+get '/calendar/new' do
+  erb :new_calendar
 end
 
 get '/bunk/new' do
@@ -119,23 +97,6 @@ get '/dailyschedule/:day_id/edit' do
   # renders edit page for daily schedule.
 end
 
-<<<<<<< HEAD
- # List of activity names
-       # ("Lake Toys,Drama,Basketball,Art,Music,Softball,Tennis," +
-       #  "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
-       #  "a1, a2, a3, a4, a5, a6").split(",")
-
-# ACTIVITES = all_activities.map { |name| Activity.new(name) }  # Calls the 'all_activities' method from the API
-# BUNKS = all_bunks.to_a.map { |name| Bunk.new(name) } # Calls the bunks_names method from the API
-# TIME_SLOTS = all_time_slots # Calls the all_time_slots method from API
-#
-# todays_schedule = DailySchedule.new("June 16, 2019")
-# todays_schedule.display_schedule
-
-db = ScheduleDatabase.new(nil)
-#db.add_bunk(Bunk.new("b2"))
-p db.all_bunks
-=======
 get '/dailyschedule/new' do
   # renders new schedule page. Should load bunks and time slots and have a drop
   # down menu for each time slot. -- the name should be 3 digits - bunk_id, time_id
@@ -148,5 +109,3 @@ post '/dailyshchedule/new' do
   # in anything that is defined by the user in the post. Then calls the schedule
   # all activities method to assign the rest of the schedule
 end
-
->>>>>>> master

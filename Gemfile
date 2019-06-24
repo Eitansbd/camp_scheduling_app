@@ -6,9 +6,5 @@ gem 'pry'
 
 gem 'sinatra'
 gem 'sinatra-contrib'
-<<<<<<< HEAD
-gem 'pg'
-=======
 gem 'erubis'
 gem 'pg'
->>>>>>> master

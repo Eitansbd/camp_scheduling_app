@@ -27,7 +27,10 @@ SET default_with_oids = false;
 CREATE TABLE public.activities (
     id integer NOT NULL,
     name character varying(50) NOT NULL,
-    location character varying(50) NOT NULL
+    location character varying(50) NOT NULL,
+    youngest_division character varying(25),
+    oldest_division character varying(25),
+    max_bunks integer
 );
 
 
@@ -55,7 +58,7 @@ ALTER SEQUENCE public.activities_id_seq OWNED BY public.activities.id;
 -- Name: bunks; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE bunks (
+CREATE TABLE public.bunks (
     id integer NOT NULL,
     name character varying(10) NOT NULL,
     division character varying(20) NOT NULL,
