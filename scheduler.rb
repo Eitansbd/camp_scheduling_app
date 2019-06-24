@@ -16,8 +16,7 @@ end
 
 helpers do
   def divisions
-    # @database.all_divisions
-    ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should be changed to draw from DB
+    @database.all_divisions
   end
 end
 
