@@ -146,6 +146,22 @@ class ScheduleDatabase
     time_slots
   end
 
+  # Add a new division
+  def add_division(name, age)
+    sql = "INSERT INTO divisions (name, age) VALUES ($1, $2);"
+    query(sql, name, age)
+  end
+
+  # Returns a list of all of the divisions ordered by their age
+  def all_divisions
+    results = query("SELECT * FROM divisions ORDER BY age;")
+    names = []
+    results.each do |tuple|
+      names << tuple["name"]
+    end
+    names
+  end
+
   private
 
   def query(statement, *params)
