@@ -156,7 +156,8 @@ ALTER SEQUENCE public.schedule_id_seq OWNED BY public.schedule.id;
 CREATE TABLE public.time_slots (
     id integer NOT NULL,
     start_time time without time zone NOT NULL,
-    end_time time without time zone NOT NULL
+    end_time time without time zone NOT NULL,
+    name character varying(25) NOT NULL
 );
 
 
@@ -264,6 +265,14 @@ ALTER TABLE ONLY public.time_slots
 
 
 --
+-- Name: time_slots time_slots_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.time_slots
+    ADD CONSTRAINT time_slots_name_key UNIQUE (name);
+
+
+--
 -- Name: time_slots time_slots_start_time_end_time_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -306,4 +315,3 @@ ALTER TABLE ONLY public.schedule
 --
 -- PostgreSQL database dump complete
 --
-
