@@ -1,5 +1,5 @@
 require 'pry'
-
+require_relative 'schedule_database'
 class Bunk
   attr_reader :name, :todays_schedule, :division, :gender
 
@@ -86,7 +86,7 @@ class Activity
   private
 
   def divisions_between(youngest_division, oldest_division)
-    divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"]
+    divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should really be taken from database
     youngest_index = divisions.index(youngest_division)
     oldest_index = divisions.index(oldest_division)
     divisions[youngest_index..oldest_index]
@@ -98,7 +98,7 @@ class DailySchedule
 
   def initialize(date, time_slots = TIME_SLOTS, activities = ACTIVITES, bunks = BUNKS)
     @date = date
-    @time_slots = time_slots
+    @time_slots = time_slots.map{|slot| slot.first}
     @activities = activities
     @bunks = bunks
     create_empty_schedule_for_bunks
