@@ -96,7 +96,7 @@ end
 class DailySchedule
   attr_reader :bunks
 
-  def initialize(date, time_slots, activities, bunks)
+  def initialize(date, time_slots = TIME_SLOTS, activities = ACTIVITES, bunks = BUNKS)
     @date = date
     @time_slots = time_slots
     @activities = activities
@@ -153,10 +153,7 @@ class DailySchedule
 
   def remove_activities_time_slot_constraints!(activities, time_slot)
     activities.reject! do |activity|
-      @bunks.map { |b| b.activity_at(time_slot) }.any? do |scheduled_activity|
-        scheduled_activity.equal? (activity)
-        # Allows for basketballs at different locations to be scheduled simultaneosly
-      end
+      @bunks.any? { |bunk| bunk.activity_at(time_slot).equal? (activity) }
     end
   end
 
@@ -185,10 +182,10 @@ class Calendar
   end
 end
 
-# activity_names = ("Lake Toys,Drama,Basketball,Art,Music,Softball,Tennis," +
-#                   "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
-#                   "a1, a2, a3, a4, a5, a6").split(",")
+activity_names = ("Lake Toys,Drama,Basketball,Art,Music,Softball,Tennis," +
+                  "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
+                  "a1, a2, a3, a4, a5, a6").split(",")
 
-# ACTIVITES = activity_names.map { |name| Activity.new(name) }
-# BUNKS = (1..10).to_a.map { |num| Bunk.new("B#{num}") }
-# TIME_SLOTS = (7..12).to_a + (1..6).to_a
+ACTIVITES = activity_names.map { |name| Activity.new(name) }
+BUNKS = (1..10).to_a.map { |num| Bunk.new("B#{num}") }
+TIME_SLOTS = (7..12).to_a + (1..6).to_a

@@ -21,8 +21,10 @@ helpers do
 end
 
 get '/' do
-
+  @todays_schedule = DailySchedule.new("June 24th")
+  @todays_schedule.schedule_all_activities
   erb :daily_schedule
+
 end
 
 get '/activity/new' do
@@ -87,6 +89,10 @@ get '/bunk/:bunk_id' do
   @bunk = @database.load_bunk(id)
 
   erb :bunk_page
+end
+
+get '/bunk/:bunk_id/daily_schedule' do
+  # lists all days
 end
 
 get '/bunk/:bunk_id/daily_schedule/:day_id' do
