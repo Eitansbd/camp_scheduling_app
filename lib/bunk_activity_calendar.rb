@@ -1,5 +1,7 @@
 require 'pry'
 require_relative 'schedule_database'
+
+# Class that stores the bunk object keeping track of bunk info and acitivities.
 class Bunk
   attr_reader :name, :todays_schedule, :division, :gender
 
@@ -19,7 +21,7 @@ class Bunk
   end
 
   def default_activity=(start_time, activity)
-    #change the default activity for a bunk
+    # change the default activity for a bunk
   end
 
   def valid_activity?(activity)
@@ -93,12 +95,13 @@ class Activity
   end
 end
 
+# Daoly Schedule object are used to create and store the daily camp schedule
 class DailySchedule
   attr_reader :bunks
 
   def initialize(date, time_slots, activities, bunks)
     @date = date
-    @time_slots = time_slots.map{|slot| slot.first}
+    @time_slots = time_slots.map{ |slot| slot.first }
     @activities = activities
     @bunks = bunks
     create_empty_schedule_for_bunks
@@ -121,7 +124,7 @@ class DailySchedule
 
         bunk.add_to_schedule(time_slot, activity_to_schedule)
 
-        #schedule_dependent_activities(activity_to_schedule, bunk, time_slot)
+        # schedule_dependent_activities(activity_to_schedule, bunk, time_slot)
       end
     end
   end
@@ -174,7 +177,7 @@ class DailySchedule
   end
 end
 
-
+# created object to store the monthly calendars
 class Calendar
   def initialize
     @schedules = []
