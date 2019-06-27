@@ -106,9 +106,9 @@ class ScheduleDatabase
 
   # Retrieve a schedule for a specified day, returns an array of hashes
   #  containing all of the activity details in order of bunk name
-  def get_daily_schedule(date)
+  def get_daily_schedule(day_id)
 
-    date_result = query("SELECT id FROM days WHERE calendar_date = $1", date)
+    date_result = query("SELECT id FROM days WHERE id = $1", day_id)
     day_id = date_result.values[0][0]
 
     sql = <<~SQL
@@ -122,7 +122,7 @@ class ScheduleDatabase
         JOIN days AS d ON s.day_id = d.id
         JOIN divisions AS div ON b.division_id = div.id
         WHERE day_id = $1
-        ORDER BY b.name;
+        ORDER BY t.start_time;
       SQL
 
       results = query(sql, day_id)
@@ -136,6 +136,35 @@ class ScheduleDatabase
           end_time: tuple["end_time"]
         }
     end
+  end
+
+  def get_bunk_schedule(bunk_id, day_id)
+    sql = <<~SQL
+      SELECT a.name AS activity, a.location, t.start_time, t.end_time, t.name AS time_slot 
+      FROM schedule AS s 
+      JOIN activities AS a 
+        ON s.activity_id = a.id 
+      JOIN time_slots AS t 
+        ON t.id = s.time_slot_id 
+      WHERE bunk_id = $1 AND day_id = $2 
+      ORDER BY t.start_time;
+    SQL
+
+    results = query(sql, bunk_id, day_id)
+    results.map do |tuple|
+      {
+        "Activity" => tuple["activity"],
+        "Location" => tuple["location"],
+        "Start Time" => tuple["start_time"],
+        "End Time" => tuple["end_time"],
+        "Time Slot" => tuple["time_slot"]
+      }
+    end
+  end
+
+  def get_days_in_month # retrieves the days in the current year summer month
+    sql = "SELECT * FROM days WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);"
+    query(sql)
   end
 
   # Get a list of all of the activites, return an array of activity objects

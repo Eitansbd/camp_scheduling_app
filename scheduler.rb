@@ -1,3 +1,4 @@
+require 'date'
 require 'pry'
 require 'sinatra'
 require 'tilt/erubis'
@@ -18,6 +19,20 @@ helpers do
   def divisions
     @database.all_divisions
   end
+
+  def bunk_schedule_keys(bunk_schedule)
+    bunk_schedule.first.keys
+  end
+
+  def bunk_schedule_data(bunk_schedule)
+    bunk_schedule.map do |activity|
+      [
+       activity["Activity"],   activity["Location"], 
+       activity["Start Time"], activity["End Time"],
+       activity["Time Slot"]
+      ]
+    end
+  end
 end
 
 get '/' do
@@ -28,6 +43,13 @@ get '/' do
   @todays_schedule = DailySchedule.new(date, time_slots, activities, bunks)
   @todays_schedule.schedule_all_activities
   erb :daily_schedule
+end
+
+post '/calendar_days/generate' do  # make the form for this
+    start_day = '2019-08-01' # params[:start_day]
+    end_day = '2019-09-01' # params[:end_day]
+    month_calendar = generate_calendar(start_day, end_day)
+    reidrect '/'
 end
 
 get '/activity/new' do
@@ -96,20 +118,36 @@ end
 get '/bunk/:bunk_id/daily_schedule/:day_id' do
   # renders page for a bunks daily schedule, including previous ones
   # retrives from database the schedule based on bunk id and day id
+  bunk_id = params[:bunk_id].to_i
+  day_id = params[:day_id].to_i
+  @bunk = @database.load_bunk(bunk_id)
+  @bunk_schedule = get_bunk_schedule(bunk_id, day_id)
+  erb :bunk_schedule
 end
 
 get '/bunk/:bunk_id/activities_history' do
   # renders page that displays the amount of times (and days?) that
   # a specific bunk had individual activities
+  bunk_id = params[:bunk_id].to_i
+  @activity_history = get_bunk_activity_history(bunk_id) # returns a hash with 
+  # keys being the day of the month, values being and array or the activities 
+  # on that day. The activity itself is a hash with the keys and values 
+  # representing the title and details.
+  erb :bunk_activity_history # create a page to display the history
 end
 
 get '/dailyschedule/:day_id' do
   # renders page of a daily schedule based on the id. Needs to load the schedule
   # from the database.
+  day_id = params[:day_id].to_i
+  # returns an array of all of the days activities
+  results = @database.get_daily_schedule(day_id)
+  erb :daily_schedule # still need this page
 end
 
 get '/dailyschedule/:day_id/edit' do
   # renders edit page for daily schedule.
+
 end
 
 get '/dailyschedule/new' do
@@ -120,7 +158,30 @@ get '/dailyschedule/new' do
 end
 
 post '/dailyshchedule/new' do
+
   # creates the daily schedule - maybe loads template for a new schedule. Fills
   # in anything that is defined by the user in the post. Then calls the schedule
   # all activities method to assign the rest of the schedule
+end
+
+def get_bunk_activity_history(bunk_id)
+  # get the months camp calendar  
+  days = @database.get_days_in_month # make this method
+  # call the bunk schedule method for each day in the month
+  result = {}
+  days.each do |tuple|
+    day_id = tuple["id"]
+    one_day_schedule = @database.get_bunk_schedule(bunk_id, day_id)
+    result[tuple["calendar_date"]] = one_day_schedule
+  end
+  result
+end
+
+def generate_calendar(start_day, end_day)
+  date = Date.parse(start_day)
+  end_date = Date.parse(end_day)
+  while date <= end_date do
+    @database.add_date(date.to_s)
+    date = date.next
+  end
 end
