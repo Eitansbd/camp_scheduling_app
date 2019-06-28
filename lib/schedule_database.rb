@@ -108,13 +108,13 @@ class ScheduleDatabase
   #  containing all of the activity details in order of bunk name
   def get_daily_schedule(day_id)
 
-    date_result = query("SELECT id FROM days WHERE id = $1", day_id)
-    day_id = date_result.values[0][0]
+    date_result = query("SELECT calendar_date FROM days WHERE id = $1", day_id)
+    calendar_date = date_result.values[0][0]
 
     sql = <<~SQL
         SELECT b.name AS bunk_name, div.name AS division,
                b.gender, a.name AS activity,
-               a.location, t.start_time, t.end_time
+               a.location, t.start_time, t.end_time,
         FROM schedule AS s
         JOIN bunks AS b ON s.bunk_id = b.id
         JOIN activities AS a ON s.activity_id = a.id
@@ -125,16 +125,18 @@ class ScheduleDatabase
         ORDER BY t.start_time;
       SQL
 
-      results = query(sql, day_id)
-      results.map do |tuple|
-        { bunk_name: tuple["bunk_name"],
-          division: tuple["division"],
-          gender: tuple["gender"],
-          activity: tuple["activity"],
-          location: tuple["location"],
-          start_time: tuple["start_time"],
-          end_time: tuple["end_time"]
-        }
+    results = query(sql, day_id)
+    results.map do |tuple|
+      { 
+        date: calendar_date,
+        bunk_name: tuple["bunk_name"],
+        division: tuple["division"],
+        gender: tuple["gender"],
+        activity: tuple["activity"],
+        location: tuple["location"],
+        start_time: tuple["start_time"],
+        end_time: tuple["end_time"]
+      }
     end
   end
 

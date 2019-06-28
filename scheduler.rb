@@ -33,6 +33,17 @@ helpers do
       ]
     end
   end
+
+  def daily_schedule_time_slots(bunk_activities)
+    time_slots = bunk_activities.values.first.map{ |activity| activity[:start_time] }
+    time_slots.unshift("Bunk")
+  end
+
+  def daily_schedule_bunk_activity_list(bunk_activities)
+    bunk_activities.map do |bunk_name, activities|
+      bunk_schedule = [bunk_name.to_s] + activities.map { |activity| "#{activity[:activity]}-#{activity[:location]}" }
+    end
+  end
 end
 
 get '/' do
@@ -142,7 +153,10 @@ get '/dailyschedule/:day_id' do
   day_id = params[:day_id].to_i
   # returns an array of all of the days activities
   results = @database.get_daily_schedule(day_id)
-  erb :daily_schedule # still need this page
+  daily_schedule = DailySchedule.load_from_database(results)
+  @daily_schedule_bunk_activities = split_to_bunks(results)
+  sort_activities_by_time_slots(@daily_schedule_bunk_activities)
+  erb :daily_schedule
 end
 
 get '/dailyschedule/:day_id/edit' do
@@ -183,5 +197,21 @@ def generate_calendar(start_day, end_day)
   while date <= end_date do
     @database.add_date(date.to_s)
     date = date.next
+  end
+end
+
+def split_to_bunks(activities)
+  time_slots = activities.map{ |activity| activity[:start_time] }
+  bunks = Hash.new([])
+  activities.each do |activity|
+    bunk_name = activity[:bunk_name]
+    bunks[bunk_name.to_sym] += [activity]
+  end
+  bunks
+end
+
+def sort_activities_by_time_slots(bunk_activities)
+  bunk_activities.each_value do |activities|
+    activities.sort_by! { |activity| activity[:start_time] }
   end
 end
