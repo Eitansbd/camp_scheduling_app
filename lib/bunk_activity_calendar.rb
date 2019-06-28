@@ -113,7 +113,6 @@ class DailySchedule
     date = schedule.first[:date]
     time_slots = find_time_slots(schedule)
     @activities = fing_all_days_activities(schedule)
-    binding.pry
   end
 
   def self.find_time_slots(schedule)
