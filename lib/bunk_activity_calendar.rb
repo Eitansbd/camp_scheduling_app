@@ -3,7 +3,8 @@ require_relative 'schedule_database'
 
 # Class that stores the bunk object keeping track of bunk info and acitivities.
 class Bunk
-  attr_reader :name, :todays_schedule, :division, :gender
+  attr_reader :name, :division, :gender
+  attr_accessor :todays_schedule
 
   def initialize(name, division = "Hey", gender = "Male", id = nil)
     @id = id  # Why is this a attribute?
@@ -101,12 +102,12 @@ end
 class DailySchedule
   attr_reader :bunks
 
-  def initialize(date, time_slots, activities, bunks)
+  def initialize(date, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
     @date = date
-    @time_slots = time_slots.map{ |slot| slot.first }
+    @time_slots = time_slots #.map{ |slot| slot }.first }
     @activities = activities
     @bunks = bunks
-    create_empty_schedule_for_bunks
+    create_empty_schedule_for_bunks if new_schedule
   end
 
   def self.load_from_database(schedule)

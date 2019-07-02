@@ -1,13 +1,13 @@
 <div>
   <table>
     <tr>
-    <% daily_schedule_time_slots(@daily_schedule_bunk_activities).each do |time_slot| %>
+    <% daily_schedule_time_slots(@daily_schedule).each do |time_slot| %>
       <th>
         <%= time_slot %>
       </th>
     <% end %>
     </tr>
-    <% daily_schedule_bunk_activity_list(@daily_schedule_bunk_activities).each do |bunk_schedule| %>
+    <% daily_schedule_bunk_activity_list(@daily_schedule).each do |bunk_schedule| %>
       <tr>
         <% bunk_schedule.each do |activity| %>
           <th>

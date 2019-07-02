@@ -34,14 +34,13 @@ helpers do
     end
   end
 
-  def daily_schedule_time_slots(bunk_activities)
-    time_slots = bunk_activities.values.first.map{ |activity| activity[:start_time] }
-    time_slots.unshift("Bunk")
+  def daily_schedule_time_slots(daily_schedule)
+    ["Bunk"] + daily_schedule.bunks.first.todays_schedule.keys
   end
 
-  def daily_schedule_bunk_activity_list(bunk_activities)
-    bunk_activities.map do |bunk_name, activities|
-      bunk_schedule = [bunk_name.to_s] + activities.map { |activity| "#{activity[:activity]}-#{activity[:location]}" }
+  def daily_schedule_bunk_activity_list(daily_schedule)
+    daily_schedule.bunks.map do |bunk|  
+      [bunk.name] + bunk.todays_schedule.values
     end
   end
 end
@@ -132,7 +131,7 @@ get '/bunk/:bunk_id/daily_schedule/:day_id' do
   bunk_id = params[:bunk_id].to_i
   day_id = params[:day_id].to_i
   @bunk = @database.load_bunk(bunk_id)
-  @bunk_schedule = get_bunk_schedule(bunk_id, day_id)
+  @bunk_schedule = @database.get_bunk_schedule(bunk_id, day_id)
   erb :bunk_schedule
 end
 
@@ -147,35 +146,79 @@ get '/bunk/:bunk_id/activities_history' do
   erb :bunk_activity_history # create a page to display the history
 end
 
-get '/dailyschedule/:day_id' do
+get '/dailyschedule/new/:gender' do
+  # renders new schedule page. Should load bunks and time slots and have a drop
+  # down menu for each time slot. -- the name should be 3 digits - bunk_id, time_id
+  # and day_id. Not sure how to deal with the issue that we need dyamic drop downs
+  # to get rid of activities that were just chosen. Page should
+  gender = params[:gender][0].upcase
+
+  @daily_schedule = generate_empty_schedule(gender)
+  erb :daily_schedule
+end
+
+post '/dailyschedule/new' do
+
+  # creates the daily schedule - maybe loads template for a new schedule. Fills
+  # in anything that is defined by the user in the post. Then calls the schedule
+  # all activities method to assign the rest of the schedule
+end
+
+get '/dailyschedule/:day_id' do  # Maybe should be switched to DailySchedule object
   # renders page of a daily schedule based on the id. Needs to load the schedule
   # from the database.
   day_id = params[:day_id].to_i
+
   # returns an array of all of the days activities
   results = @database.get_daily_schedule(day_id)
-  daily_schedule = DailySchedule.load_from_database(results)
-  @daily_schedule_bunk_activities = split_to_bunks(results)
-  sort_activities_by_time_slots(@daily_schedule_bunk_activities)
+
+  time_slots = collect_time_slots(results)
+
+  bunks_unstructured = generate_list_of_bunks(results)
+  bunks = restructure_bunks(bunks_unstructured)
+
+  # returns the following format
+
+  # [#<Bunk:0x007fc363230dd8tion>)> 
+  # @default_activities={},
+  # @division="Hey",
+  # @gender="Male",
+  # @id=nil,
+  # @name="B6",
+  # @todays_schedule=
+  #  {"11:00:00"=>
+  #    #<Activity:0x007fc363231670
+  #     @appropriate_divisions=["Hey", "Aleph", "Bet", "Gimmel", "Daled"],
+  #     @location="NCT",
+  #     @max_bunks=1,
+  #     @name="Tennis",
+  #     @oldest_division="Daled",
+  #     @youngest_division="Hey">,
+  #   "01:00:00"=>
+  #    #<Activity:0x007fc363231378
+  #     @appropriate_divisions=["Hey", "Aleph", "Bet", "Gimmel", "Daled"],
+  #     @location="Boys Field",
+  #     @max_bunks=1,
+  #     @name="Softball",
+  #     @oldest_division="Daled",
+  #     @youngest_division="Hey">,
+  #   "12:04:00"=>
+  #    #<Activity:0x007fc3632310d0
+  #     @appropriate_divisions=["Hey", "Aleph", "Bet", "Gimmel", "Daled"],
+  #     @location="Gefen",
+  #     @max_bunks=1,
+  #     @name="Zumba",
+  #     @oldest_division="Daled",
+  #     @youngest_division="Hey" } ]
+
+  @daily_schedule = DailySchedule.new(day_id, time_slots, nil, bunks)
+
   erb :daily_schedule
 end
 
 get '/dailyschedule/:day_id/edit' do
   # renders edit page for daily schedule.
 
-end
-
-get '/dailyschedule/new' do
-  # renders new schedule page. Should load bunks and time slots and have a drop
-  # down menu for each time slot. -- the name should be 3 digits - bunk_id, time_id
-  # and day_id. Not sure how to deal with the issue that we need dyamic drop downs
-  # to get rid of activities that were just chosen. Page should
-end
-
-post '/dailyshchedule/new' do
-
-  # creates the daily schedule - maybe loads template for a new schedule. Fills
-  # in anything that is defined by the user in the post. Then calls the schedule
-  # all activities method to assign the rest of the schedule
 end
 
 def get_bunk_activity_history(bunk_id)
@@ -213,5 +256,36 @@ end
 def sort_activities_by_time_slots(bunk_activities)
   bunk_activities.each_value do |activities|
     activities.sort_by! { |activity| activity[:start_time] }
+  end
+end
+
+def generate_empty_schedule(gender)
+  all_time_slots = @database.all_time_slots
+  all_bunks = @database.all_bunks(gender)
+  DailySchedule.new(nil, all_time_slots, nil, all_bunks, true)
+end
+
+def collect_time_slots(results)
+  time_slots = []
+  results.each do |activity|
+    time_slots << activity[:start_time] unless time_slots.include?(activity[:start_time])
+  end
+  time_slots
+end
+
+def generate_list_of_bunks(results)
+  bunks = Hash.new([])
+
+  results.each do |activity|
+    bunks[activity[:bunk_name]] += [activity[:start_time] => Activity.new(activity[:activity], activity[:location])]
+  end
+  bunks
+end
+
+def restructure_bunks(bunks_unstructured)
+  bunks_unstructured.map do |name, activities|
+    bunk = Bunk.new(name)
+    bunk.todays_schedule = Hash[*activities.map(&:to_a).flatten]
+    bunk
   end
 end

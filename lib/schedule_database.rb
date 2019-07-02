@@ -112,9 +112,9 @@ class ScheduleDatabase
     calendar_date = date_result.values[0][0]
 
     sql = <<~SQL
-        SELECT b.name AS bunk_name, div.name AS division,
+        SELECT b.id, b.name AS bunk_name, div.name AS division,
                b.gender, a.name AS activity,
-               a.location, t.start_time, t.end_time,
+               a.location, t.start_time, t.end_time
         FROM schedule AS s
         JOIN bunks AS b ON s.bunk_id = b.id
         JOIN activities AS a ON s.activity_id = a.id
@@ -130,6 +130,7 @@ class ScheduleDatabase
       { 
         date: calendar_date,
         bunk_name: tuple["bunk_name"],
+        bunk_id: tuple["id"],
         division: tuple["division"],
         gender: tuple["gender"],
         activity: tuple["activity"],
@@ -182,15 +183,17 @@ class ScheduleDatabase
 
   # Get a list of all of the bunks, returns an array of all of the bunk objects.
   # Works
-  def all_bunks
+  def all_bunks(gender)
   sql = <<~SQL
       SELECT b.name, d.name AS division, b.gender, b.id
       FROM bunks AS b
       JOIN divisions AS d
-        ON b.division_id = d.id;
+        ON b.division_id = d.id
+      WHERE b.gender = $1
+      ORDER BY b.name;
     SQL
 
-    results = query(sql) 
+    results = query(sql, gender) 
     bunks = []
     results.each do |tuple|
       bunks << Bunk.new(tuple["name"], tuple["division"], tuple["gender"], tuple["id"])
@@ -203,7 +206,7 @@ class ScheduleDatabase
     results = query("SELECT * FROM time_slots;")
     time_slots = []
     results.each do |tuple|
-      time_slots << [tuple["start_time"], tuple["end_time"]]
+      time_slots << tuple["start_time"] #, tuple["end_time"]] # Maybe add the end time also
     end
     time_slots
   end
