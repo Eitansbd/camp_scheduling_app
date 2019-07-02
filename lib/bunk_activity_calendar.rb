@@ -3,7 +3,8 @@ require_relative 'schedule_database'
 
 # Class that stores the bunk object keeping track of bunk info and acitivities.
 class Bunk
-  attr_reader :name, :todays_schedule, :division, :gender
+  attr_reader :name, :division, :gender
+  attr_accessor :todays_schedule
 
   def initialize(name, division = "Hey", gender = "Male", id = nil)
     @id = id  # Why is this a attribute?
@@ -56,7 +57,7 @@ class Bunk
   end
 end
 
-class Activity
+class Activity 
   attr_reader :name, :location, :youngest_division, :oldest_division, :max_bunks
 
   def initialize(name, location = "", youngest_division = "Hey",
@@ -67,6 +68,8 @@ class Activity
     @oldest_division = oldest_division
     @youngest_division = youngest_division
     @max_bunks = max_bunks
+    # We should add the bunk that it is assigned to as an optional argument so that we can identfy who the activity belongs to
+    # We should add the time slot to the activity to identify when the activity is being played
   end
 
   def for_division?(division)
@@ -99,12 +102,32 @@ end
 class DailySchedule
   attr_reader :bunks
 
-  def initialize(date, time_slots, activities, bunks)
+  def initialize(date, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
     @date = date
-    @time_slots = time_slots.map{ |slot| slot.first }
+    @time_slots = time_slots #.map{ |slot| slot }.first }
     @activities = activities
     @bunks = bunks
-    create_empty_schedule_for_bunks
+    create_empty_schedule_for_bunks if new_schedule
+  end
+
+  def self.load_from_database(schedule)
+    date = schedule.first[:date]
+    time_slots = find_time_slots(schedule)
+    @activities = fing_all_days_activities(schedule)
+  end
+
+  def self.find_time_slots(schedule)
+    time_slots = []
+    schedule.each do |activity|
+      time_slots << [activity[:start_time], activity[:end_time]] unless time_slots.include?([activity[:start_time], activity[:end_time]])
+    end
+    time_slots
+  end
+
+  def self.find_all_days_activities(schedule)
+    schedule.map do |activity|
+      Activity.new(activity[:activity], activity[:location], nil, nil, activity[:max_bunks])
+    end  # need to add the bunk name so it can be identified
   end
 
   def create_empty_schedule_for_bunks
