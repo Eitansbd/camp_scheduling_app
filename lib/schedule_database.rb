@@ -141,6 +141,28 @@ class ScheduleDatabase
     end
   end
 
+  def get_bunk_activity_history(bunk_id)
+    sql = <<~SQL
+        SELECT a.name, count(a.name), 
+              string_agg(to_char(d.calendar_date, 'MM/DD/YYYY'), ', ' 
+              ORDER BY d.calendar_date) AS dates 
+        FROM schedule AS s 
+        JOIN activities AS a 
+          ON s.activity_id = a.id 
+        JOIN days AS d 
+          ON s.day_id = d.id
+        WHERE s.bunk_id = $1 
+          AND date_part('year', calendar_date) = date_part('year', CURRENT_DATE) 
+        GROUP BY a.name
+        ORDER BY count DESC;
+      SQL
+    
+    results = query(sql, bunk_id)
+    results.values
+  end
+
+
+
   def get_bunk_schedule(bunk_id, day_id)
     sql = <<~SQL
       SELECT a.name AS activity, a.location, t.start_time, t.end_time, t.name AS time_slot 

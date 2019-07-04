@@ -62,11 +62,11 @@ post '/calendar_days/generate' do  # make the form for this
     reidrect '/'
 end
 
-get '/activity/new' do
+get '/activity/new' do  # Works
   erb :new_activity
 end
 
-post '/activity/new' do
+post '/activity/new' do  # Works
   # instantiates a new activity object
   activity = Activity.new(params[:name], params[:location], params[:youngest_division], params[:oldest_division], params[:max_bunks])
   # adds the activity to the database
@@ -74,13 +74,13 @@ post '/activity/new' do
   redirect '/'
 end
 
-get '/time_slot/new' do
+get '/time_slot/new' do # Works
   # renders page to add new time slot
   erb :new_time_slot
 end
 
 # adds a new time slot to the database
-post '/time_slot/new' do
+post '/time_slot/new' do  # Works
   name = params[:name]
   start_time = params[:start_time]
   end_time = params[:end_time]
@@ -92,7 +92,7 @@ get '/calendar/new' do
   erb :new_calendar  # work in progress
 end
 
-get '/division/new' do
+get '/division/new' do # Works
   erb :new_division
 end
 
@@ -103,7 +103,7 @@ post '/division/new' do
 
 end
 
-get '/bunk/new' do
+get '/bunk/new' do  # Works
   # renders page to create a new bunk
   # page has form with bunk name, division, gender
   erb :new_bunk
@@ -118,14 +118,14 @@ post '/bunk/new' do
   redirect '/'
 end
 
-get '/bunk/:bunk_id' do
+get '/bunk/:bunk_id' do  # Works but could use improvement
   id = params[:bunk_id].to_i
   @bunk = @database.load_bunk(id)
 
   erb :bunk_page
 end
 
-get '/bunk/:bunk_id/daily_schedule/:day_id' do
+get '/bunk/:bunk_id/daily_schedule/:day_id' do  # Works
   # renders page for a bunks daily schedule, including previous ones
   # retrives from database the schedule based on bunk id and day id
   bunk_id = params[:bunk_id].to_i
@@ -135,18 +135,16 @@ get '/bunk/:bunk_id/daily_schedule/:day_id' do
   erb :bunk_schedule
 end
 
-get '/bunk/:bunk_id/activities_history' do
+get '/bunk/:bunk_id/activities_history' do  # Works
   # renders page that displays the amount of times (and days?) that
   # a specific bunk had individual activities
   bunk_id = params[:bunk_id].to_i
-  @activity_history = get_bunk_activity_history(bunk_id) # returns a hash with 
-  # keys being the day of the month, values being and array or the activities 
-  # on that day. The activity itself is a hash with the keys and values 
-  # representing the title and details.
+  @activity_history = bunk_activity_history(bunk_id) 
+
   erb :bunk_activity_history # create a page to display the history
 end
 
-get '/dailyschedule/new/:gender' do
+get '/dailyschedule/new/:gender' do  # Works
   # renders new schedule page. Should load bunks and time slots and have a drop
   # down menu for each time slot. -- the name should be 3 digits - bunk_id, time_id
   # and day_id. Not sure how to deal with the issue that we need dyamic drop downs
@@ -157,14 +155,14 @@ get '/dailyschedule/new/:gender' do
   erb :daily_schedule
 end
 
-post '/dailyschedule/new' do
+post '/dailyschedule/new' do  # Doesn't Work
 
   # creates the daily schedule - maybe loads template for a new schedule. Fills
   # in anything that is defined by the user in the post. Then calls the schedule
   # all activities method to assign the rest of the schedule
 end
 
-get '/dailyschedule/:day_id' do  # Maybe should be switched to DailySchedule object
+get '/dailyschedule/:day_id' do  # Works
   # renders page of a daily schedule based on the id. Needs to load the schedule
   # from the database.
   day_id = params[:day_id].to_i
@@ -216,22 +214,9 @@ get '/dailyschedule/:day_id' do  # Maybe should be switched to DailySchedule obj
   erb :daily_schedule
 end
 
-get '/dailyschedule/:day_id/edit' do
+get '/dailyschedule/:day_id/edit' do # Doesn't work
   # renders edit page for daily schedule.
 
-end
-
-def get_bunk_activity_history(bunk_id)
-  # get the months camp calendar  
-  days = @database.get_days_in_month # make this method
-  # call the bunk schedule method for each day in the month
-  result = {}
-  days.each do |tuple|
-    day_id = tuple["id"]
-    one_day_schedule = @database.get_bunk_schedule(bunk_id, day_id)
-    result[tuple["calendar_date"]] = one_day_schedule
-  end
-  result
 end
 
 def generate_calendar(start_day, end_day)
