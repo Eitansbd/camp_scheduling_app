@@ -106,13 +106,13 @@ class ScheduleDatabase
 
   # Retrieve a schedule for a specified day, returns an array of hashes
   #  containing all of the activity details in order of bunk name
-  def get_daily_schedule(date)
+  def get_daily_schedule(day_id)
 
-    date_result = query("SELECT id FROM days WHERE calendar_date = $1", date)
-    day_id = date_result.values[0][0]
+    date_result = query("SELECT calendar_date FROM days WHERE id = $1", day_id)
+    calendar_date = date_result.values[0][0]
 
     sql = <<~SQL
-        SELECT b.name AS bunk_name, div.name AS division,
+        SELECT b.id, b.name AS bunk_name, div.name AS division,
                b.gender, a.name AS activity,
                a.location, t.start_time, t.end_time
         FROM schedule AS s
@@ -122,19 +122,79 @@ class ScheduleDatabase
         JOIN days AS d ON s.day_id = d.id
         JOIN divisions AS div ON b.division_id = div.id
         WHERE day_id = $1
-        ORDER BY b.name;
+        ORDER BY t.start_time;
       SQL
 
-      results = query(sql, day_id)
-      results.map do |tuple|
-        { bunk_name: tuple["bunk_name"],
-          division: tuple["division"],
-          gender: tuple["gender"],
-          activity: tuple["activity"],
-          location: tuple["location"],
-          start_time: tuple["start_time"],
-          end_time: tuple["end_time"]
-        }
+    results = query(sql, day_id)
+    results.map do |tuple|
+      {
+        date: calendar_date,
+        bunk_name: tuple["bunk_name"],
+        bunk_id: tuple["id"],
+        division: tuple["division"],
+        gender: tuple["gender"],
+        activity: tuple["activity"],
+        location: tuple["location"],
+        start_time: tuple["start_time"],
+        end_time: tuple["end_time"]
+      }
+    end
+  end
+
+  def get_bunk_activity_history(bunk_id)
+    sql = <<~SQL
+        SELECT a.name, count(a.name),
+              string_agg(to_char(d.calendar_date, 'MM/DD/YYYY'), ', '
+              ORDER BY d.calendar_date) AS dates
+        FROM schedule AS s
+        JOIN activities AS a
+          ON s.activity_id = a.id
+        JOIN days AS d
+          ON s.day_id = d.id
+        WHERE s.bunk_id = $1
+          AND date_part('year', calendar_date) = date_part('year', CURRENT_DATE)
+        GROUP BY a.name
+        ORDER BY count DESC;
+      SQL
+
+    results = query(sql, bunk_id)
+    results.values
+  end
+
+
+
+  def get_bunk_schedule(bunk_id, day_id)
+    sql = <<~SQL
+      SELECT a.name AS activity, a.location, t.start_time, t.end_time, t.name AS time_slot
+      FROM schedule AS s
+      JOIN activities AS a
+        ON s.activity_id = a.id
+      JOIN time_slots AS t
+        ON t.id = s.time_slot_id
+      WHERE bunk_id = $1 AND day_id = $2
+      ORDER BY t.start_time;
+    SQL
+
+    results = query(sql, bunk_id, day_id)
+    results.map do |tuple|
+      {
+        "Activity" => tuple["activity"],
+        "Location" => tuple["location"],
+        "Start Time" => tuple["start_time"],
+        "End Time" => tuple["end_time"],
+        "Time Slot" => tuple["time_slot"]
+      }
+    end
+  end
+
+  def get_days_in_month # retrieves the days in the current year summer month
+    sql = "SELECT * FROM days WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);"
+    results = query(sql)
+    results.map do |tuple|
+      {
+        id: tuple["id"],
+        calendar_date: tuple["calendar_date"]
+      }
     end
   end
 
@@ -144,22 +204,24 @@ class ScheduleDatabase
     result = query("SELECT * FROM activities;") # Needs serious fixing
     activities = []
     result.each do |tuple|
-      activities << Activity.new(tuple["name"], tuple["location"], tuple["youngest_division"], tuple["oldest_division"], tuple["max_bunks"])
+      activities << Activity.new(tuple["name"], tuple["location"], tuple["youngest_division"], tuple["oldest_division"], tuple["max_bunks"], tuple["id"])
     end
     activities
   end
 
   # Get a list of all of the bunks, returns an array of all of the bunk objects.
   # Works
-  def all_bunks
+  def all_bunks(gender)
   sql = <<~SQL
       SELECT b.name, d.name AS division, b.gender, b.id
       FROM bunks AS b
       JOIN divisions AS d
-        ON b.division_id = d.id;
+        ON b.division_id = d.id
+      WHERE b.gender = $1
+      ORDER BY b.name;
     SQL
 
-    results = query(sql)
+    results = query(sql, gender)
     bunks = []
     results.each do |tuple|
       bunks << Bunk.new(tuple["name"], tuple["division"], tuple["gender"], tuple["id"])
@@ -171,8 +233,8 @@ class ScheduleDatabase
   def all_time_slots
     results = query("SELECT * FROM time_slots;")
     time_slots = []
-    results.each do |tuple|
-      time_slots << [tuple["start_time"], tuple["end_time"]]
+    results.each do |tuple|  # maybe change this to hash
+      time_slots << [tuple["id"], tuple["start_time"]] #, tuple["end_time"]] # Maybe add the end time also
     end
     time_slots
   end
