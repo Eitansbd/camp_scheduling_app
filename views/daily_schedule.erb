@@ -1,22 +1,40 @@
 <div>
-  <table>
-    <tr>
-    <% daily_schedule_time_slots(@daily_schedule).each do |time_slot| %>
-      <th>
-        <%= time_slot %>
-      </th>
+  <form action="/dailyschedule/new" method="post">
+    <select name="new_schedule_date" id="news_schedule_date">
+    <option value="">Select a date</option>
+    <% available_dates.each do |id, date| %>
+      <option value="<%= id %>"><%= date %></option>
     <% end %>
-    </tr>
-    <% daily_schedule_bunk_activity_list(@daily_schedule).each do |bunk_schedule| %>
+    </select>
+
+    <table>
       <tr>
-        <% bunk_schedule.each do |activity| %>
-          <th>
-            <%= activity %>
-          </th>
-        <% end %>
+      <% daily_schedule_time_slots(@daily_schedule).each do |_, time_slot| %>
+        <th>
+          <%= time_slot %>
+        </th>
+      <% end %>
       </tr>
-    <% end %>
-  </table>
+      <% daily_schedule_bunk_activity_list(@daily_schedule).each do |bunk, bunk_schedule| %>
+        <tr>
+          <th>
+            <%= bunk.name %>
+          </th>
+          <% bunk_schedule.each do |time_slot, activity| %>
+            <th>
+              <select name="<%= bunk.id %>,<%= time_slot.first %>" id="select_activity">
+              <option value="">Select Activity</option>
+              <% available_activities.each do |id, name, location| %>
+                <option value="<%= id %>"><%= name %> - <%= location %></option>
+              <% end %>
+              </select>
+            </th>
+          <% end %>
+        </tr>
+      <% end %>
+    </table>
+    <input type="submit" value="Autocomplete schedule">
+    <form>
 </div>
 
 <!-- display a generate month calenday link if one doesn't exist yet. It should post to '/calendar_days/generate' -->

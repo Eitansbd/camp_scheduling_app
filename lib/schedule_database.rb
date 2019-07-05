@@ -189,7 +189,13 @@ class ScheduleDatabase
 
   def get_days_in_month # retrieves the days in the current year summer month
     sql = "SELECT * FROM days WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);"
-    query(sql)
+    results = query(sql)
+    results.map do |tuple|
+      {
+        id: tuple["id"], 
+        calendar_date: tuple["calendar_date"] 
+      }
+    end
   end
 
   # Get a list of all of the activites, return an array of activity objects
@@ -198,7 +204,7 @@ class ScheduleDatabase
     result = query("SELECT * FROM activities;") # Needs serious fixing
     activities = []
     result.each do |tuple|
-      activities << Activity.new(tuple["name"], tuple["location"], tuple["youngest_division"], tuple["oldest_division"], tuple["max_bunks"])
+      activities << Activity.new(tuple["name"], tuple["location"], tuple["youngest_division"], tuple["oldest_division"], tuple["max_bunks"], tuple["id"])
     end
     activities
   end
@@ -227,8 +233,8 @@ class ScheduleDatabase
   def all_time_slots
     results = query("SELECT * FROM time_slots;")
     time_slots = []
-    results.each do |tuple|
-      time_slots << tuple["start_time"] #, tuple["end_time"]] # Maybe add the end time also
+    results.each do |tuple|  # maybe change this to hash
+      time_slots << [tuple["id"], tuple["start_time"]] #, tuple["end_time"]] # Maybe add the end time also
     end
     time_slots
   end

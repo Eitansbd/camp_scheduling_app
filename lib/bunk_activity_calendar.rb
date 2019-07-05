@@ -3,7 +3,7 @@ require_relative 'schedule_database'
 
 # Class that stores the bunk object keeping track of bunk info and acitivities.
 class Bunk
-  attr_reader :name, :division, :gender
+  attr_reader :name, :division, :gender, :id
   attr_accessor :todays_schedule
 
   def initialize(name, division = "Hey", gender = "Male", id = nil)
@@ -58,10 +58,11 @@ class Bunk
 end
 
 class Activity 
-  attr_reader :name, :location, :youngest_division, :oldest_division, :max_bunks
+  attr_reader :name, :location, :youngest_division, :oldest_division, :max_bunks, :id
 
   def initialize(name, location = "", youngest_division = "Hey",
-                 oldest_division = "Daled",  max_bunks = 1)
+                 oldest_division = "Daled",  max_bunks = 1, id=nil)
+    @id = id
     @name = name
     @appropriate_divisions = divisions_between(youngest_division, oldest_division)
     @location = location
@@ -94,17 +95,17 @@ class Activity
     divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should really be taken from database
     youngest_index = divisions.index(youngest_division)
     oldest_index = divisions.index(oldest_division)
-    divisions[youngest_index..oldest_index]
+    #divisions[youngest_index..oldest_index]
   end
 end
 
 # Daoly Schedule object are used to create and store the daily camp schedule
 class DailySchedule
-  attr_reader :bunks
+  attr_reader :bunks, :time_slots
 
   def initialize(date, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
     @date = date
-    @time_slots = time_slots #.map{ |slot| slot }.first }
+    @time_slots = time_slots #.map{ |slot| slot.last }
     @activities = activities
     @bunks = bunks
     create_empty_schedule_for_bunks if new_schedule
