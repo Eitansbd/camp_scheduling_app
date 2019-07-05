@@ -35,13 +35,23 @@ helpers do
   end
 
   def daily_schedule_time_slots(daily_schedule)
-    ["Bunk"] + daily_schedule.bunks.first.todays_schedule.keys
+    ["Bunk"] + daily_schedule.time_slots
   end
 
   def daily_schedule_bunk_activity_list(daily_schedule)
-    daily_schedule.bunks.map do |bunk|  
-      [bunk.name] + bunk.todays_schedule.values
+    list = {}
+    daily_schedule.bunks.each do |bunk|
+      list[bunk] = bunk.todays_schedule.to_a
     end
+    list
+  end
+
+  def available_activities
+    @database.all_activities.map{ |activity| [activity.id, activity.name, activity.location] }
+  end
+
+  def available_dates
+    @database.get_days_in_month.map { |day| day.values }
   end
 end
 
@@ -49,7 +59,7 @@ get '/' do
   date = "June 24th"
   time_slots = @database.all_time_slots
   activities = @database.all_activities
-  bunks = @database.all_bunks
+  bunks = @database.all_bunks  # need to add gender
   @todays_schedule = DailySchedule.new(date, time_slots, activities, bunks)
   @todays_schedule.schedule_all_activities
   erb :daily_schedule
@@ -141,7 +151,7 @@ get '/bunk/:bunk_id/activities_history' do  # Works
   bunk_id = params[:bunk_id].to_i
   @activity_history = bunk_activity_history(bunk_id) 
 
-  erb :bunk_activity_history # create a page to display the history
+  erb :bunk_activity_history 
 end
 
 get '/dailyschedule/new/:gender' do  # Works
@@ -155,7 +165,20 @@ get '/dailyschedule/new/:gender' do  # Works
   erb :daily_schedule
 end
 
-post '/dailyschedule/new' do  # Doesn't Work
+post '/dailyschedule/new' do  # Needs work
+  day_id = params.delete("new_schedule_date")
+  new_schedule = params.map do |key, value|
+    bunk_id, time_slot_id = key.split(',')
+    activity_id = value
+    { 
+      day_id: day_id,
+      bunk_id: bunk_id,
+      time_slot_id: time_slot_id,
+      activity_id: activity_id
+    }
+    # returns a hash with all of the new activities to be stored in the database
+  end
+  binding.pry
 
   # creates the daily schedule - maybe loads template for a new schedule. Fills
   # in anything that is defined by the user in the post. Then calls the schedule
