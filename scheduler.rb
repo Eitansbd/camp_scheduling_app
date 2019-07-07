@@ -56,7 +56,6 @@ helpers do
 end
 
 get '/' do
-  @todays_schedule = DailySchedule.new("June 24th")
   date = "June 24th"
   time_slots = @database.all_time_slots
   activities = @database.all_activities
