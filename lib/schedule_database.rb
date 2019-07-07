@@ -114,7 +114,7 @@ class ScheduleDatabase
     sql = <<~SQL
         SELECT b.id, b.name AS bunk_name, div.name AS division,
                b.gender, a.name AS activity,
-               a.location, t.start_time, t.end_time
+               a.location, t.start_time, s.time_slot_id
         FROM schedule AS s
         JOIN bunks AS b ON s.bunk_id = b.id
         JOIN activities AS a ON s.activity_id = a.id
@@ -136,7 +136,7 @@ class ScheduleDatabase
         activity: tuple["activity"],
         location: tuple["location"],
         start_time: tuple["start_time"],
-        end_time: tuple["end_time"]
+        time_slot_id: tuple["time_slot_id"]
       }
     end
   end
@@ -160,8 +160,6 @@ class ScheduleDatabase
     results = query(sql, bunk_id)
     results.values
   end
-
-
 
   def get_bunk_schedule(bunk_id, day_id)
     sql = <<~SQL
@@ -196,6 +194,10 @@ class ScheduleDatabase
         calendar_date: tuple["calendar_date"] 
       }
     end
+  end
+
+  def get_todays_day_id
+    query("SELECT id FROM days WHERE calendar_date = CURRENT_DATE;")
   end
 
   # Get a list of all of the activites, return an array of activity objects
