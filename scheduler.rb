@@ -56,12 +56,13 @@ helpers do
 end
 
 get '/' do
-  date = "June 24th"
+  gender = "M"
+  day_id = @database.get_todays_day_id
   time_slots = @database.all_time_slots
   activities = @database.all_activities
-  bunks = @database.all_bunks  # need to add gender
-  @todays_schedule = DailySchedule.new(date, time_slots, activities, bunks)
-  @todays_schedule.schedule_all_activities
+  bunks = @database.all_bunks(gender)  # need to add gender
+  @daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
+  @daily_schedule.schedule_all_activities
   erb :daily_schedule
 end
 
@@ -149,7 +150,7 @@ get '/bunk/:bunk_id/activities_history' do  # Works
   # renders page that displays the amount of times (and days?) that
   # a specific bunk had individual activities
   bunk_id = params[:bunk_id].to_i
-  @activity_history = bunk_activity_history(bunk_id)
+  @activity_history = @database.get_bunk_activity_history(bunk_id) 
 
   erb :bunk_activity_history
 end
@@ -162,7 +163,7 @@ get '/dailyschedule/new/:gender' do  # Works
   gender = params[:gender][0].upcase
 
   @daily_schedule = generate_empty_schedule(gender)
-  erb :daily_schedule
+  erb :new_daily_schedule
 end
 
 post '/dailyschedule/new' do  # Needs work
@@ -178,11 +179,13 @@ post '/dailyschedule/new' do  # Needs work
     }
     # returns a hash with all of the new activities to be stored in the database
   end
-  binding.pry
 
   # creates the daily schedule - maybe loads template for a new schedule. Fills
   # in anything that is defined by the user in the post. Then calls the schedule
   # all activities method to assign the rest of the schedule
+
+
+    # still need to fill in remaining calendar
 end
 
 get '/dailyschedule/:day_id' do  # Works
@@ -276,7 +279,7 @@ end
 def collect_time_slots(results)
   time_slots = []
   results.each do |activity|
-    time_slots << activity[:start_time] unless time_slots.include?(activity[:start_time])
+    time_slots << [activity[:time_slot_id], activity[:start_time]] unless time_slots.include?([activity[:time_slot_id], activity[:start_time]])
   end
   time_slots
 end

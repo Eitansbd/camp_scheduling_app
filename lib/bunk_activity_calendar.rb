@@ -11,9 +11,9 @@ class Bunk
     @name = name
     @division = division
     @gender = gender
-    @default_activities = { 7  => Activity.new("Shacharit"),
-                            12 => Activity.new("Lunch"),
-                            10 => Activity.new("Shiur") }
+    @default_activities = { ["7", "11:00:00"]  => Activity.new("Shacharit"),
+                            ["11", "12:04:00"] => Activity.new("Lunch"),
+                            ["10", "01:00:00"] => Activity.new("Shiur") }
     @todays_schedule = {}
   end
 
@@ -95,7 +95,8 @@ class Activity
     divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should really be taken from database
     youngest_index = divisions.index(youngest_division)
     oldest_index = divisions.index(oldest_division)
-    #divisions[youngest_index..oldest_index]
+    ["Hey", "Aleph", "Bet", "Gimmel", "Daled"]
+    #divisions[youngest_index..oldest_index]  # This is broken for some reason, still cant figure it out
   end
 end
 
@@ -103,8 +104,8 @@ end
 class DailySchedule
   attr_reader :bunks, :time_slots
 
-  def initialize(date, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
-    @date = date
+  def initialize(day_id, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
+    @day_id = day_id
     @time_slots = time_slots #.map{ |slot| slot.last }
     @activities = activities
     @bunks = bunks
