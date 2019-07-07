@@ -104,44 +104,66 @@ class ScheduleDatabase
     query(sql, start_time, end_time)
   end
 
-  # Retrieve a schedule for a specified day, returns an array of hashes
-  #  containing all of the activity details in order of bunk name
   def get_daily_schedule(day_id)
 
-    date_result = query("SELECT calendar_date FROM days WHERE id = $1", day_id)
-    calendar_date = date_result.values[0][0]
+    # Creates a dailySchedule object and populate the scheule instance variable with
+    # the time_slots, bunks and activities. Returns the daily schedule object
 
-    sql = <<~SQL
-        SELECT b.id, b.name AS bunk_name, div.name AS division,
-               b.gender, a.name AS activity,
-               a.location, t.start_time, s.time_slot_id
-        FROM schedule AS s
-        JOIN bunks AS b ON s.bunk_id = b.id
-        JOIN activities AS a ON s.activity_id = a.id
-        JOIN time_slots AS t ON s.time_slot_id = t.id
-        JOIN days AS d ON s.day_id = d.id
-        JOIN divisions AS div ON b.division_id = div.id
-        WHERE day_id = $1
-        ORDER BY t.start_time;
-      SQL
+    results = query("SELECT * FROM schedule WHERE day_id = $1", day_id)
 
-    results = query(sql, day_id)
-    results.map do |tuple|
-      { 
-        date: calendar_date,
-        bunk_name: tuple["bunk_name"],
-        bunk_id: tuple["id"],
-        division: tuple["division"],
-        gender: tuple["gender"],
-        activity: tuple["activity"],
-        location: tuple["location"],
-        start_time: tuple["start_time"],
-        time_slot_id: tuple["time_slot_id"]
-      }
+    time_slots = all_time_slots
+
+    activities = all_activities
+
+    bunks = all_bunks
+
+    daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks, new_schedule=false)
+
+    results.each do |tuple|
+      time_slot_id = tuple["time_slot_id"].to_i
+      bunk = bunks.select{ |bunk| bunk.id == tuple["bunk_id"]}
+      activity = activities.select{ |activity| activity.id == tuple["activity_id"]}
+      daily_schedule.schedule[time_slot_id][bunk] = activity
     end
+
+    daily_schedule
   end
 
-  def get_bunk_activity_history(bunk_id)
+  def get_default_schedule
+
+    # Create a DailySchedule object that contains all of the time slots, activities and bunks.
+    # The bunks contain info about thier activity history and contains a hash that stores all of the
+    #  history info
+
+    sql = "SELECT * FROM schedule WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);"
+
+    results = query(sql)
+
+    activities = all_activities
+
+    bunks = all_bunks
+
+    results.each do |tuple|
+      bunk = bunks.select{ |bunk| bunk.id == tuple["bunk_id"]}
+      activity = activities.select{ |activity| activity.id == tuple["activity_id"]}
+      bunk.activity_history[activity] += [tuple["day_id"]]
+    end
+
+    default_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
+
+    results = query("SELECT * FROM default_schedule;")
+
+    results.each do |tuple|
+      time_slot_id = tuple["time_slot_id"].to_i
+      bunk = bunks.select{ |bunk| bunk.id == tuple["bunk_id"]}
+      activity = activities.select{ |activity| activity.id == tuple["activity_id"]}
+      default_schedule.schedule[time_slot_id][bunk] = activity
+    end
+
+    default_schedule
+  end
+
+  def get_bunk_activity_history(bunk_id)  # For displaying the history
     sql = <<~SQL
         SELECT a.name, count(a.name), 
               string_agg(to_char(d.calendar_date, 'MM/DD/YYYY'), ', ' 
@@ -161,7 +183,7 @@ class ScheduleDatabase
     results.values
   end
 
-  def get_bunk_schedule(bunk_id, day_id)
+  def get_bunk_schedule(bunk_id, day_id)  # this one is designed for displaying not storing
     sql = <<~SQL
       SELECT a.name AS activity, a.location, t.start_time, t.end_time, t.name AS time_slot 
       FROM schedule AS s 
@@ -204,11 +226,10 @@ class ScheduleDatabase
   # Works
   def all_activities
     result = query("SELECT * FROM activities;") # Needs serious fixing
-    activities = []
-    result.each do |tuple|
-      activities << Activity.new(tuple["name"], tuple["location"], tuple["youngest_division"], tuple["oldest_division"], tuple["max_bunks"], tuple["id"])
+
+    result.map do |tuple|
+      Activity.new(tuple["name"], tuple["location"], tuple["youngest_division"], tuple["oldest_division"], tuple["max_bunks"], tuple["id"])
     end
-    activities
   end
 
   # Get a list of all of the bunks, returns an array of all of the bunk objects.
@@ -224,21 +245,19 @@ class ScheduleDatabase
     SQL
 
     results = query(sql, gender) 
-    bunks = []
-    results.each do |tuple|
-      bunks << Bunk.new(tuple["name"], tuple["division"], tuple["gender"], tuple["id"])
+
+    results.map do |tuple|
+      Bunk.new(tuple["name"], tuple["division"], tuple["gender"], tuple["id"])
     end
-    bunks
   end
 
   # Gets list of all of the time slots, returns a nested array with the starting and ending time
-  def all_time_slots
+  def all_time_slots  # change to  returns an array of {id: [start_time, end_time]}
     results = query("SELECT * FROM time_slots;")
-    time_slots = []
-    results.each do |tuple|  # maybe change this to hash
-      time_slots << [tuple["id"], tuple["start_time"]] #, tuple["end_time"]] # Maybe add the end time also
+    
+    results.map do |tuple|  # maybe change this to hash
+      time_slots << {tuple["id"] => [tuple["start_time"], tuple["end_time"]}
     end
-    time_slots
   end
 
   # Add a new division
@@ -250,11 +269,10 @@ class ScheduleDatabase
   # Returns a list of all of the divisions ordered by their age
   def all_divisions
     results = query("SELECT * FROM divisions ORDER BY age;")
-    names = []
-    results.each do |tuple|
-      names << tuple["name"]
+
+    results.map do |tuple|
+      tuple["name"]
     end
-    names
   end
 
   private
