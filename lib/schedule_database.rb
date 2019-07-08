@@ -121,8 +121,8 @@ class ScheduleDatabase
 
     results.each do |tuple|
       time_slot_id = tuple["time_slot_id"].to_i
-      bunk = bunks.select{ |bunk| bunk.id == tuple["bunk_id"]}
-      activity = activities.select{ |activity| activity.id == tuple["activity_id"]}
+      bunk = bunks.find { |bunk| bunk.id == tuple["bunk_id"]}
+      activity = activities.find { |activity| activity.id == tuple["activity_id"]}
       daily_schedule.schedule[time_slot_id][bunk] = activity
     end
 
@@ -135,28 +135,20 @@ class ScheduleDatabase
     # The bunks contain info about thier activity history and contains a hash that stores all of the
     #  history info
 
-    sql = "SELECT * FROM schedule WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);"
-
-    results = query(sql)
-
     activities = all_activities
 
     bunks = all_bunks
 
-    results.each do |tuple|
-      bunk = bunks.select{ |bunk| bunk.id == tuple["bunk_id"]}
-      activity = activities.select{ |activity| activity.id == tuple["activity_id"]}
-      bunk.activity_history[activity] += [tuple["day_id"]]
-    end
+    time_slots = all_time_slots
 
-    default_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
+    default_schedule = DailySchedule.new(0, time_slots, activities, bunks)
 
     results = query("SELECT * FROM default_schedule;")
 
     results.each do |tuple|
       time_slot_id = tuple["time_slot_id"].to_i
-      bunk = bunks.select{ |bunk| bunk.id == tuple["bunk_id"]}
-      activity = activities.select{ |activity| activity.id == tuple["activity_id"]}
+      bunk = bunks.find { |bunk| bunk.id == tuple["bunk_id"]}
+      activity = activities.find { |activity| activity.id == tuple["activity_id"]}
       default_schedule.schedule[time_slot_id][bunk] = activity
     end
 
