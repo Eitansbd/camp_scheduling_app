@@ -63,7 +63,8 @@ get '/' do
   bunks = @database.all_bunks(gender)  # need to add gender
   @daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
   @daily_schedule.schedule_all_activities
-  erb :daily_schedule
+  #erb :daily_schedule
+  puts ScheduleDatabase.new(nil).all_activities
 end
 
 post '/calendar_days/generate' do  # make the form for this
@@ -120,7 +121,7 @@ get '/bunk/new' do  # Works
   erb :new_bunk
 end
 
-post '/bunk/new' do
+post '/bunk/new' do # works
   bunk = Bunk.new(params[:name], params[:division], params[:gender])
 #   creates a new bunk
 #   instantiates bunk object and send it to the database
