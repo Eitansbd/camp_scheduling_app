@@ -9,26 +9,26 @@
 
     <table>
       <tr>
-      <% daily_schedule_time_slots(@daily_schedule).each do |_, time_slot| %>
+      <% @daily_schedule.time_slots.each do |time_slot| %>
         <th>
-          <%= time_slot %>
+          <%= time_slot.keys.first %>
         </th>
       <% end %>
       </tr>
-      <% daily_schedule_bunk_activity_list(@daily_schedule).each do |bunk, bunk_schedule| %>
+      <% all_bunks_activities(@daily_schedule) do |bunk, activities| %>
         <tr>
           <th>
             <%= bunk.name %>
           </th>
-          <% bunk_schedule.each do |time_slot, activity| %>
-            <th>
+          <% activities.each do |activity| %>
+            <td>
               <select name="<%= bunk.id %>,<%= time_slot.first %>" id="select_activity">
               <option value="">Select Activity</option>
               <% available_activities.each do |id, name, location| %>
                 <option value="<%= id %>"><%= name %> - <%= location %></option>
               <% end %>
               </select>
-            </th>
+            </td>
           <% end %>
         </tr>
       <% end %>

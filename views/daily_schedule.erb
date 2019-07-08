@@ -8,13 +8,19 @@
       </th>
     <% end %>
     </tr>
-    <% all_bunks_activities(@daily_schedule) do |bunk_name, activities| %>
+    <% all_bunks_activities(@daily_schedule) do |bunk, activities| %>
     <tr>
       <th>
-        <%= bunk_name %>
+        <%= bunk.name %>
       </th>
       <% activities.each do |activity| %>
-        <td> <%= activity.name %> </td>
+        <td>
+          <% if !!activity %>
+            <%= "#{activity.name} (#{activity.location})" %>
+          <% else %>
+            No activities available
+          <% end %>
+        </td>
       <% end %>
     </tr>
     <% end %>

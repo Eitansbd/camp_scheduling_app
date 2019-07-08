@@ -41,13 +41,15 @@ helpers do
 
     bunks.each do |bunk|
       activities = []
+      time_slot_ids = []
 
       daily_schedule.schedule.each do |_, (bunk_activities_hash)|
         activities << bunk_activities_hash[bunk]
       end
-      yield(bunk.name, activities)
+
+      yield(bunk, activities)
+
     end
-    # yields for each bunk the bunk name and activities for the day
   end
 
   def daily_schedule_time_slots(daily_schedule)
@@ -68,7 +70,7 @@ get '/' do
   day_id = @database.get_todays_day_id
   time_slots = @database.all_time_slots
   activities = @database.all_activities
-  bunks = @database.all_bunks(gender)  # need to add gender
+  bunks = @database.all_bunks
   @daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
   @daily_schedule.schedule_all_activities
 
@@ -88,7 +90,9 @@ end
 
 post '/activity/new' do  # Works
   # instantiates a new activity object
-  activity = Activity.new(params[:name], params[:location], params[:youngest_division], params[:oldest_division], params[:max_bunks])
+  activity = Activity.new(params[:name], params[:location],
+                          params[:youngest_division], params[:oldest_division],
+                          params[:max_bunks])
   # adds the activity to the database
   @database.add_activity(activity)
   redirect '/'
@@ -164,14 +168,14 @@ get '/bunk/:bunk_id/activities_history' do  # Works
   erb :bunk_activity_history
 end
 
-get '/dailyschedule/new/:gender' do  # Works
+get '/dailyschedule/new' do  # Works
   # renders new schedule page. Should load bunks and time slots and have a drop
   # down menu for each time slot. -- the name should be 3 digits - bunk_id, time_id
   # and day_id. Not sure how to deal with the issue that we need dyamic drop downs
   # to get rid of activities that were just chosen. Page should
-  gender = params[:gender][0].upcase
 
-  @daily_schedule = generate_empty_schedule(gender)
+  @daily_schedule = @database.get_default_schedule
+
   erb :new_daily_schedule
 end
 

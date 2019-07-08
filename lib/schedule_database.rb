@@ -238,17 +238,16 @@ class ScheduleDatabase
 
   # Get a list of all of the bunks, returns an array of all of the bunk objects.
   # Works
-  def all_bunks(gender)
+  def all_bunks
   sql = <<~SQL
       SELECT b.name, d.name AS division, b.gender, b.id
       FROM bunks AS b
       JOIN divisions AS d
         ON b.division_id = d.id
-      WHERE b.gender = $1
       ORDER BY b.name;
     SQL
 
-    results = query(sql, gender)
+    results = query(sql)
 
     results.map do |tuple|
       Bunk.new(tuple["name"], tuple["division"], tuple["gender"], tuple["id"])

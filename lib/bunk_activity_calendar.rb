@@ -75,7 +75,7 @@ class DailySchedule
   end
 
   def schedule_all_activities
-    # insert_all_default_activities # replace by having the database schedule
+    # need to have a method that has the database schedule
     # the default activities based on the default schedule in the database
     @bunks.each do |bunk|
       @time_slots.each do |time_slot|
@@ -84,7 +84,7 @@ class DailySchedule
 
         add_to_schedule(time_slot, bunk, activity_to_schedule)
 
-        # schedule_dependent_activities(activity_to_schedule, bunk, time_slot)
+        # schedule_dependent_activities(time_slot, bunk, activity_to_schedule)
       end
     end
   end
@@ -125,7 +125,7 @@ class DailySchedule
   private
 
   def bunk_has_activity_scheduled?(bunk, time_slot)
-    @schedule[time_slot].keys.include?(bunk)
+    !!@schedule[time_slot][bunk]
   end
 
   def select_activity(bunk, time_slot)
