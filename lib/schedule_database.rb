@@ -228,7 +228,11 @@ class ScheduleDatabase
     result = query("SELECT * FROM activities;") # Needs serious fixing
 
     result.map do |tuple|
-      Activity.new(tuple["name"], tuple["location"], tuple["youngest_division"], tuple["oldest_division"], tuple["max_bunks"], tuple["id"])
+      Activity.new(tuple["name"],
+                   tuple["location"],
+                   tuple["id"]).set_activity_parameters(tuple["max_bunks"],
+                                                        tuple["youngest_division"],
+                                                        tuple["oldest_division"])
     end
   end
 
@@ -256,7 +260,8 @@ class ScheduleDatabase
     results = query("SELECT * FROM time_slots;")
 
     results.map do |tuple|  # maybe change this to hash
-      time_slots << {tuple["id"] => [tuple["start_time"], tuple["end_time"]}
+      # ??time_slots << {tuple["id"] => [tuple["start_time"], tuple["end_time"]]}
+      {tuple["id"] => [tuple["start_time"], tuple["end_time"]]}
     end
   end
 

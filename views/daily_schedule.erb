@@ -1,23 +1,22 @@
 <div>
   <table>
     <tr>
-    <% daily_schedule_time_slots(@daily_schedule).each do |_, time_slot| %>
+      <th></th>
+    <% @daily_schedule.time_slots.each do |time_slot| %>
       <th>
-        <%= time_slot %>
+        <%= time_slot.keys.first %>
       </th>
     <% end %>
     </tr>
-    <% daily_schedule_bunk_activity_list(@daily_schedule).each do |bunk, bunk_schedule| %>
-      <tr>
-        <th>
-          <%= bunk.name %>
-        </th>
-        <% bunk_schedule.each do |_, activity| %>
-          <th>
-            <%= activity %>
-          </th>
-        <% end %>
-      </tr>
+    <% all_bunks_activities(@daily_schedule) do |bunk_name, activities| %>
+    <tr>
+      <th>
+        <%= bunk_name %>
+      </th>
+      <% activities.each do |activity| %>
+        <td> <%= activity.name %> </td>
+      <% end %>
+    </tr>
     <% end %>
   </table>
 </div>

@@ -34,16 +34,24 @@ helpers do
     end
   end
 
-  def daily_schedule_time_slots(daily_schedule)
-    ["Bunk"] + daily_schedule.time_slots
+  # takes in the daily schedule and yields to a block the bunk and an array of
+  # the activities the bunk has that day in order
+  def all_bunks_activities(daily_schedule)
+    bunks = daily_schedule.bunks
+
+    bunks.each do |bunk|
+      activities = []
+
+      daily_schedule.schedule.each do |_, (bunk_activities_hash)|
+        activities << bunk_activities_hash[bunk]
+      end
+      yield(bunk.name, activities)
+    end
+    # yields for each bunk the bunk name and activities for the day
   end
 
-  def daily_schedule_bunk_activity_list(daily_schedule)
-    list = {}
-    daily_schedule.bunks.each do |bunk|
-      list[bunk] = bunk.todays_schedule.to_a
-    end
-    list
+  def daily_schedule_time_slots(daily_schedule)
+    ["Bunk"] + daily_schedule.time_slots
   end
 
   def available_activities
@@ -63,8 +71,8 @@ get '/' do
   bunks = @database.all_bunks(gender)  # need to add gender
   @daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
   @daily_schedule.schedule_all_activities
-  #erb :daily_schedule
-  puts ScheduleDatabase.new(nil).all_activities
+
+  erb :daily_schedule
 end
 
 post '/calendar_days/generate' do  # make the form for this
@@ -151,7 +159,7 @@ get '/bunk/:bunk_id/activities_history' do  # Works
   # renders page that displays the amount of times (and days?) that
   # a specific bunk had individual activities
   bunk_id = params[:bunk_id].to_i
-  @activity_history = @database.get_bunk_activity_history(bunk_id) 
+  @activity_history = @database.get_bunk_activity_history(bunk_id)
 
   erb :bunk_activity_history
 end
@@ -294,10 +302,10 @@ def generate_list_of_bunks(results)
   bunks
 end
 
-def restructure_bunks(bunks_unstructured)
-  bunks_unstructured.map do |name, activities|
-    bunk = Bunk.new(name)
-    bunk.todays_schedule = Hash[*activities.map(&:to_a).flatten]
-    bunk
-  end
-end
+# def restructure_bunks(bunks_unstructured)
+#   bunks_unstructured.map do |name, activities|
+#     bunk = Bunk.new(name)
+#     bunk.todays_schedule = Hash[*activities.map(&:to_a).flatten]
+#     bunk
+#   end
+# end

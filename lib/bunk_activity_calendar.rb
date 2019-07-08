@@ -29,6 +29,7 @@ class Activity
   def set_activity_parameters(max_bunks, youngest_division = "Hey", oldest_division = "Daled")
     @max_bunks = max_bunks
     @appropriate_divisions = divisions_between(youngest_division, oldest_division)
+    self
   end
 
   def for_division?(division)
@@ -49,7 +50,9 @@ class Activity
     divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should really be taken from database
     youngest_index = divisions.index(youngest_division)
     oldest_index = divisions.index(oldest_division)
-    divisions[youngest_index..oldest_index]  # This is broken for some reason, still cant figure it out
+    #divisions[youngest_index..oldest_index]  # This is broken for some reason, still cant figure it out
+    # youngest_divions and oldest_division are nil. maybe it's problem with db?
+    ["Hey", "Aleph", "Bet", "Gimmel", "Daled"]
   end
 end
 
@@ -57,9 +60,8 @@ end
 class DailySchedule
   attr_reader :bunks, :time_slots, :schedule
 
-  def initialize(day_id, date, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
+  def initialize(day_id, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
     @day_id = day_id
-    @date = date
     @time_slots = time_slots #.map{ |slot| slot.last }
     @activities = activities
     @bunks = bunks
@@ -110,12 +112,14 @@ class DailySchedule
   # end
 
   def display_schedule
+    string = ""
     @schedule.each do |time_slot, slot_schedule|
-      puts time_slot
+      string << (time_slot.keys.first + "\n")
       slot_schedule.each do |bunk, activity|
-        puts bunk.name + " : " + activity.name
+        string << (bunk.name + " : " + activity.name + "\n")
       end
     end
+    string
   end
 
   private
@@ -173,16 +177,16 @@ class Calendar
   end
 end
 
-activity_names = ("Lake Toys,Drama,Basketball,Art,Music,Softball,Tennis," +
-                  "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
-                  "a1, a2, a3, a4, a5, a6").split(",")
+# activity_names = ("Lake Toys,Drama,Basketball,Art,Music,Softball,Tennis," +
+#                   "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
+#                   "a1, a2, a3, a4, a5, a6").split(",")
 
-ACTIVITES = activity_names.map { |name| Activity.new(name) }
-ACTIVITES.each { |activity| activity.set_activity_parameters(1) }
-BUNKS = (1..10).to_a.map { |num| Bunk.new("B#{num}", 'Aleph', 'Male') }
-TIME_SLOTS = (7..12).to_a + (1..6).to_a
+# ACTIVITES = activity_names.map { |name| Activity.new(name) }
+# ACTIVITES.each { |activity| activity.set_activity_parameters(1) }
+# BUNKS = (1..10).to_a.map { |num| Bunk.new("B#{num}", 'Aleph', 'Male') }
+# TIME_SLOTS = (7..12).to_a + (1..6).to_a
 
-schedule =  DailySchedule.new(1,2, TIME_SLOTS, ACTIVITES, BUNKS)
-schedule.schedule_all_activities
+# schedule =  DailySchedule.new(1,2, TIME_SLOTS, ACTIVITES, BUNKS)
+# schedule.schedule_all_activities
 
-schedule.display_schedule
+# schedule.display_schedule
