@@ -68,7 +68,7 @@ class ScheduleDatabase
     query(sql, date)
   end
 
-  # Add an entry to the schedule table, used to built a dailly schedule
+  # Add an entry to the schedule table, used to build a dailly schedule
   def add_entry_to_schedule(bunk, activity, time_slot, calendar_date)
     sql = "INSERT INTO schedule (bunk_id, activity_id, time_slot_id, day_id) VALUES ($1, $2, $3, $4);"
     query(sql, bunk, activity, time_slot, calendar_date)
