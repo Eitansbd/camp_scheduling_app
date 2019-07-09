@@ -248,12 +248,15 @@ class ScheduleDatabase
 
   # Gets list of all of the time slots, returns a nested array with the starting and ending time
   def all_time_slots  # change to  returns an array of {id: [start_time, end_time]}
-    results = query("SELECT * FROM time_slots;")
+    results = query("SELECT * FROM time_slots ORDER BY start_time;")
 
-    results.map do |tuple|  # maybe change this to hash
-      # ??time_slots << {tuple["id"] => [tuple["start_time"], tuple["end_time"]]}
-      {tuple["id"] => [tuple["start_time"], tuple["end_time"]]}
+    time_slots = {}
+
+    results.each do |tuple| 
+      time_slots[tuple["id"].to_i] = [tuple["start_time"], tuple["end_time"]]
     end
+
+    time_slots
   end
 
   # Add a new division

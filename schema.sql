@@ -117,6 +117,38 @@ ALTER SEQUENCE public.days_id_seq OWNED BY public.days.id;
 
 
 --
+-- Name: default_schedule; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.default_schedule (
+    id integer NOT NULL,
+    bunk_id integer NOT NULL,
+    activity_id integer NOT NULL,
+    time_slot_id integer NOT NULL
+);
+
+
+--
+-- Name: default_schedule_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.default_schedule_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: default_schedule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.default_schedule_id_seq OWNED BY public.default_schedule.id;
+
+
+--
 -- Name: divisions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -231,6 +263,13 @@ ALTER TABLE ONLY public.bunks ALTER COLUMN id SET DEFAULT nextval('public.bunks_
 --
 
 ALTER TABLE ONLY public.days ALTER COLUMN id SET DEFAULT nextval('public.days_id_seq'::regclass);
+
+
+--
+-- Name: default_schedule id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.default_schedule ALTER COLUMN id SET DEFAULT nextval('public.default_schedule_id_seq'::regclass);
 
 
 --
@@ -361,6 +400,15 @@ COPY public.days (id, calendar_date) FROM stdin;
 
 
 --
+-- Data for Name: default_schedule; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.default_schedule (id, bunk_id, activity_id, time_slot_id) FROM stdin;
+2	20	15	7
+\.
+
+
+--
 -- Data for Name: divisions; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -421,6 +469,13 @@ SELECT pg_catalog.setval('public.days_id_seq', 39, true);
 
 
 --
+-- Name: default_schedule_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.default_schedule_id_seq', 2, true);
+
+
+--
 -- Name: divisions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -471,6 +526,14 @@ ALTER TABLE ONLY public.bunks
 
 ALTER TABLE ONLY public.days
     ADD CONSTRAINT days_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: default_schedule default_schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.default_schedule
+    ADD CONSTRAINT default_schedule_pkey PRIMARY KEY (id);
 
 
 --
@@ -543,6 +606,30 @@ ALTER TABLE ONLY public.activities
 
 ALTER TABLE ONLY public.bunks
     ADD CONSTRAINT bunks_division_fkey FOREIGN KEY (division_id) REFERENCES public.divisions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: default_schedule default_schedule_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.default_schedule
+    ADD CONSTRAINT default_schedule_activity_id_fkey FOREIGN KEY (activity_id) REFERENCES public.activities(id) ON DELETE CASCADE;
+
+
+--
+-- Name: default_schedule default_schedule_bunk_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.default_schedule
+    ADD CONSTRAINT default_schedule_bunk_id_fkey FOREIGN KEY (bunk_id) REFERENCES public.bunks(id) ON DELETE CASCADE;
+
+
+--
+-- Name: default_schedule default_schedule_time_slot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.default_schedule
+    ADD CONSTRAINT default_schedule_time_slot_id_fkey FOREIGN KEY (time_slot_id) REFERENCES public.time_slots(id) ON DELETE CASCADE;
 
 
 --
