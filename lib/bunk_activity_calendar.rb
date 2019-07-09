@@ -27,10 +27,15 @@ class Activity
     @max_bunks = max_bunks
     @appropriate_divisions = divisions_between(youngest_division, oldest_division)
     self
+    @double = false # need to add a double t/f to database.
   end
 
   def for_division?(division)
     @appropriate_divisions.include?(division)
+  end
+
+  def double?
+    @double
   end
 
   def ==(other_activity)
@@ -51,7 +56,7 @@ class Activity
   end
 end
 
-# Daoly Schedule object are used to create and store the daily camp schedule
+# Daily Schedule object are used to create and store the daily camp schedule
 class DailySchedule
   attr_reader :bunks, :time_slots, :schedule
 
@@ -100,36 +105,50 @@ class DailySchedule
   def select_activity(bunk, time_slot_id)
     activities = @activities.dup
     remove_activities_bunk_constraints!(activities, bunk)
-    remove_activities_time_slot_constraints!(activities, time_slot_id)
+    remove_activities_time_slot_constraints!(time_slot_id, activities, bunk)
 
     activities.sample
   end
 
   def remove_activities_bunk_constraints!(activities, bunk)
+    # rejects actvities that the bunk already has that day
     activities.reject! do |activity|
       @schedule.any? do |_, slot_schedule|
         slot_schedule[bunk] == activity
       end
     end
 
+    # rejects activities that aren't for this bunks division
     activities.select! do |activity|
       activity.for_division?(bunk.division)
     end
   end
 
 
-  # def schedule_dependent_activities(activity, bunk, time_slot)
-  #   return false if activity.reached_maximum_capacity?
+  def schedule_dependent_activities(activity, bunk, time_slot)
+    return nil if activity.reached_maximum_capacity?
 
+  end
 
-  # end
+  def remove_activities_time_slot_constraints!(time_slot_id, activities, bunk)
 
-  def remove_activities_time_slot_constraints!(activities, time_slot_id)
+    # rejects activities that are already scheduled
     activities.reject! do |activity|
       @schedule[time_slot_id].values.any? do |schedule_activity|
         schedule_activity.equal?(activity)
       end
     end
+
+    # rejects activities that require multiple slots and can't be filled
+    time_slot_ids = @schedule.keys
+    next_time_slot_index = time_slot_ids.index(time_slot_id) + 1
+    next_time_slot_id = time_slot_ids[next_time_slot_index]
+
+    activities.reject! do |activity|
+      activity.double? &&
+      bunk_has_activity_scheduled?(bunk, next_time_slot_id)
+    end
+
   end
 end
 
