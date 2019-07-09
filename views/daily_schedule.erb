@@ -8,15 +8,15 @@
       </th>
     <% end %>
     </tr>
-    <% all_bunks_activities(@daily_schedule) do |bunk, activities| %>
+    <% @daily_schedule.bunks.each do |bunk, activities| %>
     <tr>
       <th>
         <%= bunk.name %>
       </th>
-      <% activities.each do |activity| %>
+      <% @daily_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>
         <td>
-          <% if !!activity %>
-            <%= "#{activity.name} (#{activity.location})" %>
+          <% if !!@daily_schedule.schedule[time_slot_id][bunk] %>
+            <%= @daily_schedule.schedule[time_slot_id][bunk].name %>(<%= @daily_schedule.schedule[time_slot_id][bunk].location %>)
           <% else %>
             No activities available
           <% end %>

@@ -24,7 +24,9 @@
             <td>
               <select name="<%= bunk.id %>,<%= time_slot_id %>" id="select_activity">
               <% if !!@daily_schedule.schedule[time_slot_id][bunk] %>
-                <option value="<%= @daily_schedule.schedule[time_slot_id][bunk].id %>"><%= @daily_schedule.schedule[time_slot_id][bunk].name %>(<%= @daily_schedule.schedule[time_slot_id][bunk].location %>)</option>
+                <option value="<%= @daily_schedule.schedule[time_slot_id][bunk].id %>">
+                  <%= @daily_schedule.schedule[time_slot_id][bunk].name %>(<%= @daily_schedule.schedule[time_slot_id][bunk].location %>)
+                </option>
               <% else %>
                 <option value="">Select Activity</option>
               <% end %>

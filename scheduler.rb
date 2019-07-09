@@ -167,12 +167,7 @@ get '/bunk/:bunk_id/activities_history' do  # Works
   erb :bunk_activity_history
 end
 
-get '/dailyschedule/new' do  # Works
-  # renders new schedule page. Should load bunks and time slots and have a drop
-  # down menu for each time slot. -- the name should be 3 digits - bunk_id, time_id
-  # and day_id. Not sure how to deal with the issue that we need dyamic drop downs
-  # to get rid of activities that were just chosen. Page should
-
+get '/dailyschedule/new' do
   @daily_schedule = @database.get_default_schedule
 
   erb :new_daily_schedule
