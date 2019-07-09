@@ -21,9 +21,6 @@ class Activity
     @id = id
     @name = name
     @location = location
-
-    # We should add the bunk that it is assigned to as an optional argument so that we can identfy who the activity belongs to
-    # We should add the time slot to the activity to identify when the activity is being played
   end
 
   def set_activity_parameters(max_bunks, youngest_division = "Hey", oldest_division = "Daled")
@@ -50,9 +47,7 @@ class Activity
     divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should really be taken from database
     youngest_index = divisions.index(youngest_division)
     oldest_index = divisions.index(oldest_division)
-    #divisions[youngest_index..oldest_index]  # This is broken for some reason, still cant figure it out
-    # youngest_divions and oldest_division are nil. maybe it's problem with db?
-    ["Hey", "Aleph", "Bet", "Gimmel", "Daled"]
+    divisions[youngest_index..oldest_index]
   end
 end
 
@@ -69,8 +64,6 @@ class DailySchedule
   end
 
   def schedule_all_activities
-    # need to have a method that has the database schedule
-    # the default activities based on the default schedule in the database
     @bunks.each do |bunk|
       @time_slots.each do |time_slot_id,_|
         next if bunk_has_activity_scheduled?(bunk, time_slot_id)
@@ -86,24 +79,6 @@ class DailySchedule
   def add_to_schedule(time_slot_id, bunk, activity_to_schedule)
     @schedule[time_slot_id][bunk] = activity_to_schedule
   end
-
-
-
-  # what is this method?
-  # def self.load_from_database(schedule)
-  #   date = schedule.first[:date]
-  #   time_slots = find_time_slots(schedule)
-  #   @activities = fing_all_days_activities(schedule)
-  # end
-
-  # what is this method?
-  # def self.find_time_slots(schedule)
-  #   time_slots = []
-  #   schedule.each do |activity|
-  #     time_slots << [activity[:start_time], activity[:end_time]] unless time_slots.include?([activity[:start_time], activity[:end_time]])
-  #   end
-  #   time_slots
-  # end
 
   def display_schedule
     string = ""
@@ -171,16 +146,6 @@ class Calendar
   end
 end
 
-# activity_names = ("Lake Toys,Drama,Basketball,Art,Music,Softball,Tennis," +
-#                   "Taboon,Chavaya,Hockey,Hockey,Hockey,Hockey,Biking,Volleyball," +
-#                   "a1, a2, a3, a4, a5, a6").split(",")
+#schedule = ScheduleDatabase.new('').get_default_schedule
 
-# ACTIVITES = activity_names.map { |name| Activity.new(name) }
-# ACTIVITES.each { |activity| activity.set_activity_parameters(1) }
-# BUNKS = (1..10).to_a.map { |num| Bunk.new("B#{num}", 'Aleph', 'Male') }
-# TIME_SLOTS = (7..12).to_a + (1..6).to_a
-
-# schedule =  DailySchedule.new(1,2, TIME_SLOTS, ACTIVITES, BUNKS)
-# schedule.schedule_all_activities
-
-# schedule.display_schedule
+#test_activity = Activity.new("Hockey").set_activity_parameters(2, 'Hey', 'Aleph')

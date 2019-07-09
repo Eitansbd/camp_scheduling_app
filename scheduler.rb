@@ -168,6 +168,7 @@ get '/bunk/:bunk_id/activities_history' do  # Works
 end
 
 get '/dailyschedule/new' do
+
   @daily_schedule = @database.get_default_schedule
 
   erb :new_daily_schedule
@@ -184,13 +185,6 @@ post '/dailyschedule/new' do  # Needs work
       time_slot_id: time_slot_id,
       activity_id: activity_id
     }
-
-    # sql = <<~SQL
-    #     SELECT * FROM schedule AS s
-    #     JOIN days AS d ON d.id = s.day_id 
-    #     WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);
-    #   SQL
-
     # returns a hash with all of the new activities to be stored in the database
   end
 
