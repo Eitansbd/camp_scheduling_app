@@ -10,8 +10,8 @@ class Bunk
     @name = name
     @division = division
     @gender = gender
+    @activity_history = Hash.new([])
   end
-
 end
 
 class Activity
@@ -72,19 +72,19 @@ class DailySchedule
     # need to have a method that has the database schedule
     # the default activities based on the default schedule in the database
     @bunks.each do |bunk|
-      @time_slots.each do |time_slot|
-        next if bunk_has_activity_scheduled?(bunk, time_slot)
-        activity_to_schedule = select_activity(bunk, time_slot)
+      @time_slots.each do |time_slot_id,_|
+        next if bunk_has_activity_scheduled?(bunk, time_slot_id)
+        activity_to_schedule = select_activity(bunk, time_slot_id)
 
-        add_to_schedule(time_slot, bunk, activity_to_schedule)
+        add_to_schedule(time_slot_id, bunk, activity_to_schedule)
 
         # schedule_dependent_activities(time_slot, bunk, activity_to_schedule)
       end
     end
   end
 
-  def add_to_schedule(time_slot, bunk, activity_to_schedule)
-    @schedule[time_slot][bunk] = activity_to_schedule
+  def add_to_schedule(time_slot_id, bunk, activity_to_schedule)
+    @schedule[time_slot_id][bunk] = activity_to_schedule
   end
 
 
@@ -118,14 +118,14 @@ class DailySchedule
 
   private
 
-  def bunk_has_activity_scheduled?(bunk, time_slot)
-    !!@schedule[time_slot][bunk]
+  def bunk_has_activity_scheduled?(bunk, time_slot_id)
+    !!@schedule[time_slot_id][bunk]
   end
 
-  def select_activity(bunk, time_slot)
+  def select_activity(bunk, time_slot_id)
     activities = @activities.dup
     remove_activities_bunk_constraints!(activities, bunk)
-    remove_activities_time_slot_constraints!(activities, time_slot)
+    remove_activities_time_slot_constraints!(activities, time_slot_id)
 
     activities.sample
   end
@@ -149,9 +149,9 @@ class DailySchedule
 
   # end
 
-  def remove_activities_time_slot_constraints!(activities, time_slot)
+  def remove_activities_time_slot_constraints!(activities, time_slot_id)
     activities.reject! do |activity|
-      @schedule[time_slot].values.any? do |schedule_activity|
+      @schedule[time_slot_id].values.any? do |schedule_activity|
         schedule_activity.equal?(activity)
       end
     end

@@ -57,7 +57,7 @@ helpers do
   end
 
   def available_activities
-    @database.all_activities.map{ |activity| [activity.id, activity.name, activity.location] }
+    @database.all_activities.each{ |activity| yield(activity.id, activity.name, activity.location) }
   end
 
   def available_dates
@@ -205,7 +205,9 @@ get '/dailyschedule/:day_id' do  # Works
   # from the database.
   day_id = params[:day_id].to_i
 
-  results = @database.get_daily_schedule(day_id)
+  # returns an array of all of the days activities
+  @daily_schedule = @database.get_daily_schedule(day_id)
+
   erb :daily_schedule
 end
 
