@@ -4,7 +4,7 @@
       <th></th>
     <% @daily_schedule.time_slots.each do |time_slot| %>
       <th>
-        <%= time_slot.keys.first %>
+        <%= time_slot.values.first %>
       </th>
     <% end %>
     </tr>

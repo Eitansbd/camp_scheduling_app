@@ -11,18 +11,18 @@
       <tr>
       <% @daily_schedule.time_slots.each do |time_slot| %>
         <th>
-          <%= time_slot.keys.first %>
+          <%= time_slot.values.first %>
         </th>
       <% end %>
       </tr>
-      <% all_bunks_activities(@daily_schedule) do |bunk, activities| %>
+      <% all_bunks_activities(@daily_schedule) do |bunk, activities, time_slot_id| %>
         <tr>
           <th>
             <%= bunk.name %>
           </th>
           <% activities.each do |activity| %>
             <td>
-              <select name="<%= bunk.id %>,<%= time_slot.first %>" id="select_activity">
+              <select name="<%= bunk.id %>,<%= time_slot_id %>" id="select_activity">
               <option value="">Select Activity</option>
               <% available_activities.each do |id, name, location| %>
                 <option value="<%= id %>"><%= name %> - <%= location %></option>

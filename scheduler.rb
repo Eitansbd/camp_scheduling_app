@@ -66,7 +66,6 @@ helpers do
 end
 
 get '/' do
-  gender = "M"
   day_id = @database.get_todays_day_id
   time_slots = @database.all_time_slots
   activities = @database.all_activities
@@ -206,50 +205,7 @@ get '/dailyschedule/:day_id' do  # Works
   # from the database.
   day_id = params[:day_id].to_i
 
-  # returns an array of all of the days activities
   results = @database.get_daily_schedule(day_id)
-
-  time_slots = collect_time_slots(results)
-
-  bunks_unstructured = generate_list_of_bunks(results)
-  bunks = restructure_bunks(bunks_unstructured)
-
-  # returns the following format
-
-  # [#<Bunk:0x007fc363230dd8tion>)>
-  # @default_activities={},
-  # @division="Hey",
-  # @gender="Male",
-  # @id=nil,
-  # @name="B6",
-  # @todays_schedule=
-  #  {"11:00:00"=>
-  #    #<Activity:0x007fc363231670
-  #     @appropriate_divisions=["Hey", "Aleph", "Bet", "Gimmel", "Daled"],
-  #     @location="NCT",
-  #     @max_bunks=1,
-  #     @name="Tennis",
-  #     @oldest_division="Daled",
-  #     @youngest_division="Hey">,
-  #   "01:00:00"=>
-  #    #<Activity:0x007fc363231378
-  #     @appropriate_divisions=["Hey", "Aleph", "Bet", "Gimmel", "Daled"],
-  #     @location="Boys Field",
-  #     @max_bunks=1,
-  #     @name="Softball",
-  #     @oldest_division="Daled",
-  #     @youngest_division="Hey">,
-  #   "12:04:00"=>
-  #    #<Activity:0x007fc3632310d0
-  #     @appropriate_divisions=["Hey", "Aleph", "Bet", "Gimmel", "Daled"],
-  #     @location="Gefen",
-  #     @max_bunks=1,
-  #     @name="Zumba",
-  #     @oldest_division="Daled",
-  #     @youngest_division="Hey" } ]
-
-  @daily_schedule = DailySchedule.new(day_id, time_slots, nil, bunks)
-
   erb :daily_schedule
 end
 

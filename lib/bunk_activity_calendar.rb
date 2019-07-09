@@ -68,12 +68,6 @@ class DailySchedule
     @schedule = Hash.new { |hash, key| hash[key] = {} }
   end
 
-  def self.find_all_days_activities(schedule)
-    schedule.map do |activity|
-      Activity.new(activity[:activity], activity[:location], nil, nil, activity[:max_bunks])
-    end  # need to add the bunk name so it can be identified
-  end
-
   def schedule_all_activities
     # need to have a method that has the database schedule
     # the default activities based on the default schedule in the database
