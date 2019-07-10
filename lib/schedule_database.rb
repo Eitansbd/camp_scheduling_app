@@ -235,7 +235,17 @@ class ScheduleDatabase
   # Get a list of all of the activites, return an array of activity objects
   # Works
   def all_activities
-    result = query("SELECT * FROM activities;") # Needs serious fixing
+    sql = <<~SQL
+    SELECT a.name, a.location, a.id, youngest.name AS youngest_division_name,
+           oldest.name AS oldest_division_name
+    FROM activities AS a
+    JOIN divisions AS youngest
+      ON youngest_division_id = youngest.id
+    JOIN divisions AS oldest
+      ON oldest_division_id = oldest.id;
+    SQL
+
+    result = query(sql) # Needs serious fixing
 
     result.map do |tuple|
       Activity.new(tuple["name"],
@@ -270,7 +280,7 @@ class ScheduleDatabase
 
     time_slots = {}
 
-    results.each do |tuple| 
+    results.each do |tuple|
       time_slots[tuple["id"].to_i] = [tuple["start_time"], tuple["end_time"]]
     end
 
