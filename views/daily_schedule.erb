@@ -2,9 +2,9 @@
   <table>
     <tr>
       <th></th>
-    <% @daily_schedule.time_slots.each do |time_slot| %>
+    <% @daily_schedule.time_slots.each do |time_slot_id,(start_time, end_time)| %>
       <th>
-        <%= time_slot.keys.first %>
+        <%= start_time %>
       </th>
     <% end %>
     </tr>

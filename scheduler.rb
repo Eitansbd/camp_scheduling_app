@@ -9,6 +9,8 @@ configure(:development) do
   require 'sinatra/reloader'
   also_reload './lib/bunk_activity_calendar.rb'
   also_reload './lib/schedule_database.rb'
+  enable :sessions
+  set :session_secret, "secret"
 end
 
 before do
@@ -162,7 +164,7 @@ get '/bunk/:bunk_id/activities_history' do  # Works
   # renders page that displays the amount of times (and days?) that
   # a specific bunk had individual activities
   bunk_id = params[:bunk_id].to_i
-  @activity_history = @database.get_bunk_activity_history(bunk_id)
+  @bunk_activity_history = @database.get_bunk_activity_history(bunk_id)
 
   erb :bunk_activity_history
 end
@@ -180,25 +182,36 @@ end
 
 post '/dailyschedule/new' do  # Needs work
   day_id = params.delete("new_schedule_date")
-  new_schedule = params.map do |key, value|
-    bunk_id, time_slot_id = key.split(',')
-    activity_id = value
-    {
-      day_id: day_id,
-      bunk_id: bunk_id,
-      time_slot_id: time_slot_id,
-      activity_id: activity_id
-    }
 
-    # sql = <<~SQL
-    #     SELECT * FROM schedule AS s
-    #     JOIN days AS d ON d.id = s.day_id 
-    #     WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);
-    #   SQL
+  time_slots = @database.all_time_slots
+  bunks = @database.all_bunks
+  activities = @database.all_activities
 
+  @daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
+
+  params.each do |key, value|
+    bunk_id, time_slot_id = key.split(',').map(&:to_i)
+    activity_id = value.to_i
+    activity = activities.find{ |activity| activity.id == activity_id }
+    bunk = bunks.find { |bunk| bunk.id == bunk_id }
+    @daily_schedule.schedule[time_slot_id][bunk] = activity
     # returns a hash with all of the new activities to be stored in the database
   end
 
+  activity_history = @database.get_activity_history
+
+  activity_history.each do |activity|
+    bunk_id = activity[:bunk_id]
+    day_id = activity[:day_id]
+    activity_id = activity[:activity_id]
+    bunk = bunks.find { |bunk| bunk.id == bunk_id }
+    activity = activities.find { |activity| activity.id == activity_id}
+    bunk.add_to_activity_history(day_id, activity)
+  end
+
+  #session[:daily_schedule] = @daily_schedule
+
+  erb :new_daily_schedule
   # creates the daily schedule - maybe loads template for a new schedule. Fills
   # in anything that is defined by the user in the post. Then calls the schedule
   # all activities method to assign the rest of the schedule

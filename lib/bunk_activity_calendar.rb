@@ -12,6 +12,10 @@ class Bunk
     @gender = gender
     @activity_history = Hash.new([])
   end
+
+  def add_to_activity_history(day_id, activity)
+    @activity_history[day_id] += [activity]
+  end
 end
 
 class Activity

@@ -121,8 +121,8 @@ class ScheduleDatabase
 
     results.each do |tuple|
       time_slot_id = tuple["time_slot_id"].to_i
-      bunk = bunks.find { |bunk| bunk.id == tuple["bunk_id"]}
-      activity = activities.find { |activity| activity.id == tuple["activity_id"]}
+      bunk = bunks.find { |bunk| bunk.id == tuple["bunk_id"].to_i}
+      activity = activities.find { |activity| activity.id == tuple["activity_id"].to_i}
       daily_schedule.schedule[time_slot_id][bunk] = activity
     end
 
@@ -147,12 +147,30 @@ class ScheduleDatabase
 
     results.each do |tuple|
       time_slot_id = tuple["time_slot_id"].to_i
-      bunk = bunks.find { |bunk| bunk.id == tuple["bunk_id"]}
-      activity = activities.find { |activity| activity.id == tuple["activity_id"]}
+      bunk = bunks.find { |bunk| bunk.id == tuple["bunk_id"].to_i}
+      activity = activities.find { |activity| activity.id == tuple["activity_id"].to_i}
       default_schedule.schedule[time_slot_id][bunk] = activity
     end
 
     default_schedule
+  end
+
+  def get_activity_history
+    sql = <<~SQL
+      SELECT * FROM schedule AS s
+      JOIN days AS d ON d.id = s.day_id 
+      WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);
+    SQL
+
+    results = query(sql)
+
+    results.map do |tuple|
+      {
+        bunk_id: tuple["bunk_id"].to_i,
+        activity_id: tuple["activity_id"].to_i,
+        day_id: tuple["day_id"].to_i
+      }
+    end
   end
 
   def get_bunk_activity_history(bunk_id)  # For displaying the history
@@ -204,7 +222,7 @@ class ScheduleDatabase
     results = query(sql)
     results.map do |tuple|
       {
-        id: tuple["id"],
+        id: tuple["id"].to_i,
         calendar_date: tuple["calendar_date"]
       }
     end
@@ -222,7 +240,7 @@ class ScheduleDatabase
     result.map do |tuple|
       Activity.new(tuple["name"],
                    tuple["location"],
-                   tuple["id"]).set_activity_parameters(tuple["max_bunks"],
+                   tuple["id"].to_i).set_activity_parameters(tuple["max_bunks"],
                                                         tuple["youngest_division"],
                                                         tuple["oldest_division"])
     end
@@ -242,7 +260,7 @@ class ScheduleDatabase
     results = query(sql)
 
     results.map do |tuple|
-      Bunk.new(tuple["name"], tuple["division"], tuple["gender"], tuple["id"])
+      Bunk.new(tuple["name"], tuple["division"], tuple["gender"], tuple["id"].to_i)
     end
   end
 
