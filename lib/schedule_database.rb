@@ -237,7 +237,7 @@ class ScheduleDatabase
   def all_activities
     sql = <<~SQL
     SELECT a.name, a.location, a.id, youngest.name AS youngest_division_name,
-           oldest.name AS oldest_division_name
+           oldest.name AS oldest_division_name, a.max_bunks, a.double
     FROM activities AS a
     JOIN divisions AS youngest
       ON youngest_division_id = youngest.id
@@ -245,14 +245,15 @@ class ScheduleDatabase
       ON oldest_division_id = oldest.id;
     SQL
 
-    result = query(sql) # Needs serious fixing
+    result = query(sql)
 
-    result.map do |tuple|
+    res = result.map do |tuple|
       Activity.new(tuple["name"],
                    tuple["location"],
-                   tuple["id"].to_i).set_activity_parameters(tuple["max_bunks"],
-                                                        tuple["youngest_division"],
-                                                        tuple["oldest_division"])
+                   tuple["id"].to_i).set_activity_parameters(tuple["max_bunks"].to_i,
+                                                             tuple["youngest_division_name"],
+                                                             tuple["oldest_division_name"],
+                                                             tuple["double"])
     end
   end
 

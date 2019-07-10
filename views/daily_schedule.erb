@@ -16,7 +16,7 @@
       <% @daily_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>
         <td>
           <% if !!@daily_schedule.schedule[time_slot_id][bunk] %>
-            <%= @daily_schedule.schedule[time_slot_id][bunk].name %>(<%= @daily_schedule.schedule[time_slot_id][bunk].location %>)
+            <%= @daily_schedule.schedule[time_slot_id][bunk].name %> (<%= @daily_schedule.schedule[time_slot_id][bunk].location %>)
           <% else %>
             No activities available
           <% end %>

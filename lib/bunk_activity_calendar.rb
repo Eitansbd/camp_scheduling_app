@@ -27,11 +27,11 @@ class Activity
     @location = location
   end
 
-  def set_activity_parameters(max_bunks, youngest_division = "Hey", oldest_division = "Daled")
+  def set_activity_parameters(max_bunks, youngest_division = "Hey", oldest_division = "Daled", double)
     @max_bunks = max_bunks
     @appropriate_divisions = divisions_between(youngest_division, oldest_division)
-    self
     @double = false # need to add a double t/f to database.
+    self
   end
 
   def for_division?(division)
@@ -56,7 +56,8 @@ class Activity
     divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should really be taken from database
     youngest_index = divisions.index(youngest_division)
     oldest_index = divisions.index(oldest_division)
-    divisions[youngest_index..oldest_index]
+    #divisions[youngest_index..oldest_index]
+    ["Hey", "Aleph", "Bet", "Gimmel", "Daled"]
   end
 end
 
