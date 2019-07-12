@@ -1,6 +1,7 @@
 <div>
   <form action="/dailyschedule/new" method="post">
-    <select name="new_schedule_date" id="news_schedule_date" required>
+    <select name="new_schedule_date" id="new_schedule_date">
+    <option value="???" >Make this the date selected</option>
     <option value="">Select a date</option>
     <% available_dates.each do |id, date| %>
       <option value="<%= id %>"><%= date %></option>
@@ -40,8 +41,6 @@
         </tr>
       <% end %>
     </table>
-    <input type="submit" value="Autocomplete schedule">
+    <input type="submit" value="Save schedule">
     <form>
 </div>
-
-<!-- display a generate month calenday link if one doesn't exist yet. It should post to '/calendar_days/generate' -->

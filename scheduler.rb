@@ -203,12 +203,13 @@ post '/dailyschedule/new' do  # Needs work
     activity_id = activity[:activity_id]
     bunk = bunks.find { |bunk| bunk.id == bunk_id }
     activity = activities.find { |activity| activity.id == activity_id}
-    bunk.add_to_activity_history(date, activity)
+    #bunk.add_to_activity_history(date, activity)
   end
 
-  session[:daily_schedule] = @daily_schedule
+  @daily_schedule.schedule_all_activities
 
-  erb :new_daily_schedule
+
+  erb :save_daily_schedule
   # creates the daily schedule - maybe loads template for a new schedule. Fills
   # in anything that is defined by the user in the post. Then calls the schedule
   # all activities method to assign the rest of the schedule
