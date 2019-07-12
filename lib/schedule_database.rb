@@ -45,6 +45,7 @@ class ScheduleDatabase
     youngest_division = activity.youngest_division
     oldest_division = activity.oldest_division
     max_bunks = activity.max_bunks
+    double = activity.double
 
     youngest_division_result = query("SELECT id FROM divisions WHERE name = $1;", youngest_division)
     youngest_division_id = youngest_division_result.values[0][0]
@@ -247,7 +248,7 @@ class ScheduleDatabase
 
     result = query(sql)
 
-    res = result.map do |tuple|
+    result.map do |tuple|
       Activity.new(tuple["name"],
                    tuple["location"],
                    tuple["id"].to_i).set_activity_parameters(tuple["max_bunks"].to_i,

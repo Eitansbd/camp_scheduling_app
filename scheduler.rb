@@ -78,7 +78,7 @@ get '/' do
   erb :daily_schedule
 end
 
-post '/calendar_days/generate' do  # make the form for this
+post '/calendar_days/generate' do  # Need to work on this
     start_day = '2019-08-01' # params[:start_day]
     end_day = '2019-09-01' # params[:end_day]
     month_calendar = generate_calendar(start_day, end_day)
@@ -91,9 +91,9 @@ end
 
 post '/activity/new' do  # Works
   # instantiates a new activity object
-  activity = Activity.new(params[:name], params[:location],
-                          params[:youngest_division], params[:oldest_division],
-                          params[:max_bunks])
+  activity = Activity.new(params[:name], params[:location]).set_activity_parameters(
+                                                                params[:max_bunks],params[:youngest_division], 
+                                                                params[:oldest_division], params[:double])
   # adds the activity to the database
   @database.add_activity(activity)
   redirect '/'
