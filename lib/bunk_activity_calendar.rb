@@ -14,7 +14,11 @@ class Bunk
   end
 
   def add_to_activity_history(date, activity)
+<<<<<<< HEAD
     @activity_history[date] += [activity]
+=======
+    @activity_history[date] += activity
+>>>>>>> e6ee2355e52e6476b79dbf310b2f4890d45f4eba
   end
 end
 
@@ -35,7 +39,7 @@ class Activity
     @youngest_division = youngest_division
     @oldest_division = oldest_division
     @appropriate_divisions = divisions_between(youngest_division, oldest_division)
-    @double = double # need to add a double t/f to database.
+    @double = (double == 't')
     self
   end
 
@@ -153,15 +157,25 @@ class DailySchedule
     end
 
     # rejects activities that require multiple slots and can't be filled
-    time_slot_ids = @schedule.keys
-    next_time_slot_index = time_slot_ids.index(time_slot_id) + 1
-    next_time_slot_id = time_slot_ids[next_time_slot_index]
+
+    next_time_slot_id = next_time_slot_id(time_slot_id)
 
     activities.reject! do |activity|
       activity.double? &&
-      bunk_has_activity_scheduled?(bunk, next_time_slot_id)
+      (last_activity?(time_slot_id) ||
+      bunk_has_activity_scheduled?(bunk, next_time_slot_id))
     end
+  end
 
+  def last_activity?(time_slot_id)
+    next_time_slot_id = next_time_slot_id(time_slot_id)
+    @schedule[next_time_slot_id] == nil
+  end
+
+  def next_time_slot_id(time_slot_id)
+    time_slot_ids = @schedule.keys
+    next_time_slot_index = time_slot_ids.index(time_slot_id) + 1
+    time_slot_ids[next_time_slot_index]
   end
 end
 
