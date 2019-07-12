@@ -19,7 +19,7 @@ class Bunk
 end
 
 class Activity
-  attr_reader :name, :location, :max_bunks, :id
+  attr_reader :name, :location, :max_bunks, :id, :youngest_division, :oldest_division, :double
 
   def initialize(name, location = "", id=nil)
     @id = id
@@ -67,7 +67,7 @@ end
 
 # Daily Schedule object are used to create and store the daily camp schedule
 class DailySchedule
-  attr_reader :bunks, :time_slots, :schedule
+  attr_reader :bunks, :time_slots, :schedule, :day_id
 
   def initialize(day_id, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
     @day_id = day_id
@@ -112,7 +112,7 @@ class DailySchedule
   private
 
   def bunk_has_activity_scheduled?(bunk, time_slot_id)
-    !!@schedule[time_slot_id][bunk]
+    !!@schedule[time_slot_id] && !!@schedule[time_slot_id][bunk] 
   end
 
   def select_activity(bunk, time_slot_id)

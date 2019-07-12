@@ -1,26 +1,35 @@
 <form action="/activity/new" method ="post">
-  <label for="name">Activity Name</label>
-  <input type="text" id="name" name="name" required>
+  <div>
+    <label for="name">Activity Name</label>
+    <input type="text" id="name" name="name" required>
 
-  <label for="location">Location</label>
-  <input type="text" id="location" name="location" required>
+    <label for="location">Location</label>
+    <input type="text" id="location" name="location" required>
+  </div>
 
-  <label for="youngest_division">Youngest Division</label>
-  <select name="youngest_division" id="youngest_division" required>
-  <% divisions.each do |division| %>
-    <option value="<%= division %>"><%= division %></option>
-  <% end %>
-  </select>
+  <div>
+    <label for="youngest_division">Youngest Division</label>
+    <select name="youngest_division" id="youngest_division" required>
+    <% divisions.each do |division| %>
+      <option value="<%= division %>"><%= division %></option>
+    <% end %>
+    </select>
 
-  <label for="oldest_division">Oldest Division</label>
-  <select name="oldest_division" id="oldest_division" required>
-  <% divisions.each do |division| %>
-    <option value="<%= division %>"><%= division %></option>
-  <% end %>
-  </select>
+    <label for="oldest_division">Oldest Division</label>
+    <select name="oldest_division" id="oldest_division" required>
+    <% divisions.each do |division| %>
+      <option value="<%= division %>"><%= division %></option>
+    <% end %>
+    </select>
+  </div>
 
-  <label for="max_bunks">Maximum number of bunks</label>
-  <input type="number" step="1" min="1" name="max_bunks" id="max_bunks" value="1">
+  <div>
+    <label for="max_bunks">Maximum number of bunks</label>
+    <input type="number" step="1" min="1" name="max_bunks" id="max_bunks" value="1">
+
+    <label for="double">Played for two periods?</label>
+    <input id="double" type="checkbox" name="double" value="true">
+  </div>
 
   <button type="submit">Add Activity</button>
 </form>

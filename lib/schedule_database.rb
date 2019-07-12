@@ -45,6 +45,7 @@ class ScheduleDatabase
     youngest_division = activity.youngest_division
     oldest_division = activity.oldest_division
     max_bunks = activity.max_bunks
+    double = activity.double
 
     youngest_division_result = query("SELECT id FROM divisions WHERE name = $1;", youngest_division)
     youngest_division_id = youngest_division_result.values[0][0]
@@ -72,6 +73,20 @@ class ScheduleDatabase
   def add_entry_to_schedule(bunk, activity, time_slot, calendar_date)
     sql = "INSERT INTO schedule (bunk_id, activity_id, time_slot_id, day_id) VALUES ($1, $2, $3, $4);"
     query(sql, bunk, activity, time_slot, calendar_date)
+  end
+
+  def add_daily_schedule(daily_schedule)
+    day_id = daily_schedule.day_id.to_i
+
+    database_inputs = []
+
+    daily_schedule.schedule.each do |time_slot_id, bunks|
+      bunks.each do |bunk, activity|
+        database_inputs << [bunk.id, activity.id, time_slot_id, day_id]
+      end
+    end
+
+    binding.pry
   end
 
   # Remove a bunk from the list
@@ -232,6 +247,10 @@ class ScheduleDatabase
     query("SELECT id FROM days WHERE calendar_date = CURRENT_DATE;")
   end
 
+  def get_date_from_day_id(day_id)
+    query("SELECT calendar_date FROM days WHERE id = $1", day_id)
+  end
+
   # Get a list of all of the activites, return an array of activity objects
   # Works
   def all_activities
@@ -247,7 +266,7 @@ class ScheduleDatabase
 
     result = query(sql)
 
-    res = result.map do |tuple|
+    result.map do |tuple|
       Activity.new(tuple["name"],
                    tuple["location"],
                    tuple["id"].to_i).set_activity_parameters(tuple["max_bunks"].to_i,
