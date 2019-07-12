@@ -78,7 +78,7 @@ get '/' do
   erb :daily_schedule
 end
 
-post '/calendar_days/generate' do  # Need to work on this
+post '/calendar_days/generate' do  # Need to work on this/maybe get rid of it
     start_day = '2019-08-01' # params[:start_day]
     end_day = '2019-09-01' # params[:end_day]
     month_calendar = generate_calendar(start_day, end_day)
@@ -208,13 +208,19 @@ post '/dailyschedule/new' do  # Needs work
 
   session[:daily_schedule] = @daily_schedule
 
-  erb :new_daily_schedule
+  redirect '/dailyschedule/save'
   # creates the daily schedule - maybe loads template for a new schedule. Fills
   # in anything that is defined by the user in the post. Then calls the schedule
   # all activities method to assign the rest of the schedule
 
 
     # still need to fill in remaining calendar
+end
+
+get '/dailyschedule/save' do
+  @daily_schedule = session[:daily_schedule]
+
+  binding.pry
 end
 
 get '/dailyschedule/:day_id' do  # Works

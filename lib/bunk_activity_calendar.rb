@@ -12,10 +12,14 @@ class Bunk
     @gender = gender
     @activity_history = Hash.new([])
   end
+
+  def add_to_activity_history(date, activity)
+    @activity_history[date] += [activity]
+  end
 end
 
 class Activity
-  attr_reader :name, :location, :max_bunks, :id
+  attr_reader :name, :location, :max_bunks, :id, :youngest_division, :oldest_division, :double
 
   def initialize(name, location = "", id=nil)
     @id = id
@@ -108,7 +112,7 @@ class DailySchedule
   private
 
   def bunk_has_activity_scheduled?(bunk, time_slot_id)
-    !!@schedule[time_slot_id][bunk]
+    !!@schedule[time_slot_id] && !!@schedule[time_slot_id][bunk] 
   end
 
   def select_activity(bunk, time_slot_id)
