@@ -14,7 +14,7 @@ class Bunk
   end
 
   def add_to_activity_history(date, activity)
-    @activity_history[date] += activity
+    @activity_history[date] += [activity]
   end
 end
 

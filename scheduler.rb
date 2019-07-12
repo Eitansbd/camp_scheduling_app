@@ -201,9 +201,9 @@ post '/dailyschedule/new' do  # Needs work
     bunk_id = activity[:bunk_id]
     date = activity[:date]
     activity_id = activity[:activity_id]
-    bunk = bunks.find { |bunk| bunk.id == bunk_id }
-    activity = activities.find { |activity| activity.id == activity_id}
-    #bunk.add_to_activity_history(date, activity)
+    bunk = bunks.find { |bnk| bnk.id == bunk_id }
+    activity = activities.find { |act| act.id == activity_id}
+    bunk.add_to_activity_history(date, activity)
   end
 
   @daily_schedule.schedule_all_activities
