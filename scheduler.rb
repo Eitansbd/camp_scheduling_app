@@ -65,6 +65,12 @@ helpers do
   def available_dates
     @database.get_days_in_month.map { |day| day.values }
   end
+
+  def date_of_schedule(daily_schedule)
+    day_id = daily_schedule.day_id
+    result = @database.get_date_from_day_id(day_id)
+    result.values[0][0]
+  end
 end
 
 get '/' do
@@ -208,6 +214,7 @@ post '/dailyschedule/new' do  # Needs work
 
   @daily_schedule.schedule_all_activities
 
+  #session[:daily_schedule] = @daily_schedule
 
   erb :save_daily_schedule
   # creates the daily schedule - maybe loads template for a new schedule. Fills
@@ -218,10 +225,30 @@ post '/dailyschedule/new' do  # Needs work
     # still need to fill in remaining calendar
 end
 
-get '/dailyschedule/save' do
-  @daily_schedule = session[:daily_schedule]
+# get '/dailyschedule/save' do
+#   @daily_schedule = session[:daily_schedule]
+# end
 
-  binding.pry
+post '/dailyschedule/save' do
+  day_id = params["day_id"]
+
+  time_slots = @database.all_time_slots
+  bunks = @database.all_bunks
+  activities = @database.all_activities
+
+  @daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
+
+  params.each do |key, value|
+    next unless (key.match(/^\d+,\d+$/) && value != "")
+    bunk_id, time_slot_id = key.split(',').map(&:to_i)
+    activity_id = value.to_i
+    activity = activities.find{ |activity| activity.id == activity_id }
+    bunk = bunks.find { |bunk| bunk.id == bunk_id }
+    @daily_schedule.schedule[time_slot_id][bunk] = activity
+    # returns a hash with all of the new activities to be stored in the database
+  end
+  
+  @database.add_daily_schedule(@daily_schedule)
 end
 
 get '/dailyschedule/:day_id' do  # Works

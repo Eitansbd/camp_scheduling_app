@@ -67,7 +67,7 @@ end
 
 # Daily Schedule object are used to create and store the daily camp schedule
 class DailySchedule
-  attr_reader :bunks, :time_slots, :schedule
+  attr_reader :bunks, :time_slots, :schedule, :day_id
 
   def initialize(day_id, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
     @day_id = day_id

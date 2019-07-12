@@ -75,6 +75,20 @@ class ScheduleDatabase
     query(sql, bunk, activity, time_slot, calendar_date)
   end
 
+  def add_daily_schedule(daily_schedule)
+    day_id = daily_schedule.day_id.to_i
+
+    database_inputs = []
+
+    daily_schedule.schedule.each do |time_slot_id, bunks|
+      bunks.each do |bunk, activity|
+        database_inputs << [bunk.id, activity.id, time_slot_id, day_id]
+      end
+    end
+
+    binding.pry
+  end
+
   # Remove a bunk from the list
   def remove_bunk(id)
     sql = "DELETE FROM bunks WHERE name = $1;"
@@ -231,6 +245,10 @@ class ScheduleDatabase
 
   def get_todays_day_id
     query("SELECT id FROM days WHERE calendar_date = CURRENT_DATE;")
+  end
+
+  def get_date_from_day_id(day_id)
+    query("SELECT calendar_date FROM days WHERE id = $1", day_id)
   end
 
   # Get a list of all of the activites, return an array of activity objects
