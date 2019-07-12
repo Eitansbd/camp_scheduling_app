@@ -177,7 +177,7 @@ get '/dailyschedule/new' do
 end
 
 post '/dailyschedule/new' do  # Needs work
-  day_id = params.delete("new_schedule_date")
+  day_id = params["new_schedule_date"]
 
   time_slots = @database.all_time_slots
   bunks = @database.all_bunks
@@ -186,6 +186,7 @@ post '/dailyschedule/new' do  # Needs work
   @daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
 
   params.each do |key, value|
+    next unless (key.match(/^\d+,\d+$/) && value != "")
     bunk_id, time_slot_id = key.split(',').map(&:to_i)
     activity_id = value.to_i
     activity = activities.find{ |activity| activity.id == activity_id }
@@ -198,14 +199,14 @@ post '/dailyschedule/new' do  # Needs work
 
   activity_history.each do |activity|
     bunk_id = activity[:bunk_id]
-    day_id = activity[:day_id]
+    date = activity[:date]
     activity_id = activity[:activity_id]
     bunk = bunks.find { |bunk| bunk.id == bunk_id }
     activity = activities.find { |activity| activity.id == activity_id}
-    bunk.add_to_activity_history(day_id, activity)
+    bunk.add_to_activity_history(date, activity)
   end
 
-  #session[:daily_schedule] = @daily_schedule
+  session[:daily_schedule] = @daily_schedule
 
   erb :new_daily_schedule
   # creates the daily schedule - maybe loads template for a new schedule. Fills

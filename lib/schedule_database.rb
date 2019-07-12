@@ -159,7 +159,7 @@ class ScheduleDatabase
   def get_activity_history
     sql = <<~SQL
       SELECT * FROM schedule AS s
-      JOIN days AS d ON d.id = s.day_id 
+      JOIN days AS d ON d.id = s.day_id
       WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);
     SQL
 
@@ -169,7 +169,7 @@ class ScheduleDatabase
       {
         bunk_id: tuple["bunk_id"].to_i,
         activity_id: tuple["activity_id"].to_i,
-        day_id: tuple["day_id"].to_i
+        day_id: tuple["date"].to_i
       }
     end
   end

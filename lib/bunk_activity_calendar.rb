@@ -12,10 +12,6 @@ class Bunk
     @gender = gender
     @activity_history = Hash.new([])
   end
-
-  def add_to_activity_history(day_id, activity)
-    @activity_history[day_id] += [activity]
-  end
 end
 
 class Activity
@@ -27,10 +23,15 @@ class Activity
     @location = location
   end
 
-  def set_activity_parameters(max_bunks, youngest_division = "Hey", oldest_division = "Daled", double = false)
+  def set_activity_parameters(max_bunks,
+                              youngest_division = "Hey",
+                              oldest_division = "Daled",
+                              double = "false")
     @max_bunks = max_bunks
+    @youngest_division = youngest_division
+    @oldest_division = oldest_division
     @appropriate_divisions = divisions_between(youngest_division, oldest_division)
-    @double
+    @double = double # need to add a double t/f to database.
     self
   end
 
@@ -56,8 +57,7 @@ class Activity
     divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should really be taken from database
     youngest_index = divisions.index(youngest_division)
     oldest_index = divisions.index(oldest_division)
-    #divisions[youngest_index..oldest_index]
-    ["Hey", "Aleph", "Bet", "Gimmel", "Daled"]
+    divisions[youngest_index..oldest_index]
   end
 end
 
@@ -70,7 +70,11 @@ class DailySchedule
     @time_slots = time_slots #.map{ |slot| slot.last }
     @activities = activities
     @bunks = bunks
-    @schedule = Hash.new { |hash, key| hash[key] = {} }
+    @schedule = {}
+    @time_slots.each do |time_slot_id, _|
+      @schedule[time_slot_id
+      ] = {}
+    end
   end
 
   def schedule_all_activities
