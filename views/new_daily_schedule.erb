@@ -7,38 +7,45 @@
     <% end %>
     </select>
 
-    <table>
-      <tr>
-        <th></th>
-      <% @daily_schedule.time_slots.each do |time_slot_id,(start_time, end_time)| %>
-        <th>
-          <%= start_time %>
-        </th>
-      <% end %>
-      </tr>
-      <% @daily_schedule.bunks.each do |bunk| %>
+    <table class="schedule-table">
+      <thead>
         <tr>
+          <th></th>
+        <% @daily_schedule.time_slots.each do |time_slot_id,(start_time, end_time)| %>
           <th>
-            <%= bunk.name %>
+            <%= start_time %>
           </th>
-          <% @daily_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>
-            <td>
-              <select name="<%= bunk.id %>,<%= time_slot_id %>" id="select_activity">
-              <% if !!@daily_schedule.schedule[time_slot_id][bunk] %>
-                <option value="<%= @daily_schedule.schedule[time_slot_id][bunk].id %>">
-                  <%= @daily_schedule.schedule[time_slot_id][bunk].name %>(<%= @daily_schedule.schedule[time_slot_id][bunk].location %>)
-                </option>
-              <% else %>
-                <option value="">Select Activity</option>
-              <% end %>
-              <% available_activities do |id, name, location| %>
-                <option value="<%= id %>"><%= name %> - <%= location %></option>
-              <% end %>
-              </select>
-            </td>
-          <% end %>
+        <% end %>
         </tr>
-      <% end %>
+      </thead>
+      <tbody>
+        <% @daily_schedule.bunks.each do |bunk| %>
+          <tr>
+            <th class="bunk-name">
+              <%= bunk.name %>
+            </th>
+            <% @daily_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>
+              <td>
+                <select name="<%= bunk.id %>,<%= time_slot_id %>" id="select_activity">
+                <% if !!@daily_schedule.schedule[time_slot_id][bunk] %>
+                  <option value="<%= @daily_schedule.schedule[time_slot_id][bunk].id %>">
+                    <%= @daily_schedule.schedule[time_slot_id][bunk].name %>
+                    <!--<%= @daily_schedule.schedule[time_slot_id][bunk].location %> -->
+                  </option>
+                <% else %>
+                  <option value="">Select Activity</option>
+                <% end %>
+                <% available_activities do |id, name, location| %>
+                  <option value="<%= id %>">
+                    <%= name %> <!--- <%= location %>-->
+                  </option>
+                <% end %>
+                </select>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
     </table>
     <input type="submit" value="Autocomplete schedule">
     <form>

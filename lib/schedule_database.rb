@@ -86,7 +86,16 @@ class ScheduleDatabase
       end
     end
 
-    binding.pry
+    sql = "INSERT INTO schedule (bunk_id, activity_id, time_slot_id, day_id) VALUES "
+    sql_values = database_inputs.map.with_index do |input_cell, index|
+      count = index * 4
+      "($#{count + 1}, $#{count + 2}, $#{count + 3}, $#{count + 4})"
+    end
+
+    sql = sql + sql_values.join(", ")
+
+    @db.exec_params(sql, database_inputs.flatten)
+
   end
 
   # Remove a bunk from the list

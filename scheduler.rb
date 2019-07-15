@@ -1,3 +1,5 @@
+
+
 require 'date'
 require 'pry'
 require 'sinatra'
@@ -98,7 +100,7 @@ end
 post '/activity/new' do  # Works
   # instantiates a new activity object
   activity = Activity.new(params[:name], params[:location]).set_activity_parameters(
-                                                                params[:max_bunks],params[:youngest_division], 
+                                                                params[:max_bunks],params[:youngest_division],
                                                                 params[:oldest_division], params[:double])
   # adds the activity to the database
   @database.add_activity(activity)
@@ -242,12 +244,12 @@ post '/dailyschedule/save' do
     next unless (key.match(/^\d+,\d+$/) && value != "")
     bunk_id, time_slot_id = key.split(',').map(&:to_i)
     activity_id = value.to_i
-    activity = activities.find{ |activity| activity.id == activity_id }
-    bunk = bunks.find { |bunk| bunk.id == bunk_id }
+    activity = activities.find{ |act| act.id == activity_id }
+    bunk = bunks.find { |bnk| bnk.id == bunk_id }
     @daily_schedule.schedule[time_slot_id][bunk] = activity
     # returns a hash with all of the new activities to be stored in the database
   end
-  
+
   @database.add_daily_schedule(@daily_schedule)
 end
 
