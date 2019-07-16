@@ -1,6 +1,9 @@
-<form action="/divisions/<%= @division_id %>/edit" method ="post">
+<form action="/divisions/<%= @division[:id] %>/edit" method ="post">
   <label for="name">Division Name</label>
-  <input type="text" id="name" name="name" value="<%= @division_name %>" required>
+  <input type="text" id="name" name="name" value="<%= @division[:name] %>" required>
 
-  <button type="submit">Add Division</button>
+  <label for="age">Age Group</label>
+  <input type="number" id="age" name="age" step="1" min="0" value="<%= @division[:age] %>" required>
+
+  <button type="submit">Save Changes</button>
 </form>

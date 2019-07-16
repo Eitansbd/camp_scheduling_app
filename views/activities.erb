@@ -21,7 +21,11 @@
       <td><%= activity.youngest_division %></td>
       <td><%= activity.oldest_division %></td>
       <td><a href="/activities/<%= activity.id %>/edit">Edit</a></td>
-      <td><a href="/activities/<%= activity.id %>/delete">Delete</a></td>
+      <td>
+        <form action="/activities/<%= activity.id %>/delete" method="post">
+          <button type="submit">Delete</button>
+        </form>
+      </td>
     </tr>
     <% end %>
   </table>

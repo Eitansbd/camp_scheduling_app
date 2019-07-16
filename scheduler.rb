@@ -80,7 +80,7 @@ get '/' do
     @daily_schedule = @database.get_daily_schedule(day_id)
     erb :daily_schedule
   else
-    "there is no schedule for today"
+    erb "there is no schedule for today"
   end
 end
 
@@ -160,7 +160,7 @@ post '/time_slots/new' do  # Works
   start_time = params[:start_time]
   end_time = params[:end_time]
 
-  @database.add_time_slot(name, start_time, end_time)
+  @database.add_time_slot(start_time, end_time)
   redirect '/time_slots'
 end
 
@@ -190,7 +190,7 @@ end
 
 get '/divisions/:division_id/edit' do
   @division_id = params[:division_id].to_i
-  @division_name = @database.get_division_name(@division_id)
+  @division = @database.get_division(@division_id)
 
   erb :edit_division
 end
@@ -218,7 +218,7 @@ end
 post '/divisions/:division_id/delete' do
   id = params[:division_id].to_i
 
-  @database.delete_division
+  @database.delete_division(id)
 
   redirect '/divisions'
 end
@@ -228,10 +228,9 @@ get '/bunks' do
   erb :bunks
 end
 
-get 'bunks/:bunk_id/edit' do
+get '/bunks/:bunk_id/edit' do
   id = params[:bunk_id].to_i
-  bunk = @database.load_bunk(id)
-
+  @bunk = @database.load_bunk(id)
   erb :edit_bunk
 end
 

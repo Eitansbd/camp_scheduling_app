@@ -1,35 +1,37 @@
-<form action="/activities/<%= @activity.id %>/new" method ="post">
-  <div>
-    <label for="name">Activity Name</label>
-    <input type="text" id="name" name="name" value="<%= @activity.name %>" required>
+<div>
+  <form action="/activities/<%= @activity.id %>/new" method ="post">
+    <div>
+      <label for="name">Activity Name</label>
+      <input type="text" id="name" name="name" value="<%= @activity.name %>" required>
 
-    <label for="location">Location</label>
-    <input type="text" id="location" name="location" value="<%= @activity.location %>" required>
-  </div>
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" value="<%= @activity.location %>" required>
+    </div>
 
-  <div>
-    <label for="youngest_division">Youngest Division</label>
-    <select name="youngest_division" id="youngest_division" value="<%= @activity.youngest_division %>" required>
-    <% divisions.each do |division| %>
-      <option value="<%= division %>"><%= division %></option>
-    <% end %>
-    </select>
+    <div>
+      <label for="youngest_division">Youngest Division</label>
+      <select name="youngest_division" id="youngest_division" value="<%= @activity.youngest_division %>" required>
+      <% divisions.each do |division| %>
+        <option value="<%= division[:name] %>"><%= division[:name] %></option>
+      <% end %>
+      </select>
 
-    <label for="oldest_division">Oldest Division</label>
-    <select name="oldest_division" id="oldest_division" value="<%= @activity.youngest_division %>" required>
-    <% divisions.each do |division| %>
-      <option value="<%= division %>"><%= division %></option>
-    <% end %>
-    </select>
-  </div>
+      <label for="oldest_division">Oldest Division</label>
+      <select name="oldest_division" id="oldest_division" value="<%= @activity.youngest_division %>" required>
+      <% divisions.each do |division| %>
+        <option value="<%= division[:name] %>"><%= division[:name] %></option>
+      <% end %>
+      </select>
+    </div>
 
-  <div>
-    <label for="max_bunks">Maximum number of bunks</label>
-    <input type="number" step="1" min="1" name="max_bunks" id="max_bunks" value="<%= @activity.max_bunks %>">
+    <div>
+      <label for="max_bunks">Maximum number of bunks</label>
+      <input type="number" step="1" min="1" name="max_bunks" id="max_bunks" value="<%= @activity.max_bunks %>">
 
-    <label for="double">Played for two periods?</label>
-    <input id="double" type="checkbox" name="double" value="<%= @activity.double %>">
-  </div>
+      <label for="double">Played for two periods?</label>
+      <input id="double" type="checkbox" name="double" value="<%= @activity.double %>">
+    </div>
 
-  <button type="submit">Save Changes</button>
-</form>
+    <button type="submit">Save Changes</button>
+  </form>
+</div>

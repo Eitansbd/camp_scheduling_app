@@ -1,7 +1,9 @@
 <div>
   <ol>
   <% @all_divisions.each do |division| %>
-    <li><%= division.name %>  <a href="/divisions/<%= division.id %>/edit">Edit</a> <a href="/divisions/<%= division.id %>/delete">Delete</a></li>
+    <li>
+      <%= division[:name] %>  <a href="/divisions/<%= division[:id] %>/edit">Edit</a> <form action="/divisions/<%= division[:id] %>/delete" method="post"><button type="submit">Delete</button></form>
+    </li>
   <% end %>
   </ol>
   <br>

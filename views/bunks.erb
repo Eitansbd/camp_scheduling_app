@@ -12,7 +12,11 @@
       <td><%= bunk.gender %></td>
       <td><a href="bunks/<%= bunk.id %>/activities_history">Activity History</a></td>
       <td><a href="/bunks/<%= bunk.id %>/edit">Edit</a></td>
-      <td><a href="/bunks/<%= bunk.id %>/delete">Delete</a></td>
+      <td>
+        <form action="/bunks/<%= bunk.id %>/delete" method="post">
+          <button type="submit">Delete</button>
+        </form>
+      </td>
     </tr>
     <% end %>
   </table>

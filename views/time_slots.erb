@@ -9,7 +9,11 @@
       <td><%= time_slot.first %></td>
       <td><%= time_slot.last %></td>
       <td><a href="/time_slots/<%= time_slot_id %>/edit">Edit</a></td>
-      <td><a href="/time_slots/<%= time_slot_id %>/delete">Delete</a></td>
+      <td>
+        <form action="/time_slots/<%= time_slot_id %>/delete" method="post">
+          <button type="submit">Delete</button>
+        </form>
+      </td>
     </tr>
     <% end %>
   </table>

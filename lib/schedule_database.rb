@@ -63,9 +63,9 @@ class ScheduleDatabase
   end
 
   # Add a time slot to the time_slot table
-  def add_time_slot(name, start_time, end_time)
-    sql = "INSERT INTO time_slots (name, start_time, end_time) VALUES ($1, $2, $3);"
-    query(sql, name, start_time, end_time)
+  def add_time_slot(start_time, end_time)
+    sql = "INSERT INTO time_slots (start_time, end_time) VALUES ($1, $2);"
+    query(sql, start_time, end_time)
   end
 
   # Add a date to the days table
@@ -294,10 +294,15 @@ class ScheduleDatabase
     {time_slot_info["id"] => [time_slot_info["start_time"], time_slot_info["end_time"]]}
   end
 
-  def get_division_name(division_id)
-    sql = "SELECT name FROM divisions WHERE id = $1;"
+  def get_division(division_id)
+    sql = "SELECT id, name, age FROM divisions WHERE id = $1;"
     result = query(sql, division_id)
-    result.values[0][0]
+    tuple = result.first
+    { 
+      id: tuple["id"],
+      name: tuple["name"],
+      age: tuple["age"]
+    }
   end
 
   def edit_activity(activity)
@@ -420,7 +425,7 @@ class ScheduleDatabase
     results = query("SELECT * FROM divisions ORDER BY age;")
 
     results.map do |tuple|
-      { id: tuple["id"],
+      { id: tuple["id"].to_i,
         name: tuple["name"] }
     end
   end
