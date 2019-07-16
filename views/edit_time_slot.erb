@@ -1,0 +1,10 @@
+<form action="/time_slots/<%= @time_slot.keys.first %>/new" method ="post">
+
+  <label for="start_time">Start Time</label>
+  <input type="time" id="start_time" name="start_time" value="<%= @time_slot.values.first.first %>" required>
+
+  <label for="end_time">End Time</label>
+  <input type="time" name="end_time" id="end_time" value="<%= @time_slot.values.first.last %>" required>
+
+  <button type="submit">Add Time Slot</button>
+</form>

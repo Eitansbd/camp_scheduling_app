@@ -1,0 +1,103 @@
+'/'
+
+For non-administrators displays the current day's schedule, displays error
+message if none exists. maybe has a link to tomorrows schedule if one was created
+already.
+
+For administrator:
+Display a calendar with all of the days in the camp calendar. each day should
+have a link that goes to the schedule for that day.
+
+Menu contains:
+  bunks
+  activities,
+  divisions,
+  time slots,
+  calendar
+
+'activities' (backend completed)
+
+  Display a list of the activities with link at each activity to
+  'activity/edit', activity/delete'
+
+  at the top has an add activity button that links to the 'activity/new' page
+
+'activity/new' (backend completed)
+
+  Displays page to input a new activity to database
+
+'activity/:activity_id/edit' (backend completed - not tested)
+
+  Displays page to edit the desired activity.
+
+'time_slots' (backend completed)
+
+  Display a list of the time slots with link to 'time_slots/new', 'time_slots/edit', time_slots/delete'
+
+'time_slot/new' (backend completed)
+
+  Displays page to input a new time slot to database
+
+'time_slot/:time_slot_id/edit' (backend completed - not tested)
+
+  Displays page to edit the desired time slot
+
+'calendar/new'
+
+  Displays page to input a new monthly calendar to database
+
+'divisions' (backend completed)
+
+  Display a list of the divisions with link to 'division/new', 'division/edit', division/delete'
+
+'division/new' (backend completed)
+
+  Displays page to input a new division to database
+
+'division/edit' (backend completed - not tested)
+
+  Displays page to edit the desired division
+
+'bunks' (backend completed)
+
+  Display a list of the bunks with link to 'bunk/new', 'bunk/edit', bunk/delete'
+
+'bunk/new' (backend completed)
+
+  Displays page to input a new bunk to database
+
+'bunk/edit' (backend completed - not tested)
+
+  Displays page to edit the desired bunk
+
+'bunk/:bunk_id'
+
+  Displays the specified bunk's information
+
+'bunk/:bunk_id/daily schedule/:day_id'
+
+  Displays the specified bunk's schedule for the specified day
+
+'bunk/:bunk_id/activities_history'
+
+  Displays a specified bunks activity history
+
+'dailyschedule/:day_id/new'
+
+  Displays page to input a new schedule to database
+
+'dailyschedule/:day_id'
+
+  Displays the schedule of a specified day
+
+'dailyschedule/:day_id/edit'
+
+  Displays an editable schedule for a specified day
+
+'dailyschedule/default'
+
+  Displays the default schedule
+
+'dailyschedule/default/edit'
+
+  Displays page to edit the default daily schedule

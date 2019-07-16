@@ -1,9 +1,9 @@
-<form action="/bunks/new" method="POST">
+<form action="/bunks/<%= @bunk.id %>/edit" method="POST">
   <label for="name">Bunk name:</label>
-  <input type="text" name="name" id="name">
+  <input type="text" name="name" id="name" value="<%= @bunk.name %>">
 
   <label for="division">Bunk division</label>
-  <select name="division" id="division">
+  <select name="division" id="division" value="<%= @bunk.division %>">
     <option value='Hey'>Hey</option>
     <option value='Aleph'>Aleph</option>
     <option value='Bet'>Bet</option>
@@ -12,7 +12,7 @@
   </select>
 
   <label for="gender">Gender</label>
-  <select name="gender" id="gender">
+  <select name="gender" id="gender" value="<%= @bunk.gender %>">
     <option value='M'>Male</option>
     <option value='F'>Female</option>
   </select>

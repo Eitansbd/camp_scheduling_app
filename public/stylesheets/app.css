@@ -1,11 +1,43 @@
+body {
+  margin: 0;
+}
+
+header {
+  background-color: #2FB0D9;
+}
+
+
+.logo {
+  margin-left: 20px;
+  float: left;
+}
+
+
+
+nav li {
+  display: inline-block;
+  list-style: none;
+  margin-left: 10px;
+  text-align: center;
+  height: 20px;
+  border-radius: 5px;
+}
+
+nav a {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #0F3B49;
+  text-decoration: none;
+}
+
 .schedule-table {
+  margin: 20px;
   border-collapse: collapse;
   margin: 25px 0;
-  font-size: 0.9em;
-  min-width: 400 px;
+  font-size: 12px;
+  min-width: 400px;
   overflow: hidden;
   border: 1px solid black;
-
 }
 
 .schedule-table thead tr {

@@ -1,9 +1,14 @@
 require 'pg'
 require 'pry'
+require 'time'
 
 class ScheduleDatabase
   def initialize(logger)
-    @db = PG.connect(dbname: "camp")  # Opens the connection to the local database
+    if ENV["RACK_ENV"] == "test"
+      @db = PG.connect(dbname: "camp_test")
+    else
+      @db = PG.connect(dbname: "camp")  # Opens the connection to the local database
+    end
     @logger = logger   # Logger to log database activity
   end
 
@@ -253,11 +258,97 @@ class ScheduleDatabase
   end
 
   def get_todays_day_id
-    query("SELECT id FROM days WHERE calendar_date = CURRENT_DATE;")
+    result = query("SELECT id FROM days WHERE calendar_date = CURRENT_DATE;")
+    result.ntuples.zero? ? nil : result.values[0][0]
   end
 
   def get_date_from_day_id(day_id)
     query("SELECT calendar_date FROM days WHERE id = $1", day_id)
+  end
+
+  def get_activity(activity_id)
+    sql = <<~SQL
+        SELECT a.name, a.location, a.id, youngest.name AS youngest_division_name,
+               oldest.name AS oldest_division_name, a.max_bunks, a.double
+        FROM activities AS a
+        JOIN divisions AS youngest
+          ON youngest_division_id = youngest.id
+        JOIN divisions AS oldest
+          ON oldest_division_id = oldest.id
+        WHERE a.id = $1;
+      SQL
+
+    result = query(sql, activity_id)
+    activity = result.tuple(0)
+    Activity.new(activity["name"],
+                   activity["location"],
+                   activity["id"].to_i).set_activity_parameters(activity["max_bunks"].to_i,
+                                                             activity["youngest_division_name"],
+                                                             activity["oldest_division_name"],
+                                                             activity["double"])
+  end
+
+  def get_time_slot(time_slot_id)
+    result = query("SELECT * FROM time_slots WHERE id = $1", time_slot_id)
+    time_slot_info = result.tuple(0)
+    {time_slot_info["id"] => [time_slot_info["start_time"], time_slot_info["end_time"]]}
+  end
+
+  def get_division_name(division_id)
+    sql = "SELECT name FROM divisions WHERE id = $1;"
+    result = query(sql, division_id)
+    result.values[0][0]
+  end
+
+  def edit_activity(activity)
+    sql = <<~SQL
+        UPDATE activities
+        SET name = $1, location = $2,
+            youngest_division_id = (SELECT id FROM divisions WHERE name = $3),
+            oldest_division_id = (SELECT id FROM divisions WHERE name = $4),
+            max_bunks = $5, double = $6;
+        WHERE id = $7
+      SQL
+
+    query(sql, activity.name, activity.location, activity.youngest_division,
+          activity.oldest_division, activity.max_bunks, activity.double, activity.id)
+  end
+
+  def edit_time_slot(id, start_time, end_time)
+    sql = "UPDATE time_slots SET start_time = $1, end_time - $2 WHERE id = $3;"
+    query(sql, start_time, end_time, id)
+  end
+
+  def edit_division(id, name)
+    query("UPDATE divisions SET name = $1 WHERE id = $2;", name, id)
+  end
+
+  def edit_bunk(bunk)
+    sql = <<~SQL
+        UPDATE bunks
+           SET name = $1,
+               division = (SELECT id FROM division WHERE name = $2),
+               gender = $3
+         WHERE id = $4;
+      SQL
+
+    query(sql, bunk.name, bunk.division, bunk.gender, bunk.id)
+  end
+
+  def delete_activity(id)
+    query("DELETE FROM activities WHERE id = $1", id)
+  end
+
+  def delete_time_slot(id)
+    query("DELETE FROM time_slots WHERE id = $1;", id)
+  end
+
+  def delete_division(id)
+    query("DELETE FROM divisions WHERE id = $1;", id)
+  end
+
+  def delete_bunk(id)
+    query("DELETE FROM bunks WHERE id = $1;", id)
   end
 
   # Get a list of all of the activites, return an array of activity objects
@@ -310,7 +401,9 @@ class ScheduleDatabase
     time_slots = {}
 
     results.each do |tuple|
-      time_slots[tuple["id"].to_i] = [tuple["start_time"], tuple["end_time"]]
+      start_time = Time.strptime(tuple["start_time"], "%T").strftime("%l:%M")
+      end_time = Time.strptime(tuple["end_time"], "%T").strftime("%l:%M")
+      time_slots[tuple["id"].to_i] = [start_time, end_time]
     end
 
     time_slots
@@ -327,7 +420,8 @@ class ScheduleDatabase
     results = query("SELECT * FROM divisions ORDER BY age;")
 
     results.map do |tuple|
-      tuple["name"]
+      { id: tuple["id"],
+        name: tuple["name"] }
     end
   end
 

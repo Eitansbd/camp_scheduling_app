@@ -1,0 +1,9 @@
+<div>
+  <ol>
+  <% @all_divisions.each do |division| %>
+    <li><%= division.name %>  <a href="/divisions/<%= division.id %>/edit">Edit</a> <a href="/divisions/<%= division.id %>/delete">Delete</a></li>
+  <% end %>
+  </ol>
+  <br>
+  <a href="divisions/new">Add New Division</a>
+</div>

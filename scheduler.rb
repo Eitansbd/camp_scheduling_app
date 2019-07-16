@@ -1,5 +1,3 @@
-
-
 require 'date'
 require 'pry'
 require 'sinatra'
@@ -77,88 +75,205 @@ end
 
 get '/' do
   day_id = @database.get_todays_day_id
-  time_slots = @database.all_time_slots
-  activities = @database.all_activities
-  bunks = @database.all_bunks
-  @daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
-  @daily_schedule.schedule_all_activities
 
-  erb :daily_schedule
+  if day_id
+    @daily_schedule = @database.get_daily_schedule(day_id)
+    erb :daily_schedule
+  else
+    "there is no schedule for today"
+  end
 end
 
-post '/calendar_days/generate' do  # Need to work on this/maybe get rid of it
-    start_day = '2019-08-01' # params[:start_day]
-    end_day = '2019-09-01' # params[:end_day]
-    month_calendar = generate_calendar(start_day, end_day)
-    reidrect '/'
+get '/activities' do
+  @all_activities = @database.all_activities
+  erb :activities
 end
 
-get '/activity/new' do  # Works
+get '/activities/new' do  # Works
   erb :new_activity
 end
 
-post '/activity/new' do  # Works
+post '/activities/new' do  # Works
   # instantiates a new activity object
   activity = Activity.new(params[:name], params[:location]).set_activity_parameters(
                                                                 params[:max_bunks],params[:youngest_division],
                                                                 params[:oldest_division], params[:double])
   # adds the activity to the database
   @database.add_activity(activity)
-  redirect '/'
+  redirect '/activities'
 end
 
-get '/time_slot/new' do # Works
+get '/activities/:activity_id/edit' do
+  activity_id = params[:activity_id].to_i
+  @activity = @database.get_activity(activity_id)
+
+  erb :edit_activity
+end
+
+post '/activities/:activity_id/new' do  # Works
+  # instantiates a new activity object
+  activity = Activity.new(params[:name], params[:location], params[:activity_id].to_i).set_activity_parameters(
+                                                                params[:max_bunks].to_i,params[:youngest_division],
+                                                                params[:oldest_division], params[:double])
+  # adds the activity to the database
+  @database.edit_activity(activity)
+  redirect '/activities'
+end
+
+post '/activities/:activity_id/delete' do
+  id = params[:activity_id].to_i
+
+  @database.delete_activity(id)
+
+  redirect '/activities'
+end
+
+get '/time_slots' do
+  @all_time_slots = @database.all_time_slots
+  erb :time_slots
+end
+
+get '/time_slots/:time_slot_id/edit' do
+  time_slot_id = params[:time_slot_id].to_i
+  @time_slot = @database.get_time_slot(time_slot_id)
+
+  erb :edit_time_slot
+end
+
+post '/time_slots/:time_slot_id/edit' do
+  time_slot_id = params[:time_slot_id]
+  start_time = params[:start_time]
+  end_time = params[:end_time]
+
+  @database.edit_time_slot(time_slot_id, start_time, end_time)
+
+  redirect '/time_slots'
+end
+
+get '/time_slots/new' do # Works
   # renders page to add new time slot
   erb :new_time_slot
 end
 
 # adds a new time slot to the database
-post '/time_slot/new' do  # Works
-  name = params[:name]
+post '/time_slots/new' do  # Works
   start_time = params[:start_time]
   end_time = params[:end_time]
 
   @database.add_time_slot(name, start_time, end_time)
+  redirect '/time_slots'
+end
+
+post '/time_slots/:time_slot_id/delete' do
+  id = params[:time_slot_id].to_i
+
+  @database.delete_time_slot(id)
+
+  redirect '/time_slots'
 end
 
 get '/calendar/new' do
   erb :new_calendar  # work in progress
 end
 
-get '/division/new' do # Works
+post '/calendar/generate' do  # Need to work on this/maybe get rid of it
+    start_day = '2019-08-01' # params[:start_day]
+    end_day = '2019-09-01' # params[:end_day]
+    month_calendar = generate_calendar(start_day, end_day)
+    reidrect '/'
+end
+
+get '/divisions' do
+  @all_divisions = @database.all_divisions
+  erb :divisions
+end
+
+get '/divisions/:division_id/edit' do
+  @division_id = params[:division_id].to_i
+  @division_name = @database.get_division_name(@division_id)
+
+  erb :edit_division
+end
+
+post '/divisions/:division_id/edit' do
+  id = params[:division_id]
+  name = params[:name]
+
+  @database.edit_division(id, name)
+
+  redirect '/divisions'
+end
+
+get '/divisions/new' do # Works
   erb :new_division
 end
 
-post '/division/new' do
+post '/divisions/new' do
   name, age = params[:name], params[:age]
 
   @database.add_division(name, age)
-
+  redirect '/divisions'
 end
 
-get '/bunk/new' do  # Works
+post '/divisions/:division_id/delete' do
+  id = params[:division_id].to_i
+
+  @database.delete_division
+
+  redirect '/divisions'
+end
+
+get '/bunks' do
+  @all_bunks = @database.all_bunks
+  erb :bunks
+end
+
+get 'bunks/:bunk_id/edit' do
+  id = params[:bunk_id].to_i
+  bunk = @database.load_bunk(id)
+
+  erb :edit_bunk
+end
+
+post '/bunks/:bunk_id/edit' do
+  bunk = Bunk.new(params[:name], params[:division], params[:gender], params[:bunk_id].to_i)
+
+  @database.edit_bunk(bunk)
+
+  redirect '/bunks'
+end
+
+get '/bunks/new' do  # Works
   # renders page to create a new bunk
   # page has form with bunk name, division, gender
   erb :new_bunk
 end
 
-post '/bunk/new' do # works
+post '/bunks/new' do # works
   bunk = Bunk.new(params[:name], params[:division], params[:gender])
 #   creates a new bunk
 #   instantiates bunk object and send it to the database
   @database.add_bunk(bunk)
 
-  redirect '/'
+  redirect '/bunks'
 end
 
-get '/bunk/:bunk_id' do  # Works but could use improvement
+post '/bunks/:bunk_id/delete' do
+  id = params[:bunk_id]
+
+  @database.delete_bunk(id)
+
+  redirect '/bunks'
+end
+
+get '/bunks/:bunk_id' do  # Works but could use improvement
   id = params[:bunk_id].to_i
   @bunk = @database.load_bunk(id)
 
   erb :bunk_page
 end
 
-get '/bunk/:bunk_id/daily_schedule/:day_id' do  # Works
+get '/bunks/:bunk_id/dailyschedule/:day_id' do  # Works
   # renders page for a bunks daily schedule, including previous ones
   # retrives from database the schedule based on bunk id and day id
   bunk_id = params[:bunk_id].to_i
@@ -168,7 +283,7 @@ get '/bunk/:bunk_id/daily_schedule/:day_id' do  # Works
   erb :bunk_schedule
 end
 
-get '/bunk/:bunk_id/activities_history' do  # Works
+get '/bunks/:bunk_id/activities_history' do  # Works
   # renders page that displays the amount of times (and days?) that
   # a specific bunk had individual activities
   bunk_id = params[:bunk_id].to_i
@@ -177,14 +292,14 @@ get '/bunk/:bunk_id/activities_history' do  # Works
   erb :bunk_activity_history
 end
 
-get '/dailyschedule/new' do
+get '/dailyschedules/new' do
 
   @daily_schedule = @database.get_default_schedule
 
   erb :new_daily_schedule
 end
 
-post '/dailyschedule/new' do  # Needs work
+post '/dailyschedules/new' do  # Needs work
   day_id = params["new_schedule_date"]
 
   time_slots = @database.all_time_slots
@@ -231,7 +346,7 @@ end
 #   @daily_schedule = session[:daily_schedule]
 # end
 
-post '/dailyschedule/save' do
+post '/dailyschedules/save' do
   day_id = params["day_id"]
 
   time_slots = @database.all_time_slots
@@ -253,7 +368,7 @@ post '/dailyschedule/save' do
   @database.add_daily_schedule(@daily_schedule)
 end
 
-get '/dailyschedule/:day_id' do  # Works
+get '/dailyschedules/:day_id' do  # Works
   # renders page of a daily schedule based on the id. Needs to load the schedule
   # from the database.
   day_id = params[:day_id].to_i
@@ -264,7 +379,7 @@ get '/dailyschedule/:day_id' do  # Works
   erb :daily_schedule
 end
 
-get '/dailyschedule/:day_id/edit' do # Doesn't work
+get '/dailyschedules/:day_id/edit' do # Doesn't work
   # renders edit page for daily schedule.
 
 end
@@ -278,49 +393,3 @@ def generate_calendar(start_day, end_day)
   end
 end
 
-def split_to_bunks(activities)
-  time_slots = activities.map{ |activity| activity[:start_time] }
-  bunks = Hash.new([])
-  activities.each do |activity|
-    bunk_name = activity[:bunk_name]
-    bunks[bunk_name.to_sym] += [activity]
-  end
-  bunks
-end
-
-def sort_activities_by_time_slots(bunk_activities)
-  bunk_activities.each_value do |activities|
-    activities.sort_by! { |activity| activity[:start_time] }
-  end
-end
-
-def generate_empty_schedule(gender)
-  all_time_slots = @database.all_time_slots
-  all_bunks = @database.all_bunks(gender)
-  DailySchedule.new(nil, all_time_slots, nil, all_bunks, true)
-end
-
-def collect_time_slots(results)
-  time_slots = []
-  results.each do |activity|
-    time_slots << [activity[:time_slot_id], activity[:start_time]] unless time_slots.include?([activity[:time_slot_id], activity[:start_time]])
-  end
-  time_slots
-end
-
-def generate_list_of_bunks(results)
-  bunks = Hash.new([])
-
-  results.each do |activity|
-    bunks[activity[:bunk_name]] += [activity[:start_time] => Activity.new(activity[:activity], activity[:location])]
-  end
-  bunks
-end
-
-# def restructure_bunks(bunks_unstructured)
-#   bunks_unstructured.map do |name, activities|
-#     bunk = Bunk.new(name)
-#     bunk.todays_schedule = Hash[*activities.map(&:to_a).flatten]
-#     bunk
-#   end
-# end

@@ -1,0 +1,21 @@
+<div>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Division</th>
+      <th>Gender</th>
+    </tr>
+    <% @all_bunks.each do |bunk| %>
+    <tr>
+      <td><%= bunk.name %></td>
+      <td><%= bunk.division %></td>
+      <td><%= bunk.gender %></td>
+      <td><a href="bunks/<%= bunk.id %>/activities_history">Activity History</a></td>
+      <td><a href="/bunks/<%= bunk.id %>/edit">Edit</a></td>
+      <td><a href="/bunks/<%= bunk.id %>/delete">Delete</a></td>
+    </tr>
+    <% end %>
+  </table>
+  <br>
+  <a href="bunks/new">Add New Bunk</a>
+</div>

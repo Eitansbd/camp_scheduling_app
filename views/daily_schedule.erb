@@ -5,7 +5,7 @@
         <th></th>
       <% @daily_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>
         <th>
-          <%= start_time %>
+          <%= "#{start_time} - #{end_time}" %>
         </th>
       <% end %>
       </tr>
@@ -14,7 +14,9 @@
       <% @daily_schedule.bunks.each do |bunk, activities| %>
       <tr>
         <th class="bunk-name">
-          <%= bunk.name %>
+          <a href="/bunk/<%= bunk.id %>">
+            <%= bunk.name %>
+          </a>
         </th>
         <% @daily_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>
           <td>

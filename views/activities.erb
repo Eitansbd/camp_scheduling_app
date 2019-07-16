@@ -1,0 +1,30 @@
+<div>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Location</th>
+      <th>Max Bunks</th>
+      <th>Double Period</th>
+      <th>Youngest Division</th>
+      <th>Oldest Division</th>
+    </tr>
+    <% @all_activities.each do |activity| %>
+    <tr>
+      <td><%= activity.name %></td>
+      <td><%= activity.location %></td>
+      <td><%= activity.max_bunks %></td>
+      <% if activity.double %>
+        <td>Yes</td>
+      <% else %>
+        <td>No</td>
+      <% end %>
+      <td><%= activity.youngest_division %></td>
+      <td><%= activity.oldest_division %></td>
+      <td><a href="/activities/<%= activity.id %>/edit">Edit</a></td>
+      <td><a href="/activities/<%= activity.id %>/delete">Delete</a></td>
+    </tr>
+    <% end %>
+  </table>
+  <br>
+  <a href="activities/new">Add New Activity</a>
+</div>

@@ -1,0 +1,18 @@
+<div>
+  <table>
+    <tr>
+      <th>Start Time</th>
+      <th>End Time</th>
+    </tr>
+    <% @all_time_slots.each do |time_slot_id, time_slot| %>
+    <tr>
+      <td><%= time_slot.first %></td>
+      <td><%= time_slot.last %></td>
+      <td><a href="/time_slots/<%= time_slot_id %>/edit">Edit</a></td>
+      <td><a href="/time_slots/<%= time_slot_id %>/delete">Delete</a></td>
+    </tr>
+    <% end %>
+  </table>
+  <br>
+  <a href="time_slots/new">Add New Time Slot</a>
+</div>
