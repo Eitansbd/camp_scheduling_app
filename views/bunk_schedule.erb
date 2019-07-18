@@ -5,17 +5,20 @@
         gender: <%= @bunk.gender %>
     </p>
 </div>
-<table>
-    <tr>
-        <% bunk_schedule_keys(@bunk_schedule).each do |info| %>
-        <th> <%= info %> </th>
+<div>
+    <p><%= @date %></p>
+    <table>
+        <tr>
+            <% bunk_schedule_keys(@bunk_schedule).each do |info| %>
+            <th> <%= info %> </th>
+            <% end %>
+        </tr>
+        <% bunk_schedule_data(@bunk_schedule).each do |row| %>
+        <tr>
+            <% row.each do |data| %>
+            <td> <%= data %> </td>
+            <% end %>
+        </tr>
         <% end %>
-    </tr>
-    <% bunk_schedule_data(@bunk_schedule).each do |row| %>
-    <tr>
-        <% row.each do |data| %>
-        <td> <%= data %> </td>
-        <% end %>
-    </tr>
-    <% end %> 
-</table>
+    </table>
+</div>

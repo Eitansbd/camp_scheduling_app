@@ -1,0 +1,51 @@
+<div>
+    <p>
+        name: <%= @bunk.name %>
+        division: <%= @bunk.division %>
+        gender: <%= @bunk.gender %>
+    </p>
+</div>
+
+<div>
+    <% if @bunk_schedule %>
+    <table>
+        <tr>
+            <% bunk_schedule_keys(@bunk_schedule).each do |info| %>
+            <th> <%= info %> </th>
+            <% end %>
+        </tr>
+        <% bunk_schedule_data(@bunk_schedule).each do |row| %>
+        <tr>
+            <% row.each do |data| %>
+            <td> <%= data %> </td>
+            <% end %>
+        </tr>
+        <% end %>
+    </table>
+    <% else %>
+    <p>There is no bunk schedule for today</p>
+    <% end %>
+</div>
+
+<div>
+  <table>
+    <tr>
+      <th>Name</th><th>Count</th><th>Dates</th>
+    </tr>
+    <% display_bunk_activity_history(@bunk) do |activity, count, dates| %>
+      <tr>
+          <th>
+            <%= activity %>
+          </th>
+          <th>
+            <%= count %>
+          </th>
+          <th>
+          <% dates.each do |date| %>
+            <a href="/bunks/<%= @bunk.id %>/dailyschedule/<%= date %>"><%= date %></a>
+          <% end %>
+          </th>
+      </tr>
+    <% end %>
+  </table>
+</div>

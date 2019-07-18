@@ -26,7 +26,7 @@ Menu contains:
 
   Displays page to input a new activity to database
 
-'activity/:activity_id/edit' (backend completed - not tested)
+'activity/:activity_id/edit' (backend completed)
 
   Displays page to edit the desired activity.
 
@@ -38,7 +38,7 @@ Menu contains:
 
   Displays page to input a new time slot to database
 
-'time_slot/:time_slot_id/edit' (backend completed - not tested)
+'time_slot/:time_slot_id/edit' (backend completed)
 
   Displays page to edit the desired time slot
 
@@ -54,7 +54,7 @@ Menu contains:
 
   Displays page to input a new division to database
 
-'division/edit' (backend completed - not tested)
+'division/edit' (backend completed)
 
   Displays page to edit the desired division
 
@@ -66,31 +66,31 @@ Menu contains:
 
   Displays page to input a new bunk to database
 
-'bunk/edit' (backend completed - not tested)
+'bunk/edit' (backend completed)
 
   Displays page to edit the desired bunk
 
-'bunk/:bunk_id'
+'bunk/:bunk_id' (I think we can get rid of this)
 
   Displays the specified bunk's information
 
-'bunk/:bunk_id/daily schedule/:day_id'
+'bunk/:bunk_id/daily schedule/:date' (backend completed)
 
   Displays the specified bunk's schedule for the specified day
 
-'bunk/:bunk_id/activities_history'
+'bunk/:bunk_id/info'
 
-  Displays a specified bunks activity history
+  Displays a specified bunks information, current schedule and actiivty history
 
-'dailyschedule/:day_id/new'
+'dailyschedule/new' (backend completed)
 
   Displays page to input a new schedule to database
 
-'dailyschedule/:day_id'
+'dailyschedule/:day_id'(backend completed)
 
   Displays the schedule of a specified day
 
-'dailyschedule/:day_id/edit'
+'dailyschedule/:day_id/edit' (backend completed)
 
   Displays an editable schedule for a specified day
 

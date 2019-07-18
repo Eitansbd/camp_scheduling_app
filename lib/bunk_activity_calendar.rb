@@ -3,7 +3,7 @@ require_relative 'schedule_database'
 
 # Class that stores the bunk object keeping track of bunk info and acitivities.
 class Bunk
-  attr_reader :name, :division, :gender, :id
+  attr_reader :name, :division, :gender, :id, :activity_history
 
   def initialize(name, division, gender, id = nil)
     @id = id  # Why is this a attribute?
@@ -85,6 +85,7 @@ class DailySchedule
     @bunks.each do |bunk|
       @time_slots.each do |time_slot_id,_|
         next if bunk_has_activity_scheduled?(bunk, time_slot_id)
+
         activity_to_schedule = select_activity(bunk, time_slot_id)
 
         add_to_schedule(time_slot_id, bunk, activity_to_schedule)
@@ -112,7 +113,7 @@ class DailySchedule
   private
 
   def bunk_has_activity_scheduled?(bunk, time_slot_id)
-    !!@schedule[time_slot_id] && !!@schedule[time_slot_id][bunk] 
+    !!@schedule[time_slot_id] && !!@schedule[time_slot_id][bunk]
   end
 
   def select_activity(bunk, time_slot_id)

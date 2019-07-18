@@ -14,7 +14,7 @@
       <% @daily_schedule.bunks.each do |bunk, activities| %>
       <tr>
         <th class="bunk-name">
-          <a href="/bunk/<%= bunk.id %>">
+          <a href="/bunks/<%= bunk.id %>/info">
             <%= bunk.name %>
           </a>
         </th>
@@ -23,7 +23,7 @@
             <% if !!@daily_schedule.schedule[time_slot_id][bunk] %>
               <%= @daily_schedule.schedule[time_slot_id][bunk].name %> (<%= @daily_schedule.schedule[time_slot_id][bunk].location %>)
             <% else %>
-              No activities available
+              No activity scheduled
             <% end %>
           </td>
         <% end %>

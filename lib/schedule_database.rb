@@ -202,24 +202,23 @@ class ScheduleDatabase
     end
   end
 
-  def get_bunk_activity_history(bunk_id)  # For displaying the history
+  def populate_bunk_activity_history(bunk)  # For displaying the history
     sql = <<~SQL
-        SELECT a.name, count(a.name),
-              string_agg(to_char(d.calendar_date, 'MM/DD/YYYY'), ', '
-              ORDER BY d.calendar_date) AS dates
+        SELECT a.name, a.location, a.id, d.calendar_date
         FROM schedule AS s
         JOIN activities AS a
           ON s.activity_id = a.id
         JOIN days AS d
           ON s.day_id = d.id
         WHERE s.bunk_id = $1
-          AND date_part('year', calendar_date) = date_part('year', CURRENT_DATE)
-        GROUP BY a.name
-        ORDER BY count DESC;
+          AND date_part('year', calendar_date) = date_part('year', CURRENT_DATE);
       SQL
 
-    results = query(sql, bunk_id)
-    results.values
+    results = query(sql, bunk.id)
+    results.each do |tuple|
+      activity = Activity.new(tuple["name"], tuple["location"], tuple["id"])
+      bunk.add_to_activity_history(tuple["calendar_date"], activity)
+    end
   end
 
   def get_bunk_schedule(bunk_id, day_id)  # this one is designed for displaying not storing
@@ -247,12 +246,12 @@ class ScheduleDatabase
   end
 
   def get_days_in_month # retrieves the days in the current year summer month
-    sql = "SELECT * FROM days WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);"
+    sql = "SELECT * FROM days WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE) ORDER BY calendar_date;"
     results = query(sql)
     results.map do |tuple|
       {
         id: tuple["id"].to_i,
-        calendar_date: tuple["calendar_date"]
+        calendar_date: Date.parse(tuple["calendar_date"])
       }
     end
   end
@@ -263,7 +262,13 @@ class ScheduleDatabase
   end
 
   def get_date_from_day_id(day_id)
-    query("SELECT calendar_date FROM days WHERE id = $1", day_id)
+    result = query("SELECT calendar_date FROM days WHERE id = $1", day_id)
+    result.values[0][0]
+  end
+
+  def get_day_id_from_date(date)
+    result = query("SELECT id FROM days WHERE calendar_date = $1", date)
+    result.values[0][0]
   end
 
   def get_activity(activity_id)
@@ -298,7 +303,7 @@ class ScheduleDatabase
     sql = "SELECT id, name, age FROM divisions WHERE id = $1;"
     result = query(sql, division_id)
     tuple = result.first
-    { 
+    {
       id: tuple["id"],
       name: tuple["name"],
       age: tuple["age"]
@@ -332,7 +337,7 @@ class ScheduleDatabase
     sql = <<~SQL
         UPDATE bunks
            SET name = $1,
-               division = (SELECT id FROM division WHERE name = $2),
+               division_id = (SELECT id FROM divisions WHERE name = $2),
                gender = $3
          WHERE id = $4;
       SQL
@@ -354,6 +359,10 @@ class ScheduleDatabase
 
   def delete_bunk(id)
     query("DELETE FROM bunks WHERE id = $1;", id)
+  end
+
+  def delete_previous_daily_schedule(day_id)
+    query("DELETE FROM schedule WHERE day_id = $1", day_id)
   end
 
   # Get a list of all of the activites, return an array of activity objects
@@ -389,7 +398,7 @@ class ScheduleDatabase
       FROM bunks AS b
       JOIN divisions AS d
         ON b.division_id = d.id
-      ORDER BY b.name;
+      ORDER BY d.age, b.gender DESC, b.name;
     SQL
 
     results = query(sql)

@@ -1,4 +1,4 @@
-<!doctype html>
+<fk!doctype html>
 <html>
   <head>
     <title>Camp Scheduler</title>
@@ -8,15 +8,26 @@
   <body>
     <header>
       <div class="container">
-        <h3 class="logo">Smart Scheduling</h3>
 
         <nav>
+          <p><a href="/">Smart Scheduling</a></p>
+
           <ul>
-            <li><a href="/bunks">Bunks</a></li>
-            <li><a href="/activities">Activities</a></li>
+            <li><a href="/calendar">Calendar</a></li>
+            <li><a href="#">Bunks <img src="/images/down_arrow.png"></a>
+              <ul>
+                <li><a href="/bunks">Bunks List</a></li>
+                <li><a href="/bunks/new">Add Bunks</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Activities <img src="/images/down_arrow.png"></a>
+              <ul>
+                <li><a href="/activities">Activities List</a></li>
+                <li><a href="/activities/new">Add Activity</a></li>
+              </ul>
+            </li>
             <li><a href="/divisions">Divisions</a></li>
             <li><a href="/time_slots">Time Slots</a></li>
-            <li><a href="/calendar">Calendar</a></li>
           </ul>
         </nav>
       </div>

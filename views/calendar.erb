@@ -1,0 +1,33 @@
+<div id="calendar-wrap">
+  <div id="calendar">
+    <h1 class="month"> <%= @calendar_days.first[:calendar_date].strftime("%B") %></h1>
+    <ul class="weekdays">
+      <li>Sunday</li>
+      <li>Monday</li>
+      <li>Tuesday</li>
+      <li>Wednesday</li>
+      <li>Thursday</li>
+      <li>Friday</li>
+      <li>Shabbos</li>
+    </ul>
+
+    <ul class="days">
+      <% @calendar_days.first[:calendar_date].wday.times do  %>
+        <li></li>
+      <% end %>
+
+      <% @calendar_days.each do |day| %>
+        <% if day[:calendar_date].wday == 0 %>
+    </ul>
+    <ul class="days">
+        <% end %>
+        <a href="/dailyschedules/<%=day[:id] %>"><li class="day">
+          <div class="date"><%= day[:calendar_date].mday %></div>
+          <div class="date-name"> <%= day[:calendar_date].month %> </div>
+        </li></a>
+      <% end %>
+    </ul>
+
+
+  </div>
+</div>

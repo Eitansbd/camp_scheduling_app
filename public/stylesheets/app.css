@@ -1,37 +1,176 @@
-body {
+* {
   margin: 0;
+  padding: 0;
 }
 
-header {
-  background-color: #2FB0D9;
+body {
+  /*background-image: url("/images/grass_background.jpg");*/
 }
 
+/*Navigation Menu*/
 
-.logo {
-  margin-left: 20px;
+nav {
+  width: 100%;
+  height: 60px;
+  background-color: #679ACC;
+  margin-bottom: 8px;
+  font-family: "Open Sans";
+}
+
+nav p {
+  position: absolute;
+  width: 240px;
+  color: #222;
+  line-height: 55px;
+  font-size: 22px;
+  padding: 0px 20px;
+  margin-top: 5px;
+}
+
+nav ul {
+  margin-left: 240px;
+  width: 800px;
+}
+
+nav ul li {
   float: left;
-}
-
-
-
-nav li {
-  display: inline-block;
   list-style: none;
-  margin-left: 10px;
-  text-align: center;
-  height: 20px;
-  border-radius: 5px;
+  position: relative;
 }
+
+nav ul li a {
+  display: block;
+
+  font-size: 18px;
+  padding: 22px 14px;
+}
+
+nav ul li a img {
+  height: 8px;
+  width: 10px;
+}
+
+nav ul li ul {
+  width: auto;
+  margin-left: 0px;
+  display: none;
+  position: absolute;
+  background-color: #679ACC;
+  padding: 5px;
+  border-radius: 0px 0px 4px 4px;
+}
+
+nav ul li:hover ul {
+  display: block;
+}
+
+nav ul li ul li {
+  width: 180px;
+}
+
+nav ul li ul li a {
+  padding: 8px 14px;
+  border-radius: 4px;
+}
+
+nav ul li ul li a:hover {
+  background-color: #f3f3f3;
+}
+
 
 nav a {
-  font-size: 14px;
   text-transform: uppercase;
   color: #0F3B49;
   text-decoration: none;
 }
 
+
+
+/*Calendar*/
+
+#calendar {
+  margin: 0 5%;
+  width: 90%;
+}
+
+#calendar .month {
+  text-align: center;
+  margin: 5px;
+}
+
+#calendar a {
+  text-decoration: none;
+}
+
+#calendar ul {
+  list-style: none;
+  clear: both;
+  width: 100%;
+}
+
+#calendar li {
+  display: block;
+  float: left;
+  width: 14.2857142%;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  margin-right: -1px;
+  margin-bottom: -1px;
+}
+
+#calendar ul.weekdays {
+  height: 40px;
+  background: #777;
+}
+
+#calendar ul.weekdays li {
+  overflow: auto;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 20px;
+  padding: 10px 6px;
+  font-size: 16px;
+  color: #fff;
+  border: none!important;
+}
+
+#calendar .days li {
+  height: 180px;
+}
+
+#calendar .days li:hover {
+  background: #eee;
+}
+
+#calendar .date {
+  margin: 8px;
+  text-align: center;
+  float: right;
+  padding: 8px;
+  background: #333;
+  color: #fff;
+  border-radius: 100%;
+  width: 20px;
+  font-size: 14px;
+
+}
+
+#calendar .date-name {
+  clear: both;
+  display: block;
+  font-size: 11px;
+  margin-top: 40px;
+  margin-bottom: 5px;
+  color: #666;
+  line-height: 14px;
+  background-color: #e4f2f2;
+}
+
+/*Schedule Table */
+
 .schedule-table {
-  margin: 20px;
+  margin-left: 20px;
   border-collapse: collapse;
   margin: 25px 0;
   font-size: 12px;

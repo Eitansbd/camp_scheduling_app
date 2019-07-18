@@ -36,6 +36,22 @@ helpers do
     end
   end
 
+  def display_bunk_activity_history(bunk)
+    results = Hash.new([])
+    bunk.activity_history.each do |date, activities|
+      activities.each do |activity|
+        results[activity.name] += [date]
+      end
+    end
+
+    ordered_results = results.sort_by { |_, dates| dates.size }.reverse
+
+    ordered_results.each do |activity, dates|
+      yield(activity, dates.size, dates)
+    end
+  end
+
+
   # takes in the daily schedule and yields to a block the bunk and an array of
   # the activities the bunk has that day in order
   def all_bunks_activities(daily_schedule)
@@ -68,8 +84,7 @@ helpers do
 
   def date_of_schedule(daily_schedule)
     day_id = daily_schedule.day_id
-    result = @database.get_date_from_day_id(day_id)
-    result.values[0][0]
+    date = @database.get_date_from_day_id(day_id)
   end
 end
 
@@ -82,6 +97,13 @@ get '/' do
   else
     erb "there is no schedule for today"
   end
+end
+
+get '/calendar' do
+  @calendar_days = @database.get_days_in_month
+
+
+  erb :calendar
 end
 
 get '/activities' do
@@ -265,31 +287,34 @@ post '/bunks/:bunk_id/delete' do
   redirect '/bunks'
 end
 
-get '/bunks/:bunk_id' do  # Works but could use improvement
+get '/bunks/:bunk_id/info' do  # Works but could use improvement
   id = params[:bunk_id].to_i
+  day_id = @database.get_todays_day_id
   @bunk = @database.load_bunk(id)
-
-  erb :bunk_page
+  @bunk_schedule = @database.get_bunk_schedule(id, day_id) if day_id
+  @database.populate_bunk_activity_history(@bunk)
+  erb :bunk_info
 end
 
-get '/bunks/:bunk_id/dailyschedule/:day_id' do  # Works
+get '/bunks/:bunk_id/dailyschedule/:date' do  # Works
   # renders page for a bunks daily schedule, including previous ones
   # retrives from database the schedule based on bunk id and day id
   bunk_id = params[:bunk_id].to_i
-  day_id = params[:day_id].to_i
+  @date = params[:date]
+  day_id = @database.get_day_id_from_date(@date)
   @bunk = @database.load_bunk(bunk_id)
   @bunk_schedule = @database.get_bunk_schedule(bunk_id, day_id)
   erb :bunk_schedule
 end
 
-get '/bunks/:bunk_id/activities_history' do  # Works
-  # renders page that displays the amount of times (and days?) that
-  # a specific bunk had individual activities
-  bunk_id = params[:bunk_id].to_i
-  @bunk_activity_history = @database.get_bunk_activity_history(bunk_id)
+# get '/bunks/:bunk_id/activities_history' do  # Works
+#   # renders page that displays the amount of times (and days?) that
+#   # a specific bunk had individual activities
+#   bunk_id = params[:bunk_id].to_i
+#   @bunk_activity_history = @database.get_bunk_activity_history(bunk_id)
 
-  erb :bunk_activity_history
-end
+#   erb :bunk_activity_history
+# end
 
 get '/dailyschedules/new' do
 
@@ -346,6 +371,7 @@ end
 # end
 
 post '/dailyschedules/save' do
+
   day_id = params["day_id"]
 
   time_slots = @database.all_time_slots
@@ -364,6 +390,8 @@ post '/dailyschedules/save' do
     # returns a hash with all of the new activities to be stored in the database
   end
 
+
+  @database.delete_previous_daily_schedule(day_id)
   @database.add_daily_schedule(@daily_schedule)
 end
 
@@ -380,7 +408,10 @@ end
 
 get '/dailyschedules/:day_id/edit' do # Doesn't work
   # renders edit page for daily schedule.
+  @day_id = params[:day_id]
+  @daily_schedule = @database.get_daily_schedule(@day_id)
 
+  erb :edit_daily_schedule
 end
 
 def generate_calendar(start_day, end_day)
