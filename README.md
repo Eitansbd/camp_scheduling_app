@@ -1,13 +1,1 @@
-# camp_scheduling_app
-
-The time slots data passed into the `DailySchedlue` object is of the structure:
-  `[{time_slot_id: [start_time, end_time]}, {time_slot_id: [start_time, end_time]}, ...]`
-  
-The data passed into the `Activity` object includes the `name`, `location`, `id`
-
-The data passed into the `Bunk` object includes `name`, `division`, `gender`, `id`.
-
-I did not test anything because I needed your changes for most of it
-
-
--- add edit button and page to the schedule
+The Camp Scheduling App is a camp schedule management system to create and maintain the calendar and daily schedules for a summer camp. The app is designed to work with a the camp scheduling director to help create schedules based on a set of highly copmlex requirements. With the ability to update default schedules and input specific activities for each bunk during a specific day, the app gives control to the user when needed and then generates the remaining schedule.
