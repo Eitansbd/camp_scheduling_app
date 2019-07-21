@@ -1,25 +1,33 @@
 <div>
+  <br>
+  <div class="add-object">
+    <label for="add" >Add New Bunk</label>
+    <a id="add" href="bunks/new"><i class='fas'>&#xf067;</i></a>
+  </div>
   <table>
-    <tr>
-      <th>Name</th>
-      <th>Division</th>
-      <th>Gender</th>
-    </tr>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Division</th>
+        <th>Gender</th>
+        <th>Info</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
     <% @all_bunks.each do |bunk| %>
     <tr>
-      <td><%= bunk.name %></td>
+      <td class="bunk-name"><%= bunk.name %></td>
       <td><%= bunk.division %></td>
       <td><%= bunk.gender %></td>
-      <td><a href="bunks/<%= bunk.id %>/info">Bunk Info</a></td>
-      <td><a href="/bunks/<%= bunk.id %>/edit">Edit</a></td>
+      <td><a href="bunks/<%= bunk.id %>/info"><i class='far'>&#xf022;</i></a></td>
+      <td><a href="/bunks/<%= bunk.id %>/edit"><i class='far'>&#xf044;</i></a></td>
       <td>
         <form action="/bunks/<%= bunk.id %>/delete" method="post">
-          <button type="submit">Delete</button>
+          <button type="submit"><i class='far'>&#xf2ed;</i></button>
         </form>
       </td>
     </tr>
     <% end %>
   </table>
-  <br>
-  <a href="bunks/new">Add New Bunk</a>
 </div>

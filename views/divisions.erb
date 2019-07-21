@@ -1,11 +1,29 @@
 <div>
-  <ol>
-  <% @all_divisions.each do |division| %>
-    <li>
-      <%= division[:name] %>  <a href="/divisions/<%= division[:id] %>/edit">Edit</a> <form action="/divisions/<%= division[:id] %>/delete" method="post"><button type="submit">Delete</button></form>
-    </li>
-  <% end %>
-  </ol>
-  <br>
-  <a href="divisions/new">Add New Division</a>
+  <div class="add-object">
+    <br>
+    <label for="add" >Add New Division</label>
+    <a id="add" href="divisions/new"><i class='fas'>&#xf067;</i></a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <% @all_divisions.each do |division| %>
+    <tr>
+      <td><%= division[:name] %></td>
+      <td><%= division[:age] %></td>
+      <td><a href="/divisions/<%= division[:id] %>/edit"><i class='far'>&#xf044;</i></a></td>
+      <td>
+        <form action="/divisions/<%= division[:id] %>/delete" method="post">
+          <button type="submit"><i class='far'>&#xf2ed;</i></button>
+        </form>
+      </td>
+    </tr>
+    <% end %>
+  </table>
 </div>

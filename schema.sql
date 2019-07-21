@@ -222,8 +222,7 @@ ALTER SEQUENCE schedule_id_seq OWNED BY schedule.id;
 CREATE TABLE time_slots (
     id integer NOT NULL,
     start_time time without time zone NOT NULL,
-    end_time time without time zone NOT NULL,
-    name character varying(25) NOT NULL
+    end_time time without time zone NOT NULL
 );
 
 
@@ -335,32 +334,53 @@ SELECT pg_catalog.setval('activities_id_seq', 30, true);
 --
 
 COPY bunks (id, name, division_id, gender) FROM stdin;
-19	B5	2	M
-20	B6	2	M
-21	B7	2	M
-22	B8	2	M
-23	B9	2	M
-33	G4L	2	F
-34	G4R	2	F
-35	G5F	2	F
-36	G5B	2	F
-24	B14	3	M
-25	B15	3	M
-26	B16	3	M
-27	B17	3	M
-37	G1	4	F
-38	G2	4	F
-39	G3L	4	F
-40	G3R	4	F
-15	B1	1	M
-16	B2	1	M
-17	B3	1	M
-18	B4	1	M
-28	G7	1	F
-29	G8	1	F
-30	G9	1	F
-31	G17	1	F
-32	G18	1	F
+47	B12	1	M
+49	B13	1	M
+50	B14	1	M
+51	B15	1	M
+52	B16	1	M
+53	G11	1	F
+54	G12	1	F
+55	G13	1	F
+56	G14	1	F
+57	G15	1	F
+58	G16	1	F
+59	B4	2	M
+60	B5	2	M
+61	B6	2	M
+62	B7	2	M
+63	Gwhiz	2	F
+64	G0	2	F
+65	G0.5	2	F
+66	G1	2	F
+67	G2	2	F
+68	B8	3	M
+69	B9	3	M
+70	B10	3	M
+71	B11	3	M
+72	G3R	3	F
+73	G3L	3	F
+74	G4R	3	F
+75	G4L	3	F
+76	B17	4	M
+77	B18	4	M
+78	B19	4	M
+79	B20	4	M
+80	G4.5	4	F
+81	G9	4	F
+82	G10	4	F
+83	G17	4	F
+84	G18	4	F
+85	B1	5	M
+86	B1.5	5	M
+87	B2	5	M
+88	B2.5	5	M
+89	B3	5	M
+90	G6.25	5	F
+91	G6.5	5	F
+92	G8	5	F
+93	G7	5	F
+94	G6.75	5	F
 \.
 
 
@@ -368,7 +388,7 @@ COPY bunks (id, name, division_id, gender) FROM stdin;
 -- Name: bunks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('bunks_id_seq', 46, true);
+SELECT pg_catalog.setval('bunks_id_seq', 95, true);
 
 
 --
@@ -376,9 +396,6 @@ SELECT pg_catalog.setval('bunks_id_seq', 46, true);
 --
 
 COPY days (id, calendar_date) FROM stdin;
-3	2019-08-04
-4	2019-08-02
-5	2019-07-28
 6	2019-08-01
 7	2019-08-02
 8	2019-08-03
@@ -411,8 +428,6 @@ COPY days (id, calendar_date) FROM stdin;
 35	2019-08-30
 36	2019-08-31
 37	2019-09-01
-38	2018-08-06
-39	2019-07-05
 \.
 
 
@@ -428,7 +443,6 @@ SELECT pg_catalog.setval('days_id_seq', 39, true);
 --
 
 COPY default_schedule (id, bunk_id, activity_id, time_slot_id) FROM stdin;
-2	20	15	7
 \.
 
 
@@ -464,93 +478,6 @@ SELECT pg_catalog.setval('divisions_id_seq', 5, true);
 --
 
 COPY schedule (id, bunk_id, activity_id, time_slot_id, day_id) FROM stdin;
-10	20	14	7	3
-12	20	16	10	3
-14	20	17	10	4
-15	20	21	7	5
-16	20	22	11	3
-17	20	17	10	6
-18	20	17	10	38
-19	15	25	10	3
-20	24	11	10	3
-21	25	15	10	3
-22	26	12	10	3
-23	27	23	10	3
-24	16	24	10	3
-25	17	21	10	3
-26	18	13	10	3
-27	19	16	10	3
-28	20	27	10	3
-29	21	28	10	3
-30	22	14	10	3
-31	23	17	10	3
-32	37	22	10	3
-33	31	29	10	3
-34	32	26	10	3
-35	38	18	10	3
-36	39	19	10	3
-37	40	20	10	3
-38	28	30	10	3
-39	15	22	12	3
-40	24	20	12	3
-41	25	21	12	3
-42	26	23	12	3
-43	27	27	12	3
-44	16	13	12	3
-45	17	29	12	3
-46	18	11	12	3
-47	19	14	12	3
-48	20	25	12	3
-49	21	15	12	3
-50	22	28	12	3
-51	23	12	12	3
-52	37	26	12	3
-53	31	19	12	3
-54	32	17	12	3
-55	38	16	12	3
-56	39	24	12	3
-57	40	18	12	3
-58	29	30	12	3
-59	15	30	7	3
-60	24	23	7	3
-61	25	24	7	3
-62	26	21	7	3
-63	27	13	7	3
-64	16	11	7	3
-65	17	16	7	3
-66	18	22	7	3
-67	19	20	7	3
-68	20	15	7	3
-69	21	26	7	3
-70	22	25	7	3
-71	23	18	7	3
-72	37	19	7	3
-73	31	12	7	3
-74	32	29	7	3
-75	38	28	7	3
-76	39	27	7	3
-77	40	14	7	3
-78	33	17	7	3
-79	15	18	11	3
-80	24	21	11	3
-81	25	14	11	3
-82	26	25	11	3
-83	27	29	11	3
-84	16	15	11	3
-85	17	23	11	3
-86	18	16	11	3
-87	19	17	11	3
-88	20	22	11	3
-89	21	13	11	3
-90	22	20	11	3
-91	23	28	11	3
-92	37	11	11	3
-93	31	30	11	3
-94	32	12	11	3
-95	38	27	11	3
-96	40	24	11	3
-97	33	26	11	3
-98	34	19	11	3
 \.
 
 
@@ -558,25 +485,31 @@ COPY schedule (id, bunk_id, activity_id, time_slot_id, day_id) FROM stdin;
 -- Name: schedule_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('schedule_id_seq', 98, true);
+SELECT pg_catalog.setval('schedule_id_seq', 178, true);
 
 
 --
 -- Name: time_slot_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('time_slot_id_seq', 12, true);
+SELECT pg_catalog.setval('time_slot_id_seq', 27, true);
 
 
 --
 -- Data for Name: time_slots; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY time_slots (id, start_time, end_time, name) FROM stdin;
-7	11:00:00	12:00:00	Period 1
-10	01:00:00	03:00:00	Period 3
-11	12:04:00	14:32:00	Period 4
-12	10:00:00	23:00:00	Period 0
+COPY time_slots (id, start_time, end_time) FROM stdin;
+18	09:00:00	09:55:00
+19	10:05:00	10:55:00
+20	11:05:00	11:55:00
+21	12:05:00	12:55:00
+22	13:05:00	13:55:00
+23	14:05:00	14:55:00
+24	15:05:00	15:55:00
+25	16:05:00	16:55:00
+26	17:05:00	17:55:00
+27	18:00:00	18:40:00
 \.
 
 
@@ -650,14 +583,6 @@ ALTER TABLE ONLY schedule
 
 ALTER TABLE ONLY time_slots
     ADD CONSTRAINT time_slot_pkey PRIMARY KEY (id);
-
-
---
--- Name: time_slots_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY time_slots
-    ADD CONSTRAINT time_slots_name_key UNIQUE (name);
 
 
 --

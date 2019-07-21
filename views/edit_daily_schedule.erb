@@ -1,23 +1,20 @@
-<div>
-  <form action="/dailyschedules/save" method="post">
-    <select name="new_schedule_date" id="news_schedule_date" required>
-    <% available_dates.each do |id, date| %>
-      <option value="<%= id %>"
-        <% if id == @day_id %>
-        "selected"
-        <% end %> >
-        <%= date %>
-      </option>
-    <% end %>
-    </select>
+<div class="schedule-date">
+  <p><%= date_of_schedule(@daily_schedule) %></p>
+</div>
+<div class="reset-schedule">
+  <label for="reset">Reset Schedule</label>
+  <a id="reset" href="/dailyschedules/<%= @day_id %>/new"><i class='fas'>&#xf01e;</i></a>
+</div>
 
+<div>
+  <form action="/dailyschedules/<%= @day_id %>/save" method="post">
     <table class="schedule-table">
       <thead>
         <tr>
           <th></th>
         <% @daily_schedule.time_slots.each do |time_slot_id,(start_time, end_time)| %>
           <th>
-            <%= start_time %>
+            <%= "#{start_time} - #{end_time}" %>
           </th>
         <% end %>
         </tr>
@@ -53,5 +50,4 @@
     </table>
     <input type="submit" value="Save schedule">
     <form>
-    <a href="/dailyschedules/new">Reset Schedule</a>
 </div>

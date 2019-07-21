@@ -1,13 +1,22 @@
 <div>
+  <br>
+  <div class="add-object">
+    <label for="add"> Add New Acivity</label>
+    <a href="activities/new"><i class='fas'>&#xf067;</i></a>
+  </div>
   <table>
-    <tr>
-      <th>Name</th>
-      <th>Location</th>
-      <th>Max Bunks</th>
-      <th>Double Period</th>
-      <th>Youngest Division</th>
-      <th>Oldest Division</th>
-    </tr>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Max Bunks</th>
+        <th>Double Period</th>
+        <th>Youngest Division</th>
+        <th>Oldest Division</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
     <% @all_activities.each do |activity| %>
     <tr>
       <td><%= activity.name %></td>
@@ -20,15 +29,13 @@
       <% end %>
       <td><%= activity.youngest_division %></td>
       <td><%= activity.oldest_division %></td>
-      <td><a href="/activities/<%= activity.id %>/edit">Edit</a></td>
+      <td><a href="/activities/<%= activity.id %>/edit"><i class='far'>&#xf044;</i></a></td>
       <td>
         <form action="/activities/<%= activity.id %>/delete" method="post">
-          <button type="submit">Delete</button>
+          <button type="submit"><i class='far'>&#xf2ed;</i></button>
         </form>
       </td>
     </tr>
     <% end %>
   </table>
-  <br>
-  <a href="activities/new">Add New Activity</a>
 </div>

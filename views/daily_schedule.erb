@@ -1,4 +1,12 @@
 <div>
+  <div class="schedule-date">
+    <h3 class="date"><%= date_of_schedule(@daily_schedule) %></h3>
+  </div>
+  <br>
+  <div class="edit-schedule">
+    <label for="edit-schedule">Edit Schedule</label>
+    <a id="edit-schedule" href="/dailyschedules/<%= @daily_schedule.day_id %>/edit"><i class='far'>&#xf044;</i></a>
+  </div>
   <table class="schedule-table">
     <thead>
       <tr>

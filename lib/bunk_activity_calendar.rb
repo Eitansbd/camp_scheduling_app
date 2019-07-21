@@ -76,8 +76,7 @@ class DailySchedule
     @bunks = bunks
     @schedule = {}
     @time_slots.each do |time_slot_id, _|
-      @schedule[time_slot_id
-      ] = {}
+      @schedule[time_slot_id] = {}
     end
   end
 

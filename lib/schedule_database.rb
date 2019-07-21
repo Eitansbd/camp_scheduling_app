@@ -80,6 +80,14 @@ class ScheduleDatabase
     query(sql, bunk, activity, time_slot, calendar_date)
   end
 
+  def add_calendar(calendar)
+    sql = "INSERT INTO days (calendar_date) VALUES "
+    sql_values = calendar.map.with_index { |_, index| "($#{index + 1})" }.join(", ")
+    sql = sql + sql_values
+
+    @db.exec_params(sql, calendar.map(&:to_s))
+  end
+
   def add_daily_schedule(daily_schedule)
     day_id = daily_schedule.day_id.to_i
 
@@ -101,6 +109,27 @@ class ScheduleDatabase
 
     @db.exec_params(sql, database_inputs.flatten)
 
+  end
+
+  def add_default_schedule(default_schedule)
+
+    database_inputs = []
+
+    default_schedule.schedule.each do |time_slot_id, bunks|
+      bunks.each do |bunk, activity|
+        database_inputs << [bunk.id, activity.id, time_slot_id]
+      end
+    end
+
+    sql = "INSERT INTO default_schedule (bunk_id, activity_id, time_slot_id) VALUES "
+    sql_values = database_inputs.map.with_index do |input_cell, index|
+      count = index * 3
+      "($#{count + 1}, $#{count + 2}, $#{count + 3})"
+    end
+
+    sql = sql + sql_values.join(", ")
+
+    @db.exec_params(sql, database_inputs.flatten)
   end
 
   # Remove a bunk from the list
@@ -245,13 +274,21 @@ class ScheduleDatabase
     end
   end
 
-  def get_days_in_month # retrieves the days in the current year summer month
-    sql = "SELECT * FROM days WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE) ORDER BY calendar_date;"
+  def get_days_in_current_session # retrieves the days in the current year summer month
+    sql =<<~SQL
+        SELECT DISTINCT d.id, d.calendar_date, s.id IS NOT NULL AS scheduled
+          FROM days AS d
+          LEFT OUTER JOIN schedule AS s
+               ON s.day_id = d.id
+         WHERE date_part('year', d.calendar_date) = date_part('year', CURRENT_DATE)
+         ORDER BY d.calendar_date;
+      SQL
     results = query(sql)
     results.map do |tuple|
       {
         id: tuple["id"].to_i,
-        calendar_date: Date.parse(tuple["calendar_date"])
+        calendar_date: Date.parse(tuple["calendar_date"]),
+        scheduled: tuple["scheduled"] == 't' ? true : false
       }
     end
   end
@@ -329,8 +366,8 @@ class ScheduleDatabase
     query(sql, start_time, end_time, id)
   end
 
-  def edit_division(id, name)
-    query("UPDATE divisions SET name = $1 WHERE id = $2;", name, id)
+  def edit_division(id, name, age)
+    query("UPDATE divisions SET name = $1, age = $2 WHERE id = $3;", name, age, id)
   end
 
   def edit_bunk(bunk)
@@ -362,7 +399,11 @@ class ScheduleDatabase
   end
 
   def delete_previous_daily_schedule(day_id)
-    query("DELETE FROM schedule WHERE day_id = $1", day_id)
+    query("DELETE FROM schedule WHERE day_id = $1;", day_id)
+  end
+
+  def delete_previous_default_schedule
+    query("DELETE FROM default_schedule;")
   end
 
   # Get a list of all of the activites, return an array of activity objects
@@ -435,7 +476,8 @@ class ScheduleDatabase
 
     results.map do |tuple|
       { id: tuple["id"].to_i,
-        name: tuple["name"] }
+        name: tuple["name"],
+        age: tuple["age"] }
     end
   end
 

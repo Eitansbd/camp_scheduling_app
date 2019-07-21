@@ -1,15 +1,13 @@
 <div>
-  <form action="/dailyschedules/save" method="post">
-    <select name="day_id" id="day_id">
-      <option value="<%= @daily_schedule.day_id %>" ><%= date_of_schedule(@daily_schedule) %></option>
-    </select>
+  <form action="/dailyschedules/<%= params[:day_id] %>/save" method="post">
+    <p><%= date_of_schedule(@daily_schedule) %></p>
     <table class="schedule-table">
       <thead>
         <tr>
           <th></th>
         <% @daily_schedule.time_slots.each do |time_slot_id,(start_time, end_time)| %>
           <th>
-            <%= start_time %>
+            <%= start_time %> - <%= end_time %>
           </th>
         <% end %>
         </tr>

@@ -8,3 +8,6 @@ The data passed into the `Activity` object includes the `name`, `location`, `id`
 The data passed into the `Bunk` object includes `name`, `division`, `gender`, `id`.
 
 I did not test anything because I needed your changes for most of it
+
+
+-- add edit button and page to the schedule

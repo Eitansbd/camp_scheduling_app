@@ -1,11 +1,10 @@
 <div>
-  <form action="/dailyschedules/<%= params[:day_id] %>/new" method="post">
-    <p><%= @date %></p>
+  <form action="/dailyschedules/default/edit" method="post">
     <table class="schedule-table">
       <thead>
         <tr>
           <th></th>
-        <% @daily_schedule.time_slots.each do |time_slot_id,(start_time, end_time)| %>
+        <% @default_schedule.time_slots.each do |time_slot_id,(start_time, end_time)| %>
           <th>
             <%= start_time %> - <%= end_time %>
           </th>
@@ -13,18 +12,18 @@
         </tr>
       </thead>
       <tbody>
-        <% @daily_schedule.bunks.each do |bunk| %>
+        <% @default_schedule.bunks.each do |bunk| %>
           <tr>
             <th class="bunk-name">
               <%= bunk.name %>
             </th>
-            <% @daily_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>
+            <% @default_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>
               <td>
                 <select name="<%= bunk.id %>,<%= time_slot_id %>" id="select_activity">
-                <% if !!@daily_schedule.schedule[time_slot_id][bunk] %>
-                  <option value="<%= @daily_schedule.schedule[time_slot_id][bunk].id %>">
-                    <%= @daily_schedule.schedule[time_slot_id][bunk].name %>
-                    <!--<%= @daily_schedule.schedule[time_slot_id][bunk].location %> -->
+                <% if !!@default_schedule.schedule[time_slot_id][bunk] %>
+                  <option value="<%= @default_schedule.schedule[time_slot_id][bunk].id %>">
+                    <%= @default_schedule.schedule[time_slot_id][bunk].name %>
+                    <!--<%= @default_schedule.schedule[time_slot_id][bunk].location %> -->
                   </option>
                 <% else %>
                   <option value="">Select Activity</option>
@@ -41,8 +40,6 @@
         <% end %>
       </tbody>
     </table>
-    <input type="submit" value="Autocomplete schedule">
+    <input type="submit" value="Save Default Schedule">
     <form>
 </div>
-
-<!-- display a generate month calenday link if one doesn't exist yet. It should post to '/calendar_days/generate' -->

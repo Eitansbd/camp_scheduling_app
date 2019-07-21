@@ -100,10 +100,30 @@ get '/' do
 end
 
 get '/calendar' do
-  @calendar_days = @database.get_days_in_month
+  calendar_days = @database.get_days_in_current_session
 
+  @calendar_months = Hash.new([])
+  calendar_days.each do |day|
+    month = day[:calendar_date].mon
+    @calendar_months[month] += [day]
+  end
+
+  rerdirect '/calendar/new' if @calendar_months.empty?
 
   erb :calendar
+end
+
+get '/calendar/new' do
+  erb :new_calendar  # work in progress
+end
+
+post '/calendar/new' do  # Need to work on this/maybe get rid of it
+    start_day = params[:start_date] # params[:start_day]
+    end_day = params[:end_date] # params[:end_day]
+    calendar = generate_calendar(start_day, end_day)
+    @database.add_calendar(calendar)
+
+    redirect '/calendar'
 end
 
 get '/activities' do
@@ -122,6 +142,9 @@ post '/activities/new' do  # Works
                                                                 params[:oldest_division], params[:double])
   # adds the activity to the database
   @database.add_activity(activity)
+
+  session[:message] = "#{activity.name} successfully added to the database."
+
   redirect '/activities'
 end
 
@@ -132,13 +155,16 @@ get '/activities/:activity_id/edit' do
   erb :edit_activity
 end
 
-post '/activities/:activity_id/new' do  # Works
+post '/activities/:activity_id/edit' do  # Works
   # instantiates a new activity object
   activity = Activity.new(params[:name], params[:location], params[:activity_id].to_i).set_activity_parameters(
                                                                 params[:max_bunks].to_i,params[:youngest_division],
                                                                 params[:oldest_division], params[:double])
   # adds the activity to the database
   @database.edit_activity(activity)
+
+  session[:message] = "Successfully changed #{activity.name}."
+
   redirect '/activities'
 end
 
@@ -146,6 +172,8 @@ post '/activities/:activity_id/delete' do
   id = params[:activity_id].to_i
 
   @database.delete_activity(id)
+
+  session[:message] = "Activity has been deleted"
 
   redirect '/activities'
 end
@@ -169,6 +197,8 @@ post '/time_slots/:time_slot_id/edit' do
 
   @database.edit_time_slot(time_slot_id, start_time, end_time)
 
+  session[:message] = "Successfully changed time slot."
+
   redirect '/time_slots'
 end
 
@@ -183,6 +213,9 @@ post '/time_slots/new' do  # Works
   end_time = params[:end_time]
 
   @database.add_time_slot(start_time, end_time)
+
+  session[:message] = "Time slot successfully added to the database."
+
   redirect '/time_slots'
 end
 
@@ -191,18 +224,9 @@ post '/time_slots/:time_slot_id/delete' do
 
   @database.delete_time_slot(id)
 
+  session[:message] = "Time slot has been deleted"
+
   redirect '/time_slots'
-end
-
-get '/calendar/new' do
-  erb :new_calendar  # work in progress
-end
-
-post '/calendar/generate' do  # Need to work on this/maybe get rid of it
-    start_day = '2019-08-01' # params[:start_day]
-    end_day = '2019-09-01' # params[:end_day]
-    month_calendar = generate_calendar(start_day, end_day)
-    reidrect '/'
 end
 
 get '/divisions' do
@@ -220,8 +244,11 @@ end
 post '/divisions/:division_id/edit' do
   id = params[:division_id]
   name = params[:name]
+  age = params[:age]
 
-  @database.edit_division(id, name)
+  @database.edit_division(id, name, age)
+
+  session[:message] = "Successfully changed #{name}."
 
   redirect '/divisions'
 end
@@ -234,6 +261,9 @@ post '/divisions/new' do
   name, age = params[:name], params[:age]
 
   @database.add_division(name, age)
+
+  session[:message] = "#{name} successfully added to the database."
+
   redirect '/divisions'
 end
 
@@ -241,6 +271,8 @@ post '/divisions/:division_id/delete' do
   id = params[:division_id].to_i
 
   @database.delete_division(id)
+
+  session[:message] = "Division has been deleted"
 
   redirect '/divisions'
 end
@@ -261,6 +293,8 @@ post '/bunks/:bunk_id/edit' do
 
   @database.edit_bunk(bunk)
 
+  session[:message] = "Successfully changed #{bunk.name}."
+
   redirect '/bunks'
 end
 
@@ -276,6 +310,8 @@ post '/bunks/new' do # works
 #   instantiates bunk object and send it to the database
   @database.add_bunk(bunk)
 
+  session[:message] = "#{bunk.name} successfully added to the database."
+
   redirect '/bunks'
 end
 
@@ -283,6 +319,8 @@ post '/bunks/:bunk_id/delete' do
   id = params[:bunk_id]
 
   @database.delete_bunk(id)
+
+  session[:message] = "Bunk has been deleted"
 
   redirect '/bunks'
 end
@@ -316,15 +354,35 @@ end
 #   erb :bunk_activity_history
 # end
 
-get '/dailyschedules/new' do
+get '/dailyschedules/:day_id' do  # Works
+  # renders page of a daily schedule based on the id. Needs to load the schedule
+  # from the database.
+  day_id = params[:day_id].to_i
+
+  # returns an array of all of the days activities
+  @daily_schedule = @database.get_daily_schedule(day_id)
+
+  erb :daily_schedule
+end
+
+get '/dailyschedules/:day_id/new' do
+
+  if env["HTTP_REFERER"] && env["HTTP_REFERER"].include?("/calendar")
+    session[:message] = "No activities where scheduled for this day."
+  elsif env["HTTP_REFERER"] && env["HTTP_REFERER"].include?("/dailyschedule")
+    session[:message] = "Schedule has been reset. Changes are solidified when new schedule is saved."
+  end
+
+  day_id = params[:day_id]
+  @date = @database.get_date_from_day_id(day_id)
 
   @daily_schedule = @database.get_default_schedule
 
   erb :new_daily_schedule
 end
 
-post '/dailyschedules/new' do  # Needs work
-  day_id = params["new_schedule_date"]
+post '/dailyschedules/:day_id/new' do  # Needs work
+  day_id = params[:day_id]
 
   time_slots = @database.all_time_slots
   bunks = @database.all_bunks
@@ -356,6 +414,7 @@ post '/dailyschedules/new' do  # Needs work
   @daily_schedule.schedule_all_activities
 
   #session[:daily_schedule] = @daily_schedule
+  session[:message] = "Remaining activities have successsfully been autofilled into the schedule."
 
   erb :save_daily_schedule
   # creates the daily schedule - maybe loads template for a new schedule. Fills
@@ -370,9 +429,9 @@ end
 #   @daily_schedule = session[:daily_schedule]
 # end
 
-post '/dailyschedules/save' do
+post '/dailyschedules/:day_id/save' do
 
-  day_id = params["day_id"]
+  day_id = params[:day_id]
 
   time_slots = @database.all_time_slots
   bunks = @database.all_bunks
@@ -393,17 +452,40 @@ post '/dailyschedules/save' do
 
   @database.delete_previous_daily_schedule(day_id)
   @database.add_daily_schedule(@daily_schedule)
+
+  session[:message] = "Schedule has been successfully saved to the database."
+
+  redirect '/calendar'
 end
 
-get '/dailyschedules/:day_id' do  # Works
-  # renders page of a daily schedule based on the id. Needs to load the schedule
-  # from the database.
-  day_id = params[:day_id].to_i
+get '/dailyschedules/default/edit' do
+  @default_schedule = @database.get_default_schedule
+  erb :default_daily_schedule
+end
 
-  # returns an array of all of the days activities
-  @daily_schedule = @database.get_daily_schedule(day_id)
+post '/dailyschedules/default/edit' do
+  time_slots = @database.all_time_slots
+  bunks = @database.all_bunks
+  activities = @database.all_activities
 
-  erb :daily_schedule
+  @default_schedule = DailySchedule.new(0, time_slots, activities, bunks)
+
+  params.each do |key, value|
+    next unless (key.match(/^\d+,\d+$/) && value != "")
+    bunk_id, time_slot_id = key.split(',').map(&:to_i)
+    activity_id = value.to_i
+    activity = activities.find{ |act| act.id == activity_id }
+    bunk = bunks.find { |bnk| bnk.id == bunk_id }
+    @default_schedule.schedule[time_slot_id][bunk] = activity
+    # returns a hash with all of the new activities to be stored in the database
+  end
+
+  @database.delete_previous_default_schedule
+  @database.add_default_schedule(@default_schedule)
+
+  session[:message] = "Successfully changed default schedule."
+
+  redirect '/calendar'
 end
 
 get '/dailyschedules/:day_id/edit' do # Doesn't work
@@ -417,9 +499,15 @@ end
 def generate_calendar(start_day, end_day)
   date = Date.parse(start_day)
   end_date = Date.parse(end_day)
-  while date <= end_date do
-    @database.add_date(date.to_s)
+  calendar = []
+  while date <= end_date
+    calendar << date
     date = date.next
   end
+  calendar
+end
+
+error do
+   "hello"
 end
 
