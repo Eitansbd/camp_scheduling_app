@@ -1,0 +1,31 @@
+<div id="bunk-info">
+    <h3>Bunk's Information</h3>
+    <br>
+    <p>Name: <%= @bunk.name %></p>
+    <p>Division: <%= @bunk.division %></p>
+    <p>Gender: <%= @bunk.gender %></p>
+</div>
+<br>
+<br>
+
+<div>
+    <h3>Bunk's Schedule</h3>
+    <br>
+    <p><%= @date %></p>
+    <table>
+        <thead>
+            <tr>
+                <% bunk_schedule_keys(@bunk_schedule).each do |info| %>
+                <th> <%= info %> </th>
+                <% end %>
+            </tr>
+        </thead>
+        <% bunk_schedule_data(@bunk_schedule).each do |row| %>
+        <tr>
+            <% row.each do |data| %>
+            <td> <%= data %> </td>
+            <% end %>
+        </tr>
+        <% end %>
+    </table>
+</div>

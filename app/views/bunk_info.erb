@@ -1,0 +1,61 @@
+<div id="bunk-info">
+    <h3>Bunk's Information</h3>
+    <br>
+    <p>Name: <%= @bunk.name %></p>
+    <p>Division: <%= @bunk.division %></p>
+    <p>Gender: <%= @bunk.gender %></p>
+</div>
+<br>
+<br>
+
+<div id="bunk-schedule">
+    <h3>Bunk's Schedule</h3>
+    <% unless @bunk_schedule.empty? %>
+    <table>
+      <thead>
+        <tr>
+            <% bunk_schedule_keys(@bunk_schedule).each do |info| %>
+            <th><%= info %></th>
+            <% end %>
+        </tr>
+      </thead>
+      <% bunk_schedule_data(@bunk_schedule).each do |row| %>
+      <tr>
+          <% row.each do |data| %>
+          <td> <%= data %> </td>
+          <% end %>
+      </tr>
+      <% end %>
+    </table>
+    <% else %>
+    <p>There is no bunk schedule for today</p>
+    <% end %>
+</div>
+<br>
+<br>
+
+<div>
+  <h3>Bunk's Activity History</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th><th>Count</th><th>Dates</th>
+      </tr>
+    </thead>
+    <% display_bunk_activity_history(@bunk) do |activity, count, dates| %>
+      <tr>
+          <td>
+            <%= activity %>
+          </td>
+          <td>
+            <%= count %>
+          </td>
+          <td>
+          <% dates.each do |date| %>
+            <a href="/bunks/<%= @bunk.id %>/dailyschedule/<%= date %>"><%= date %></a>
+          <% end %>
+          </td>
+      </tr>
+    <% end %>
+  </table>
+</div>

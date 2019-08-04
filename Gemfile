@@ -8,3 +8,5 @@ gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'erubis'
 gem 'pg'
+gem "minitest"
+gem "rack-test"

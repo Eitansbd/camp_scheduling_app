@@ -26,15 +26,20 @@
 
 
             <% if day[:scheduled] %>
-              <a href="/dailyschedules/<%=day[:id] %>"><li class="day scheduled">
-              <div>Scheduled</div>
+              <li class="day scheduled">
+                <a href="/dailyschedules/<%=day[:id] %>">
+                  <div class="date"><%= day[:calendar_date].mday %></div>
+                  <div class="schedule-status">Scheduled</div>
+            </a>
+              </li>
             <% else %>
-              <a href="/dailyschedules/<%=day[:id] %>/new"><li class="day no-schedule">
-                <div>No Schedule</div>
+              <li class="day not-scheduled">
+                <a href="/dailyschedules/<%=day[:id] %>">
+                  <div class="date"><%= day[:calendar_date].mday %></div>
+                  <div class="schedule-status">Not Scheduled</div>
+                </a>
+              </li>
             <% end %>
-              <div class="date"><%= day[:calendar_date].mday %></div>
-              <div class="date-name"> <%= day[:calendar_date].month %> </div>
-            </li></a>
           <% end %>
         </ul>
       </div>

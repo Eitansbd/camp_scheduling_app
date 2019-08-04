@@ -1,12 +1,13 @@
-<div class="schedule-date">
+<div>
+  <br>
+  <h3>Daily Schedule</h3>
+  <br>
   <p><%= date_of_schedule(@daily_schedule) %></p>
-</div>
-<div class="reset-schedule">
+  <br>
+
   <label for="reset">Reset Schedule</label>
   <a id="reset" href="/dailyschedules/<%= @day_id %>/new"><i class='fas'>&#xf01e;</i></a>
-</div>
 
-<div>
   <form action="/dailyschedules/<%= @day_id %>/save" method="post">
     <table class="schedule-table">
       <thead>
@@ -48,6 +49,10 @@
         <% end %>
       </tbody>
     </table>
-    <input type="submit" value="Save schedule">
+    <div class="save-schedule">
+      <label for="save">Save Schedule</label>
+      <button id="save" type="submit"><i class='far'>&#xf0c7;</i></button>
+    </div>
+    <br>
     <form>
 </div>

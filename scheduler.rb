@@ -5,10 +5,13 @@ require 'tilt/erubis'
 require_relative './lib/bunk_activity_calendar.rb'
 require_relative './lib/schedule_database.rb'
 
-configure(:development) do
+configure :development do
   require 'sinatra/reloader'
   also_reload './lib/bunk_activity_calendar.rb'
   also_reload './lib/schedule_database.rb'
+end
+
+configure do
   enable :sessions
   set :session_secret, "secret"
 end
@@ -30,8 +33,7 @@ helpers do
     bunk_schedule.map do |activity|
       [
        activity["Activity"],   activity["Location"],
-       activity["Start Time"], activity["End Time"],
-       activity["Time Slot"]
+       activity["Start Time"], activity["End Time"]
       ]
     end
   end
@@ -156,11 +158,10 @@ get '/activities/:activity_id/edit' do
 end
 
 post '/activities/:activity_id/edit' do  # Works
-  # instantiates a new activity object
   activity = Activity.new(params[:name], params[:location], params[:activity_id].to_i).set_activity_parameters(
                                                                 params[:max_bunks].to_i,params[:youngest_division],
                                                                 params[:oldest_division], params[:double])
-  # adds the activity to the database
+
   @database.edit_activity(activity)
 
   session[:message] = "Successfully changed #{activity.name}."
@@ -203,11 +204,9 @@ post '/time_slots/:time_slot_id/edit' do
 end
 
 get '/time_slots/new' do # Works
-  # renders page to add new time slot
   erb :new_time_slot
 end
 
-# adds a new time slot to the database
 post '/time_slots/new' do  # Works
   start_time = params[:start_time]
   end_time = params[:end_time]
@@ -299,15 +298,12 @@ post '/bunks/:bunk_id/edit' do
 end
 
 get '/bunks/new' do  # Works
-  # renders page to create a new bunk
-  # page has form with bunk name, division, gender
   erb :new_bunk
 end
 
 post '/bunks/new' do # works
   bunk = Bunk.new(params[:name], params[:division], params[:gender])
-#   creates a new bunk
-#   instantiates bunk object and send it to the database
+
   @database.add_bunk(bunk)
 
   session[:message] = "#{bunk.name} successfully added to the database."
@@ -460,7 +456,7 @@ end
 
 get '/dailyschedules/default/edit' do
   @default_schedule = @database.get_default_schedule
-  erb :default_daily_schedule
+  erb :default_schedule
 end
 
 post '/dailyschedules/default/edit' do
@@ -489,12 +485,13 @@ post '/dailyschedules/default/edit' do
 end
 
 get '/dailyschedules/:day_id/edit' do # Doesn't work
-  # renders edit page for daily schedule.
+
   @day_id = params[:day_id]
   @daily_schedule = @database.get_daily_schedule(@day_id)
 
   erb :edit_daily_schedule
 end
+
 
 def generate_calendar(start_day, end_day)
   date = Date.parse(start_day)
@@ -505,9 +502,5 @@ def generate_calendar(start_day, end_day)
     date = date.next
   end
   calendar
-end
-
-error do
-   "hello"
 end
 

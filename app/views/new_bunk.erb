@@ -1,8 +1,8 @@
 <form action="/bunks/new" method="POST">
-  <label for="name">Bunk name:</label>
+  <label for="name">Bunk Name:</label>
   <input type="text" name="name" id="name">
 
-  <label for="division">Bunk division</label>
+  <label for="division">Bunk Division:</label>
   <select name="division" id="division">
     <option value='Hey'>Hey</option>
     <option value='Aleph'>Aleph</option>
@@ -11,11 +11,14 @@
     <option value='Daled'>Daled</option>
   </select>
 
-  <label for="gender">Gender</label>
+  <label for="gender">Gender:</label>
   <select name="gender" id="gender">
     <option value='M'>Male</option>
     <option value='F'>Female</option>
   </select>
 
-  <button type=submit>Add Bunk</button>
+  <br>
+
+  <label for="add">Add Bunk</label>
+  <button id="add" type="submit"><i class='far'>&#xf0c7;</i></button>
 </form>

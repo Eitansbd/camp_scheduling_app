@@ -1,5 +1,4 @@
-require 'pry'
-require_relative 'schedule_database'
+
 
 # Class that stores the bunk object keeping track of bunk info and acitivities.
 class Bunk
@@ -174,20 +173,3 @@ class DailySchedule
     time_slot_ids[next_time_slot_index]
   end
 end
-
-
-
-# created object to store the monthly calendars
-class Calendar
-  def initialize
-    @schedules = []
-  end
-
-  def create_schedule(date)
-    @todays_schedule = DailySchedule.new(date)
-  end
-end
-
-#schedule = ScheduleDatabase.new('').get_default_schedule
-
-#test_activity = Activity.new("Hockey").set_activity_parameters(2, 'Hey', 'Aleph')
