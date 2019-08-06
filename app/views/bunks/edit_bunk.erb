@@ -3,12 +3,16 @@
   <input type="text" name="name" id="name" value="<%= @bunk.name %>">
 
   <label for="division">Bunk division</label>
-  <select name="division" id="division" value="<%= @bunk.division %>">
-    <option value='Hey'>Hey</option>
-    <option value='Aleph'>Aleph</option>
-    <option value='Bet'>Bet</option>
-    <option value='Gimmel'>Gimmel</option>
-    <option value='Daled'>Daled</option>
+  <select name="division" id="division">
+    <% @divisions.each do |division| %>
+      <% if division[:name] == @bunk.division %>
+        <option value="<%= division[:name] %>" selected>
+      <% else %>
+        <option value="<%= division[:name] %>">
+      <% end %>
+          <%= division[:name] %>
+        </option>
+    <% end %>
   </select>
 
   <label for="gender">Gender</label>

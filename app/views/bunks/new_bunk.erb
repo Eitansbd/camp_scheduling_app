@@ -1,14 +1,12 @@
 <form action="/bunks/new" method="POST">
   <label for="name">Bunk Name:</label>
-  <input type="text" name="name" id="name">
+  <input type="text" name="name" id="name" value="<%= params[:name] %>">
 
   <label for="division">Bunk Division:</label>
   <select name="division" id="division">
-    <option value='Hey'>Hey</option>
-    <option value='Aleph'>Aleph</option>
-    <option value='Bet'>Bet</option>
-    <option value='Gimmel'>Gimmel</option>
-    <option value='Daled'>Daled</option>
+    <% @divisions.each do |division| %>
+      <option value="<%= division[:name] %>"><%= division[:name] %></option>
+    <% end %>
   </select>
 
   <label for="gender">Gender:</label>

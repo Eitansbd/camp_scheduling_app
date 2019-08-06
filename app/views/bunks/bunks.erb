@@ -1,10 +1,8 @@
 <div>
-  <br>
   <div class="add-object">
-    <label for="add" >Add New Bunk</label>
-    <a id="add" href="bunks/new"><i class='fas'>&#xf067;</i></a>
+    <a href="/bunks/new">Add New Bunk <i class='fas'>&#xf067;</i></a>
   </div>
-  <table>
+  <table class="bunks-list">
     <thead>
       <tr>
         <th>Name</th>
@@ -20,7 +18,7 @@
       <td class="bunk-name"><%= bunk.name %></td>
       <td><%= bunk.division %></td>
       <td><%= bunk.gender %></td>
-      <td><a href="bunks/<%= bunk.id %>/info"><i class='far'>&#xf022;</i></a></td>
+      <td><a href="/bunks/<%= bunk.id %>/info"><i class='far'>&#xf022;</i></a></td>
       <td><a href="/bunks/<%= bunk.id %>/edit"><i class='far'>&#xf044;</i></a></td>
       <td>
         <form action="/bunks/<%= bunk.id %>/delete" method="post">
