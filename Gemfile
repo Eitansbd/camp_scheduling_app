@@ -10,3 +10,6 @@ gem 'erubis'
 gem 'pg'
 gem "minitest"
 gem "rack-test"
+gem 'capybara'
+gem 'minitest-capybara'
+gem 'database_cleaner'
