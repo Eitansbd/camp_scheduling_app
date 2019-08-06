@@ -2,6 +2,9 @@
 require_relative 'application_controller.rb'
 
 class CalendarsController < ApplicationController
+  set :views, [File.expand_path('../../views/calendars', __FILE__),
+               File.expand_path('../../views/', __FILE__)]
+
   get '/calendar' do
     calendar_days = @database.get_days_in_current_session
 

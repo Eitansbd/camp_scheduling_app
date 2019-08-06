@@ -3,9 +3,13 @@
 require_relative 'application_controller.rb'
 
 class ActivitiesController < ApplicationController
+
+  set :views, [File.expand_path('../../views/activities', __FILE__),
+               File.expand_path('../../views/', __FILE__)]
+
   get '/activities' do
     @all_activities = @database.all_activities
-    erb :activities
+    erb :activities, :layout => :layout
   end
 
   get '/activities/new' do  # Works
@@ -33,14 +37,12 @@ class ActivitiesController < ApplicationController
   end
 
   post '/activities/:activity_id/edit' do  # Works
-    activity = Activity.new(params[:name], params[:location], params[:activity_id].to_i).set_activity_parameters(
-                                                                  params[:max_bunks].to_i,params[:youngest_division],
-                                                                  params[:oldest_division], params[:double])
+    activity = Activity.new(params[:name], params[:location], params[:activity_id].to_i)
+    activity.set_activity_parameters(params[:max_bunks].to_i,params[:youngest_division],
+                                     params[:oldest_division], params[:double])
 
     @database.edit_activity(activity)
-
     session[:message] = "Successfully changed #{activity.name}."
-
     redirect '/activities'
   end
 

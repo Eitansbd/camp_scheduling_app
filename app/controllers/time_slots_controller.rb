@@ -2,6 +2,9 @@
 require_relative 'application_controller.rb'
 
 class TimeSlotsController < ApplicationController
+  set :views, [File.expand_path('../../views/time_slots', __FILE__),
+               File.expand_path('../../views/', __FILE__)]
+
   get '/time_slots' do
     @all_time_slots = @database.all_time_slots
     erb :time_slots

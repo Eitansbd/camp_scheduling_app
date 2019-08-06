@@ -2,6 +2,9 @@
 require_relative 'application_controller.rb'
 
 class DailySchdulesController < ApplicationController
+  set :views, [File.expand_path('../../views/daily_schedules', __FILE__),
+               File.expand_path('../../views/', __FILE__)]
+
   get '/dailyschedules/:day_id' do  # Works
     # renders page of a daily schedule based on the id. Needs to load the schedule
     # from the database.
@@ -44,7 +47,7 @@ class DailySchdulesController < ApplicationController
       activity = activities.find{ |activity| activity.id == activity_id }
       bunk = bunks.find { |bunk| bunk.id == bunk_id }
       @daily_schedule.schedule[time_slot_id][bunk] = activity
-  
+
     end
 
     activity_history = @database.get_activity_history

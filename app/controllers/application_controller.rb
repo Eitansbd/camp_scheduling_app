@@ -1,5 +1,6 @@
 # application_controller.rb
 require 'sinatra/base'
+require 'sinatra/reloader'
 
 class ApplicationController < Sinatra::Base
   set :views, File.expand_path('../../views', __FILE__)
@@ -8,7 +9,7 @@ class ApplicationController < Sinatra::Base
 
 
   configure :development do
-    require 'sinatra/reloader'
+    register Sinatra::Reloader
   end
 
   configure do
@@ -17,42 +18,17 @@ class ApplicationController < Sinatra::Base
   end
 
   before do
-    @database = ScheduleDatabase.new(logger)
+    @database = CampDatabase.new(logger)
   end
 
   helpers do
+    def find_template(views, name, engine, &block)
+      Array(views).each { |v| super(v, name, engine, &block) }
+    end
+
     def divisions
       @database.all_divisions
     end
-
-    def bunk_schedule_keys(bunk_schedule)
-      bunk_schedule.first.keys
-    end
-
-    def bunk_schedule_data(bunk_schedule)
-      bunk_schedule.map do |activity|
-        [
-         activity["Activity"],   activity["Location"],
-         activity["Start Time"], activity["End Time"]
-        ]
-      end
-    end
-
-    def display_bunk_activity_history(bunk)
-      results = Hash.new([])
-      bunk.activity_history.each do |date, activities|
-        activities.each do |activity|
-          results[activity.name] += [date]
-        end
-      end
-
-      ordered_results = results.sort_by { |_, dates| dates.size }.reverse
-
-      ordered_results.each do |activity, dates|
-        yield(activity, dates.size, dates)
-      end
-    end
-
 
     # takes in the daily schedule and yields to a block the bunk and an array of
     # the activities the bunk has that day in order
@@ -95,7 +71,7 @@ class ApplicationController < Sinatra::Base
 
     if day_id
       @daily_schedule = @database.get_daily_schedule(day_id)
-      erb :daily_schedule
+      redirect "/dailyschedules/#{day_id}"
     else
       erb "there is no schedule for today"
     end

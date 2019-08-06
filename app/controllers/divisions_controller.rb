@@ -2,6 +2,9 @@
 require_relative 'application_controller.rb'
 
 class DivisionsController < ApplicationController
+  set :views, [File.expand_path('../../views/divisions', __FILE__),
+              File.expand_path('../../views/', __FILE__)]
+
   get '/divisions' do
     @all_divisions = @database.all_divisions
     erb :divisions
