@@ -8,7 +8,7 @@ require_relative 'division.rb'
 require_relative 'time_slots.rb'
 require_relative 'calendar.rb'
 
-class ScheduleDatabase
+class CampDatabase
   include ActivityData
   include BunkData
   include DailyScheduleData
@@ -16,7 +16,7 @@ class ScheduleDatabase
   include TimeSlotData
   include CalendarData
 
-  def initialize(logger)
+  def initialize(logger=nil)
     if ENV["RACK_ENV"] == "test"
       @db = PG.connect(dbname: "camp_test")
     else
@@ -102,6 +102,13 @@ class ScheduleDatabase
     result.values[0][0]
   end
 
+  def custom(sql)
+    @db.exec(sql)
+  end
+
+  def get_last_result
+    @db.get_last_result
+  end
 
   private
 

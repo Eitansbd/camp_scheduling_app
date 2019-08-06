@@ -58,7 +58,7 @@ module ActivityData
 
     result = query(sql, activity_id)
     activity_data = result.first
-    
+
     instantiate_activity(activity_data)
   end
 
@@ -116,14 +116,14 @@ module ActivityData
       instantiate_activity(tuple)
     end
   end
-  
+
   private
-  
+
   def instantiate_activity(data)
     activity = Activity.new(data["name"],
                  data["location"],
                  data["id"].to_i)
-                 
+
     activity.set_activity_parameters(data["max_bunks"].to_i,
                                      data["youngest_division_name"],
                                      data["oldest_division_name"],

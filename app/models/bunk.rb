@@ -62,7 +62,7 @@ module BunkData
     query("DELETE FROM bunks WHERE id = $1;", id)
   end
 
-  def get_bunk_schedule(bunk_id, day_id)  # this one is designed for displaying not storing
+  def get_bunk_schedule(bunk_id)  # this one is designed for displaying not storing
     sql = <<~SQL
       SELECT a.name AS activity, a.location, t.start_time, t.end_time
       FROM schedule AS s
@@ -70,11 +70,11 @@ module BunkData
         ON s.activity_id = a.id
       JOIN time_slots AS t
         ON t.id = s.time_slot_id
-      WHERE bunk_id = $1 AND day_id = $2
+      WHERE bunk_id = $1 AND day_id = (SELECT id FROM days WHERE calendar_date = CURRENT_DATE)
       ORDER BY t.start_time;
     SQL
 
-    results = query(sql, bunk_id, day_id)
+    results = query(sql, bunk_id)
     results.map do |tuple|
       {
         "Activity" => tuple["activity"],
@@ -84,6 +84,8 @@ module BunkData
       }
     end
   end
+
+  # def get_bunk_schedule_
 
   # Get a list of all of the bunks, returns an array of all of the bunk objects.
   def all_bunks
@@ -99,6 +101,33 @@ module BunkData
 
     results.map do |tuple|
       instantiate_bunk(tuple)
+    end
+  end
+
+  def load_bunk_with_activity_history(bunk_id)
+    bunk = load_bunk(bunk_id)
+
+    populate_bunk_activity_history(bunk)
+
+    bunk
+  end
+
+  def populate_bunk_activity_history(bunk)  # For displaying the history
+    sql = <<~SQL
+        SELECT a.name, a.location, a.id, d.calendar_date
+        FROM schedule AS s
+        JOIN activities AS a
+          ON s.activity_id = a.id
+        JOIN days AS d
+          ON s.day_id = d.id
+       WHERE s.bunk_id = $1
+         AND date_part('year', calendar_date) = date_part('year', CURRENT_DATE);
+      SQL
+
+    results = query(sql, bunk.id)
+    results.each do |tuple|
+      activity = Activity.new(tuple["name"], tuple["location"], tuple["id"])
+      bunk.add_to_activity_history(tuple["calendar_date"], activity)
     end
   end
 
