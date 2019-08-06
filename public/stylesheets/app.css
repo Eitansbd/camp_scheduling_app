@@ -4,13 +4,16 @@
 }
 
 body {
-  /*background-image: url("/images/grass_background.jpg");*/
   font-family: "Arial Rounded MT Bold";
+}
 
+.content {
+  margin: 20px;
 }
 
 body a {
   text-decoration: none;
+  color: black;
 }
 
 /*Navigation Menu*/
@@ -320,7 +323,7 @@ table tbody tr:nth-of-type(even) {
 
 /*Icons*/
 
-button a {
+button {
   font-size: 18px;
   padding: 5px;
   border: none;
