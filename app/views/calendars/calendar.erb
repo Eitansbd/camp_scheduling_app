@@ -34,7 +34,7 @@
               </li>
             <% else %>
               <li class="day not-scheduled">
-                <a href="/dailyschedules/<%=day[:id] %>">
+                <a href="/dailyschedules/<%=day[:id] %>/new">
                   <div class="date"><%= day[:calendar_date].mday %></div>
                   <div class="schedule-status">Not Scheduled</div>
                 </a>

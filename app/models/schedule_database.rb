@@ -1,3 +1,4 @@
+require 'pry'
 require 'pg'
 require 'time'
 
@@ -17,10 +18,12 @@ class CampDatabase
   include CalendarData
 
   def initialize(logger=nil)
-    if ENV["RACK_ENV"] == "test"
-      @db = PG.connect(dbname: "camp_test")
-    else
-      @db = PG.connect(dbname: "camp")  # Opens the connection to the local database
+    @db = if Sinatra::Base.production?
+            PG.connect(ENV['DATABASE_URL'])
+          elsif Sinatra::Base.development?
+            PG.connect(dbname: "camp")
+          else
+            PG.connect(dbname: "camp_test")
     end
     @logger = logger   # Logger to log database activity
   end

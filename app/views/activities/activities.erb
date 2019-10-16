@@ -12,6 +12,7 @@
         <th>Double Period</th>
         <th>Youngest Division</th>
         <th>Oldest Division</th>
+        <th>Auto Scheduled</th>
         <th>Edit</th>
         <th>Delete</th>
       </tr>
@@ -28,6 +29,11 @@
       <% end %>
       <td><%= activity.youngest_division %></td>
       <td><%= activity.oldest_division %></td>
+       <% if activity.auto_schedule %>
+        <td>Yes</td>
+      <% else %>
+        <td>No</td>
+      <% end %>
       <td><a href="/activities/<%= activity.id %>/edit"><i class='far'>&#xf044;</i></a></td>
       <td>
         <form action="/activities/<%= activity.id %>/delete" method="post">

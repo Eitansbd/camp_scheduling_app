@@ -1,12 +1,22 @@
 <div>
+  <p><%= @date %></p>
   <form action="/dailyschedules/<%= params[:day_id] %>/new" method="post">
-    <p><%= @date %></p>
-    <table class="schedule-table">
+    <div id="available-activities">
+      <ul>
+        <% @activities.each do |activity| %>
+          <li>
+            <input type="checkbox" name="<%= activity.id %>" value="auto-schedule" <%= auto_schedule?(activity) %>>
+            <label for="<%= activity.id %>"> <%= activity.name %></label>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <table class="schedule-table" id="auto-generate-schedule">
       <thead>
         <tr>
           <th></th>
         <% @daily_schedule.time_slots.each do |time_slot_id,(start_time, end_time)| %>
-          <th>
+          <th class="time-slot" id="time-slot-<%=time_slot_id%>">
             <%= start_time %> - <%= end_time %>
           </th>
         <% end %>
@@ -14,13 +24,13 @@
       </thead>
       <tbody>
         <% @daily_schedule.bunks.each do |bunk| %>
-          <tr>
-            <th class="bunk-name">
+          <tr class="bunk-schedule">
+            <th class="bunk-name" id="bunk-row-<%=bunk.id%>">
               <%= bunk.name %>
             </th>
             <% @daily_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>
               <td>
-                <select name="<%= bunk.id %>,<%= time_slot_id %>" id="select_activity">
+                <select name="<%= bunk.id %>,<%= time_slot_id %>" id="<%= bunk.id %>,<%= time_slot_id %>" class="select_activity">
                 <% if !!@daily_schedule.schedule[time_slot_id][bunk] %>
                   <option value="<%= @daily_schedule.schedule[time_slot_id][bunk].id %>">
                     <%= @daily_schedule.schedule[time_slot_id][bunk].name %>

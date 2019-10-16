@@ -1,4 +1,6 @@
 # bunk.rb
+require_relative 'activity.rb'
+
 class Bunk
   attr_reader :name, :division, :gender, :id, :activity_history
 

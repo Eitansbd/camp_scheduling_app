@@ -9,15 +9,15 @@ module DivisionData
       age: tuple["age"]
     }
   end
-  
+
   def edit_division(id, name, age)
     query("UPDATE divisions SET name = $1, age = $2 WHERE id = $3;", name, age, id)
   end
-  
+
   def delete_division(id)
     query("DELETE FROM divisions WHERE id = $1;", id)
   end
-  
+
     # Add a new division
   def add_division(name, age)
     sql = "INSERT INTO divisions (name, age) VALUES ($1, $2);"

@@ -1,11 +1,14 @@
 #daily_schedule.rb
 
+require_relative 'bunk.rb'
+require_relative 'activity.rb'
+
 class DailySchedule
   attr_reader :bunks, :time_slots, :schedule, :day_id
 
-  def initialize(day_id, time_slots, activities, bunks, new_schedule=false) # should rename to date_id
+  def initialize(day_id, time_slots, activities, bunks) # should rename to date_id
     @day_id = day_id
-    @time_slots = time_slots #.map{ |slot| slot.last }
+    @time_slots = time_slots
     @activities = activities
     @bunks = bunks
     @schedule = {}
@@ -14,7 +17,11 @@ class DailySchedule
     end
   end
 
-  def schedule_all_activities
+  def schedule_all_activities(activity_ids=nil)
+    @available_activities = @activities.select do |activity|
+      activity_ids.include?(activity.id)
+    end
+
     @bunks.each do |bunk|
       @time_slots.each do |time_slot_id,_|
         next if bunk_has_activity_scheduled?(bunk, time_slot_id)
@@ -50,51 +57,60 @@ class DailySchedule
   end
 
   def select_activity(bunk, time_slot_id)
-    activities = @activities.dup
-    remove_activities_bunk_constraints!(activities, bunk)
-    remove_activities_time_slot_constraints!(time_slot_id, activities, bunk)
+    activities = @available_activities.dup
+    
+    found_activity = false
+    activity = nil
 
-    activities.sample
-  end
+    while !found_activity && !activities.empty?
+      activity = activities.delete_at(rand(activities.length))
 
-  def remove_activities_bunk_constraints!(activities, bunk)
-    # rejects actvities that the bunk already has that day
-    activities.reject! do |activity|
-      @schedule.any? do |_, slot_schedule|
-        slot_schedule[bunk] == activity
+      if valid_activity?(activity, bunk, time_slot_id)
+        found_activity = true
       end
     end
 
-    # rejects activities that aren't for this bunks division
-    activities.select! do |activity|
-      activity.for_division?(bunk.division)
+    found_activity ? activity : nil
+  end
+
+  def valid_activity?(activity, bunk, time_slot_id)
+    return false unless activity.auto_schedule?
+    return false if bunk_already_has_this_activity?(bunk, activity)
+    return false if activity_already_scheduled?(activity,  time_slot_id)
+    return false if bunk_cant_have_activity?(bunk, activity)
+    return false if cant_schedule_double_activity?(bunk, activity, time_slot_id)
+    return true
+  end
+
+  private
+
+  def bunk_already_has_this_activity?(bunk, activity)
+    @schedule.any? do |_ , slot_schedule|
+      slot_schedule[bunk] == activity
     end
   end
 
+  def activity_already_scheduled?(activity, time_slot_id)
+    @schedule[time_slot_id].values.any? do |scheduled_activity|
+        scheduled_activity.equal?(activity)
+    end
+  end
+
+  def bunk_cant_have_activity?(bunk, activity)
+    !activity.for_division?(bunk.division)
+  end
+
+  def cant_schedule_double_activity?(bunk, activity, time_slot_id)
+    next_time_slot_id = next_time_slot_id(time_slot_id)
+
+    activity.double? &&
+    (last_activity?(time_slot_id) ||
+    bunk_has_activity_scheduled?(bunk, next_time_slot_id))
+  end
 
   def schedule_dependent_activities(activity, bunk, time_slot)
     return nil if activity.reached_maximum_capacity?
 
-  end
-
-  def remove_activities_time_slot_constraints!(time_slot_id, activities, bunk)
-
-    # rejects activities that are already scheduled
-    activities.reject! do |activity|
-      @schedule[time_slot_id].values.any? do |schedule_activity|
-        schedule_activity.equal?(activity)
-      end
-    end
-
-    # rejects activities that require multiple slots and can't be filled
-
-    next_time_slot_id = next_time_slot_id(time_slot_id)
-
-    activities.reject! do |activity|
-      activity.double? &&
-      (last_activity?(time_slot_id) ||
-      bunk_has_activity_scheduled?(bunk, next_time_slot_id))
-    end
   end
 
   def last_activity?(time_slot_id)
@@ -116,13 +132,13 @@ module DailyScheduleData
   #   sql = "INSERT INTO schedule (bunk_id, activity_id, time_slot_id, day_id) VALUES ($1, $2, $3, $4);"
   #   query(sql, bunk, activity, time_slot, calendar_date)
   # end
-  
+
     # Remove a schedule entry
   def remove_entry_from_schedule(bunk, time_slot, date)
     sql = "DELETE FROM schedule WHERE bunk_id = $1 AND time_slot_id = $2 AND day_id = $3;"
     query(sql, bunk, time_slot, date)
   end
-  
+
   def add_daily_schedule(daily_schedule)
     day_id = daily_schedule.day_id.to_i
 
@@ -166,7 +182,7 @@ module DailyScheduleData
 
     @db.exec_params(sql, database_inputs.flatten)
   end
-  
+
   def get_daily_schedule(day_id)
 
     # Creates a dailySchedule object and populate the scheule instance variable with
@@ -180,7 +196,7 @@ module DailyScheduleData
 
     bunks = all_bunks
 
-    daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks, new_schedule=false)
+    daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
 
     results.each do |tuple|
       time_slot_id = tuple["time_slot_id"].to_i
@@ -217,7 +233,7 @@ module DailyScheduleData
 
     default_schedule
   end
-  
+
   def delete_previous_daily_schedule(day_id)
     query("DELETE FROM schedule WHERE day_id = $1;", day_id)
   end

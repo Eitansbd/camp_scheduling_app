@@ -7,6 +7,12 @@ class ActivitiesController < ApplicationController
   set :views, [File.expand_path('../../views/activities', __FILE__),
                File.expand_path('../../views/', __FILE__)]
 
+  helpers do
+    def auto_schedule?(activity)
+      activity.auto_schedule ? "checked" : ""
+    end
+  end
+
   get '/activities' do
     @all_activities = @database.all_activities
     erb :activities, :layout => :layout
@@ -20,7 +26,9 @@ class ActivitiesController < ApplicationController
     # instantiates a new activity object
     activity = Activity.new(params[:name], params[:location]).set_activity_parameters(
                                                                   params[:max_bunks],params[:youngest_division],
-                                                                  params[:oldest_division], params[:double])
+                                                                  params[:oldest_division],
+                                                                  params[:double],
+                                                                  params[:auto_schedule])
     # adds the activity to the database
     @database.add_activity(activity)
 
@@ -39,8 +47,9 @@ class ActivitiesController < ApplicationController
   post '/activities/:activity_id/edit' do  # Works
     activity = Activity.new(params[:name], params[:location], params[:activity_id].to_i)
     activity.set_activity_parameters(params[:max_bunks].to_i,params[:youngest_division],
-                                     params[:oldest_division], params[:double])
-
+                                     params[:oldest_division], params[:double],
+                                     params[:auto_schedule])
+    binding.pry
     @database.edit_activity(activity)
     session[:message] = "Successfully changed #{activity.name}."
     redirect '/activities'

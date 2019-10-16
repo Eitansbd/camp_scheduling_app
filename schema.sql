@@ -9,14 +9,14 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
@@ -29,7 +29,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: activities; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: activities; Type: TABLE; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 CREATE TABLE activities (
@@ -43,8 +43,10 @@ CREATE TABLE activities (
 );
 
 
+ALTER TABLE public.activities OWNER TO "ec2-user";
+
 --
--- Name: activities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: activities_id_seq; Type: SEQUENCE; Schema: public; Owner: ec2-user
 --
 
 CREATE SEQUENCE activities_id_seq
@@ -55,15 +57,17 @@ CREATE SEQUENCE activities_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.activities_id_seq OWNER TO "ec2-user";
+
 --
--- Name: activities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: activities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ec2-user
 --
 
 ALTER SEQUENCE activities_id_seq OWNED BY activities.id;
 
 
 --
--- Name: bunks; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: bunks; Type: TABLE; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 CREATE TABLE bunks (
@@ -74,8 +78,10 @@ CREATE TABLE bunks (
 );
 
 
+ALTER TABLE public.bunks OWNER TO "ec2-user";
+
 --
--- Name: bunks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: bunks_id_seq; Type: SEQUENCE; Schema: public; Owner: ec2-user
 --
 
 CREATE SEQUENCE bunks_id_seq
@@ -86,15 +92,17 @@ CREATE SEQUENCE bunks_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.bunks_id_seq OWNER TO "ec2-user";
+
 --
--- Name: bunks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: bunks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ec2-user
 --
 
 ALTER SEQUENCE bunks_id_seq OWNED BY bunks.id;
 
 
 --
--- Name: days; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: days; Type: TABLE; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 CREATE TABLE days (
@@ -103,8 +111,10 @@ CREATE TABLE days (
 );
 
 
+ALTER TABLE public.days OWNER TO "ec2-user";
+
 --
--- Name: days_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: days_id_seq; Type: SEQUENCE; Schema: public; Owner: ec2-user
 --
 
 CREATE SEQUENCE days_id_seq
@@ -115,15 +125,17 @@ CREATE SEQUENCE days_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.days_id_seq OWNER TO "ec2-user";
+
 --
--- Name: days_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: days_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ec2-user
 --
 
 ALTER SEQUENCE days_id_seq OWNED BY days.id;
 
 
 --
--- Name: default_schedule; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: default_schedule; Type: TABLE; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 CREATE TABLE default_schedule (
@@ -134,8 +146,10 @@ CREATE TABLE default_schedule (
 );
 
 
+ALTER TABLE public.default_schedule OWNER TO "ec2-user";
+
 --
--- Name: default_schedule_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: default_schedule_id_seq; Type: SEQUENCE; Schema: public; Owner: ec2-user
 --
 
 CREATE SEQUENCE default_schedule_id_seq
@@ -146,15 +160,17 @@ CREATE SEQUENCE default_schedule_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.default_schedule_id_seq OWNER TO "ec2-user";
+
 --
--- Name: default_schedule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: default_schedule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ec2-user
 --
 
 ALTER SEQUENCE default_schedule_id_seq OWNED BY default_schedule.id;
 
 
 --
--- Name: divisions; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: divisions; Type: TABLE; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 CREATE TABLE divisions (
@@ -164,8 +180,10 @@ CREATE TABLE divisions (
 );
 
 
+ALTER TABLE public.divisions OWNER TO "ec2-user";
+
 --
--- Name: divisions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: divisions_id_seq; Type: SEQUENCE; Schema: public; Owner: ec2-user
 --
 
 CREATE SEQUENCE divisions_id_seq
@@ -176,15 +194,17 @@ CREATE SEQUENCE divisions_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.divisions_id_seq OWNER TO "ec2-user";
+
 --
--- Name: divisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: divisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ec2-user
 --
 
 ALTER SEQUENCE divisions_id_seq OWNED BY divisions.id;
 
 
 --
--- Name: schedule; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: schedule; Type: TABLE; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 CREATE TABLE schedule (
@@ -196,8 +216,10 @@ CREATE TABLE schedule (
 );
 
 
+ALTER TABLE public.schedule OWNER TO "ec2-user";
+
 --
--- Name: schedule_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: schedule_id_seq; Type: SEQUENCE; Schema: public; Owner: ec2-user
 --
 
 CREATE SEQUENCE schedule_id_seq
@@ -208,15 +230,17 @@ CREATE SEQUENCE schedule_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.schedule_id_seq OWNER TO "ec2-user";
+
 --
--- Name: schedule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: schedule_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ec2-user
 --
 
 ALTER SEQUENCE schedule_id_seq OWNED BY schedule.id;
 
 
 --
--- Name: time_slots; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: time_slots; Type: TABLE; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 CREATE TABLE time_slots (
@@ -226,8 +250,10 @@ CREATE TABLE time_slots (
 );
 
 
+ALTER TABLE public.time_slots OWNER TO "ec2-user";
+
 --
--- Name: time_slot_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: time_slot_id_seq; Type: SEQUENCE; Schema: public; Owner: ec2-user
 --
 
 CREATE SEQUENCE time_slot_id_seq
@@ -238,64 +264,66 @@ CREATE SEQUENCE time_slot_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.time_slot_id_seq OWNER TO "ec2-user";
+
 --
--- Name: time_slot_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: time_slot_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: ec2-user
 --
 
 ALTER SEQUENCE time_slot_id_seq OWNED BY time_slots.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY activities ALTER COLUMN id SET DEFAULT nextval('activities_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY bunks ALTER COLUMN id SET DEFAULT nextval('bunks_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY days ALTER COLUMN id SET DEFAULT nextval('days_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY default_schedule ALTER COLUMN id SET DEFAULT nextval('default_schedule_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY divisions ALTER COLUMN id SET DEFAULT nextval('divisions_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY schedule ALTER COLUMN id SET DEFAULT nextval('schedule_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY time_slots ALTER COLUMN id SET DEFAULT nextval('time_slot_id_seq'::regclass);
 
 
 --
--- Data for Name: activities; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: activities; Type: TABLE DATA; Schema: public; Owner: ec2-user
 --
 
 COPY activities (id, name, location, youngest_division_id, oldest_division_id, max_bunks, double) FROM stdin;
@@ -322,14 +350,14 @@ COPY activities (id, name, location, youngest_division_id, oldest_division_id, m
 
 
 --
--- Name: activities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: activities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ec2-user
 --
 
 SELECT pg_catalog.setval('activities_id_seq', 31, true);
 
 
 --
--- Data for Name: bunks; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: bunks; Type: TABLE DATA; Schema: public; Owner: ec2-user
 --
 
 COPY bunks (id, name, division_id, gender) FROM stdin;
@@ -384,14 +412,14 @@ COPY bunks (id, name, division_id, gender) FROM stdin;
 
 
 --
--- Name: bunks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: bunks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ec2-user
 --
 
 SELECT pg_catalog.setval('bunks_id_seq', 97, true);
 
 
 --
--- Data for Name: days; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: days; Type: TABLE DATA; Schema: public; Owner: ec2-user
 --
 
 COPY days (id, calendar_date) FROM stdin;
@@ -431,14 +459,14 @@ COPY days (id, calendar_date) FROM stdin;
 
 
 --
--- Name: days_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: days_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ec2-user
 --
 
 SELECT pg_catalog.setval('days_id_seq', 39, true);
 
 
 --
--- Data for Name: default_schedule; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: default_schedule; Type: TABLE DATA; Schema: public; Owner: ec2-user
 --
 
 COPY default_schedule (id, bunk_id, activity_id, time_slot_id) FROM stdin;
@@ -446,14 +474,14 @@ COPY default_schedule (id, bunk_id, activity_id, time_slot_id) FROM stdin;
 
 
 --
--- Name: default_schedule_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: default_schedule_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ec2-user
 --
 
 SELECT pg_catalog.setval('default_schedule_id_seq', 2, true);
 
 
 --
--- Data for Name: divisions; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: divisions; Type: TABLE DATA; Schema: public; Owner: ec2-user
 --
 
 COPY divisions (id, name, age) FROM stdin;
@@ -466,14 +494,14 @@ COPY divisions (id, name, age) FROM stdin;
 
 
 --
--- Name: divisions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: divisions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ec2-user
 --
 
 SELECT pg_catalog.setval('divisions_id_seq', 5, true);
 
 
 --
--- Data for Name: schedule; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: schedule; Type: TABLE DATA; Schema: public; Owner: ec2-user
 --
 
 COPY schedule (id, bunk_id, activity_id, time_slot_id, day_id) FROM stdin;
@@ -841,21 +869,21 @@ COPY schedule (id, bunk_id, activity_id, time_slot_id, day_id) FROM stdin;
 
 
 --
--- Name: schedule_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: schedule_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ec2-user
 --
 
 SELECT pg_catalog.setval('schedule_id_seq', 564, true);
 
 
 --
--- Name: time_slot_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: time_slot_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ec2-user
 --
 
 SELECT pg_catalog.setval('time_slot_id_seq', 27, true);
 
 
 --
--- Data for Name: time_slots; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: time_slots; Type: TABLE DATA; Schema: public; Owner: ec2-user
 --
 
 COPY time_slots (id, start_time, end_time) FROM stdin;
@@ -873,7 +901,7 @@ COPY time_slots (id, start_time, end_time) FROM stdin;
 
 
 --
--- Name: activities_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: activities_pkey; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY activities
@@ -881,7 +909,7 @@ ALTER TABLE ONLY activities
 
 
 --
--- Name: bunks_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bunks_name_key; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY bunks
@@ -889,7 +917,7 @@ ALTER TABLE ONLY bunks
 
 
 --
--- Name: bunks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: bunks_pkey; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY bunks
@@ -897,7 +925,7 @@ ALTER TABLE ONLY bunks
 
 
 --
--- Name: days_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: days_pkey; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY days
@@ -905,7 +933,7 @@ ALTER TABLE ONLY days
 
 
 --
--- Name: default_schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: default_schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY default_schedule
@@ -913,7 +941,7 @@ ALTER TABLE ONLY default_schedule
 
 
 --
--- Name: divisions_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: divisions_name_key; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY divisions
@@ -921,7 +949,7 @@ ALTER TABLE ONLY divisions
 
 
 --
--- Name: divisions_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: divisions_pkey; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY divisions
@@ -929,7 +957,7 @@ ALTER TABLE ONLY divisions
 
 
 --
--- Name: schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY schedule
@@ -937,7 +965,7 @@ ALTER TABLE ONLY schedule
 
 
 --
--- Name: time_slot_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: time_slot_pkey; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY time_slots
@@ -945,7 +973,7 @@ ALTER TABLE ONLY time_slots
 
 
 --
--- Name: time_slots_start_time_end_time_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: time_slots_start_time_end_time_key; Type: CONSTRAINT; Schema: public; Owner: ec2-user; Tablespace: 
 --
 
 ALTER TABLE ONLY time_slots
@@ -953,7 +981,7 @@ ALTER TABLE ONLY time_slots
 
 
 --
--- Name: activities_oldest_division_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: activities_oldest_division_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY activities
@@ -961,7 +989,7 @@ ALTER TABLE ONLY activities
 
 
 --
--- Name: activities_youngest_division_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: activities_youngest_division_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY activities
@@ -969,7 +997,7 @@ ALTER TABLE ONLY activities
 
 
 --
--- Name: bunks_division_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: bunks_division_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY bunks
@@ -977,7 +1005,7 @@ ALTER TABLE ONLY bunks
 
 
 --
--- Name: default_schedule_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: default_schedule_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY default_schedule
@@ -985,7 +1013,7 @@ ALTER TABLE ONLY default_schedule
 
 
 --
--- Name: default_schedule_bunk_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: default_schedule_bunk_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY default_schedule
@@ -993,7 +1021,7 @@ ALTER TABLE ONLY default_schedule
 
 
 --
--- Name: default_schedule_time_slot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: default_schedule_time_slot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY default_schedule
@@ -1001,7 +1029,7 @@ ALTER TABLE ONLY default_schedule
 
 
 --
--- Name: schedule_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: schedule_activity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY schedule
@@ -1009,7 +1037,7 @@ ALTER TABLE ONLY schedule
 
 
 --
--- Name: schedule_bunk_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: schedule_bunk_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY schedule
@@ -1017,7 +1045,7 @@ ALTER TABLE ONLY schedule
 
 
 --
--- Name: schedule_day_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: schedule_day_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY schedule
@@ -1025,11 +1053,21 @@ ALTER TABLE ONLY schedule
 
 
 --
--- Name: schedule_time_slot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: schedule_time_slot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: ec2-user
 --
 
 ALTER TABLE ONLY schedule
     ADD CONSTRAINT schedule_time_slot_id_fkey FOREIGN KEY (time_slot_id) REFERENCES time_slots(id) ON DELETE CASCADE;
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --

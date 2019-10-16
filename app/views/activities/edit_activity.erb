@@ -29,7 +29,10 @@
       <input type="number" step="1" min="1" name="max_bunks" id="max_bunks" value="<%= @activity.max_bunks %>">
 
       <label for="double">Played for two periods?</label>
-      <input id="double" type="checkbox" name="double" value="<%= @activity.double %>">
+      <input id="double" type="checkbox" name="double" value="t" <%= double?(@activity)>
+
+      <label for="auto_schedule">Should this acitivty be auto scheduled?</label>
+      <input id="auto_schedule" type="checkbox" name="auto_schedule" value="t" <%=auto_schedule?(@activity)%>
     </div>
 
     <label for="save">Save Changes</label>

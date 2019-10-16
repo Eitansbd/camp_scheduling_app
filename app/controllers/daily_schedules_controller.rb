@@ -5,6 +5,12 @@ class DailySchdulesController < ApplicationController
   set :views, [File.expand_path('../../views/daily_schedules', __FILE__),
                File.expand_path('../../views/', __FILE__)]
 
+  helpers do
+    def auto_schedule?(activity)
+      activity.auto_schedule? ? "checked" : ""
+    end
+  end
+
   get '/dailyschedules/:day_id' do  # Works
     # renders page of a daily schedule based on the id. Needs to load the schedule
     # from the database.
@@ -27,6 +33,7 @@ class DailySchdulesController < ApplicationController
     @date = @database.get_date_from_day_id(day_id)
 
     @daily_schedule = @database.get_default_schedule
+    @activities = @database.all_activities
 
     erb :new_daily_schedule
   end
@@ -47,7 +54,6 @@ class DailySchdulesController < ApplicationController
       activity = activities.find{ |activity| activity.id == activity_id }
       bunk = bunks.find { |bunk| bunk.id == bunk_id }
       @daily_schedule.schedule[time_slot_id][bunk] = activity
-
     end
 
     activity_history = @database.get_activity_history
@@ -61,9 +67,16 @@ class DailySchdulesController < ApplicationController
       bunk.add_to_activity_history(date, activity)
     end
 
-    @daily_schedule.schedule_all_activities
+    available_activities = []
+    params.each do |key, value|
+      if key.match(/^\d+/) && value == "auto-schedule"
+        available_activities << key.to_i
+      end
+    end
 
-    #session[:daily_schedule] = @daily_schedule
+    @daily_schedule.schedule_all_activities(available_activities)
+
+
     session[:message] = "Remaining activities have successsfully been autofilled into the schedule."
 
     erb :save_daily_schedule
@@ -74,10 +87,6 @@ class DailySchdulesController < ApplicationController
 
       # still need to fill in remaining calendar
   end
-
-  # get '/dailyschedule/save' do
-  #   @daily_schedule = session[:daily_schedule]
-  # end
 
   post '/dailyschedules/:day_id/save' do
 

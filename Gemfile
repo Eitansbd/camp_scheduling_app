@@ -13,3 +13,7 @@ gem "rack-test"
 gem 'capybara'
 gem 'minitest-capybara'
 gem 'database_cleaner'
+
+group :production do
+  gem 'puma'
+end

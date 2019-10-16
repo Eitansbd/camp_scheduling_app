@@ -262,6 +262,23 @@ nav a {
   background-color: #f3f3f3;
 }
 
+#available-activities {
+  float: left;
+  width: 150px;
+  border: 1px solid black;
+}
+
+#available-activities ul {
+  list-style: none;
+  margin: 4px;
+}
+
+#auto-generate-schedule {
+  display: inherit;
+  margin-left: 160px;
+
+}
+
 
 /*All other tables*/
 
