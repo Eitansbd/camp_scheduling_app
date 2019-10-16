@@ -113,6 +113,10 @@ class CampDatabase
     @db.get_last_result
   end
 
+  def disconnect
+    @db.close
+  end
+
   private
 
   def query(statement, *params)

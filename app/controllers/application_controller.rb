@@ -76,4 +76,8 @@ class ApplicationController < Sinatra::Base
       erb "there is no schedule for today"
     end
   end
+
+  after do
+    @database.disconnect
+  end
 end
