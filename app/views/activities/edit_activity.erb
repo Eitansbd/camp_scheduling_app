@@ -9,17 +9,17 @@
     </div>
 
     <div>
-      <label for="youngest_division">Youngest Division</label>
-      <select name="youngest_division" id="youngest_division" value="<%= @activity.youngest_division %>" required>
+      <label for="youngest_division_age">Youngest Division</label>
+      <select name="youngest_division_age" id="youngest_division_age" required>
       <% divisions.each do |division| %>
-        <option value="<%= division[:name] %>"><%= division[:name] %></option>
+        <option value="<%= division[:age] %>"><%= division[:name] %></option>
       <% end %>
       </select>
 
-      <label for="oldest_division">Oldest Division</label>
-      <select name="oldest_division" id="oldest_division" value="<%= @activity.youngest_division %>" required>
+      <label for="oldest_division_age">Oldest Division</label>
+      <select name="oldest_division_age" id="oldest_division_age" required>
       <% divisions.each do |division| %>
-        <option value="<%= division[:name] %>"><%= division[:name] %></option>
+        <option value="<%= division[:age] %>"><%= division[:name] %></option>
       <% end %>
       </select>
     </div>
@@ -29,10 +29,10 @@
       <input type="number" step="1" min="1" name="max_bunks" id="max_bunks" value="<%= @activity.max_bunks %>">
 
       <label for="double">Played for two periods?</label>
-      <input id="double" type="checkbox" name="double" value="t" <%= double?(@activity)>
+      <input id="double" type="checkbox" name="double" value="t" <%= double?(@activity)%>>
 
       <label for="auto_schedule">Should this acitivty be auto scheduled?</label>
-      <input id="auto_schedule" type="checkbox" name="auto_schedule" value="t" <%=auto_schedule?(@activity)%>
+      <input id="auto_schedule" type="checkbox" name="auto_schedule" value="t" <%=auto_schedule?(@activity)%>>
     </div>
 
     <label for="save">Save Changes</label>

@@ -10,8 +10,8 @@
         <th>Location</th>
         <th>Max Bunks</th>
         <th>Double Period</th>
-        <th>Youngest Division</th>
-        <th>Oldest Division</th>
+        <th>Youngest Age</th>
+        <th>Oldest Age</th>
         <th>Auto Scheduled</th>
         <th>Edit</th>
         <th>Delete</th>
@@ -27,8 +27,8 @@
       <% else %>
         <td>No</td>
       <% end %>
-      <td><%= activity.youngest_division %></td>
-      <td><%= activity.oldest_division %></td>
+      <td><%= activity.youngest_age %></td>
+      <td><%= activity.oldest_age %></td>
        <% if activity.auto_schedule %>
         <td>Yes</td>
       <% else %>

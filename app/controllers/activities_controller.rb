@@ -1,7 +1,7 @@
 # activities_controller.rb
 
 require_relative 'application_controller.rb'
-
+require 'pry'
 class ActivitiesController < ApplicationController
 
   set :views, [File.expand_path('../../views/activities', __FILE__),
@@ -10,6 +10,10 @@ class ActivitiesController < ApplicationController
   helpers do
     def auto_schedule?(activity)
       activity.auto_schedule ? "checked" : ""
+    end
+
+    def double?(activity)
+      activity.double ? "checked" : ""
     end
   end
 
@@ -25,8 +29,9 @@ class ActivitiesController < ApplicationController
   post '/activities/new' do  # Works
     # instantiates a new activity object
     activity = Activity.new(params[:name], params[:location]).set_activity_parameters(
-                                                                  params[:max_bunks],params[:youngest_division],
-                                                                  params[:oldest_division],
+                                                                  params[:max_bunks],
+                                                                  params[:youngest_division_age].to_i,
+                                                                  params[:oldest_division_age].to_i,
                                                                   params[:double],
                                                                   params[:auto_schedule])
     # adds the activity to the database
@@ -46,8 +51,8 @@ class ActivitiesController < ApplicationController
 
   post '/activities/:activity_id/edit' do  # Works
     activity = Activity.new(params[:name], params[:location], params[:activity_id].to_i)
-    activity.set_activity_parameters(params[:max_bunks].to_i,params[:youngest_division],
-                                     params[:oldest_division], params[:double],
+    activity.set_activity_parameters(params[:max_bunks].to_i,params[:youngest_division_age],
+                                     params[:oldest_division_age], params[:double],
                                      params[:auto_schedule])
     binding.pry
     @database.edit_activity(activity)
