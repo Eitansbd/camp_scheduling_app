@@ -1,5 +1,5 @@
 class Activity
-  attr_reader :name, :location, :max_bunks, :id, :youngest_division, :oldest_division, :double, :auto_schedule
+  attr_reader :name, :location, :max_bunks, :id, :youngest_age, :oldest_age, :double, :auto_schedule
 
   def initialize(name, location = "", id=nil)
     @id = id
@@ -7,19 +7,18 @@ class Activity
     @location = location
   end
 
-  def set_activity_parameters(max_bunks, youngest_division,
-                              oldest_division, double, auto_schedule)
+  def set_activity_parameters(max_bunks, youngest_age,
+                              oldest_age, double, auto_schedule)
     @max_bunks = max_bunks
-    @youngest_division = youngest_division
-    @oldest_division = oldest_division
-    @appropriate_divisions = divisions_between(youngest_division, oldest_division)
+    @youngest_age = youngest_age
+    @oldest_age = oldest_age
     @double = (double == 't')
     @auto_schedule = (auto_schedule == 't')
     self
   end
 
   def for_division?(division)
-    @appropriate_divisions.include?(division)
+    @division[:age] >= @youngest_age && @division[:age] <= @oldest_age
   end
 
   def double?
@@ -37,29 +36,15 @@ class Activity
   def auto_schedule?
     auto_schedule
   end
-
-  private
-
-  def divisions_between(youngest_division, oldest_division)
-    divisions = ["Hey", "Aleph", "Bet", "Gimmel", "Daled"] # This should really be taken from database
-    youngest_index = divisions.index(youngest_division)
-    oldest_index = divisions.index(oldest_division)
-    divisions[youngest_index..oldest_index]
-  end
 end
 
 module ActivityData
   def get_activity(activity_id)
     sql = <<~SQL
-        SELECT a.name, a.location, a.id, youngest.name AS youngest_division_name,
-               oldest.name AS oldest_division_name, a.max_bunks,
+        SELECT a.name, a.location, a.id, a.youngest_age, a.oldest_age, a.max_bunks,
                a.double, a.auto_schedule
         FROM activities AS a
-        JOIN divisions AS youngest
-          ON youngest_division_id = youngest.id
-        JOIN divisions AS oldest
-          ON oldest_division_id = oldest.id
-        WHERE a.id = $1;
+        WHERE id = $1
       SQL
 
     result = query(sql, activity_id)
@@ -71,20 +56,14 @@ module ActivityData
   def add_activity(activity)
     name = activity.name
     location = activity.location
-    youngest_division = activity.youngest_division
-    oldest_division = activity.oldest_division
+    youngest_age = activity.youngest_age
+    oldest_age = activity.oldest_age
     max_bunks = activity.max_bunks
     double = activity.double
     auto_schedule = activity.auto_schedule
 
-    youngest_division_result = query("SELECT id FROM divisions WHERE name = $1;", youngest_division)
-    youngest_division_id = youngest_division_result.values[0][0]
-
-    oldest_division_result = query("SELECT id FROM divisions WHERE name = $1;", oldest_division)
-    oldest_division_id = oldest_division_result.values[0][0]
-
-    sql = "INSERT INTO activities (name, location, youngest_division_id, oldest_division_id, max_bunks, double, auto_schedule) VALUES ($1, $2, $3, $4, $5, $6, $7);"
-    query(sql, name, location, youngest_division_id, oldest_division_id, max_bunks, double, auto_schedule)
+    sql = "INSERT INTO activities (name, location, youngest_age, oldest_age, max_bunks, double, auto_schedule) VALUES ($1, $2, $3, $4, $5, $6, $7);"
+    query(sql, name, location, youngest_age, oldest_age, max_bunks, double, auto_schedule)
   end
 
   def edit_activity(activity)
@@ -94,14 +73,14 @@ module ActivityData
     sql = <<~SQL
         UPDATE activities
         SET name = $1, location = $2,
-            youngest_division_id = (SELECT id FROM divisions WHERE name = $3),
-            oldest_division_id = (SELECT id FROM divisions WHERE name = $4),
+            youngest_division_age = $3,
+            oldest_division_age = $4,
             max_bunks = $5, double = $6, auto_schedule = $7
         WHERE id = $8;
       SQL
 
-    query(sql, activity.name, activity.location, activity.youngest_division,
-          activity.oldest_division, activity.max_bunks, double, auto_schedule,
+    query(sql, activity.name, activity.location, activity.youngest_age,
+          activity.oldest_age, activity.max_bunks, double, auto_schedule,
           activity.id)
   end
 
@@ -112,14 +91,10 @@ module ActivityData
   # Works
   def all_activities
     sql = <<~SQL
-    SELECT a.name, a.location, a.id, youngest.name AS youngest_division_name,
-           oldest.name AS oldest_division_name, a.max_bunks, a.double, a.auto_schedule
-    FROM activities AS a
-    JOIN divisions AS youngest
-      ON youngest_division_id = youngest.id
-    JOIN divisions AS oldest
-      ON oldest_division_id = oldest.id
-ORDER BY a.name;
+      SELECT a.name, a.location, a.id, a.youngest_age, a.oldest_age, a.max_bunks,
+             a.double, a.auto_schedule
+      FROM activities AS a
+      ORDER BY a.name;
     SQL
 
     result = query(sql)
@@ -137,8 +112,8 @@ ORDER BY a.name;
                  data["id"].to_i)
 
     activity.set_activity_parameters(data["max_bunks"].to_i,
-                                     data["youngest_division_name"],
-                                     data["oldest_division_name"],
+                                     data["youngest_age"],
+                                     data["oldest_age"],
                                      data["double"],
                                      data["auto_schedule"])
   end
