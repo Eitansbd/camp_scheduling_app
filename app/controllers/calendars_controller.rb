@@ -14,7 +14,7 @@ class CalendarsController < ApplicationController
       @calendar_months[month] += [day]
     end
 
-    rerdirect '/calendar/new' if @calendar_months.empty?
+    redirect '/calendar/new' if @calendar_months.empty?
 
     erb :calendar
   end

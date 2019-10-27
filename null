@@ -38,12 +38,12 @@ ALTER TABLE
 ALTER TABLE
  setval 
 --------
-     30
+     31
 (1 row)
 
  setval 
 --------
-     95
+     97
 (1 row)
 
  setval 
@@ -63,7 +63,7 @@ ALTER TABLE
 
  setval 
 --------
-    178
+    564
 (1 row)
 
  setval 
