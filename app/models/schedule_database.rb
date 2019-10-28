@@ -37,8 +37,7 @@ class CampDatabase
   def get_activity_history
     sql = <<~SQL
       SELECT * FROM schedule AS s
-      JOIN days AS d ON d.id = s.day_id
-      WHERE date_part('year', calendar_date) = date_part('year', CURRENT_DATE);
+      JOIN days AS d ON d.id = s.day_id;
     SQL
 
     results = query(sql)
@@ -60,8 +59,7 @@ class CampDatabase
           ON s.activity_id = a.id
         JOIN days AS d
           ON s.day_id = d.id
-        WHERE s.bunk_id = $1
-          AND date_part('year', calendar_date) = date_part('year', CURRENT_DATE);
+        WHERE s.bunk_id = $1;
       SQL
 
     results = query(sql, bunk.id)
@@ -77,7 +75,6 @@ class CampDatabase
           FROM days AS d
           LEFT OUTER JOIN schedule AS s
                ON s.day_id = d.id
-         WHERE date_part('year', d.calendar_date) = date_part('year', CURRENT_DATE)
          ORDER BY d.calendar_date;
       SQL
     results = query(sql)
