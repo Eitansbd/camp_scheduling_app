@@ -1,5 +1,9 @@
 # calendars_controller.rb
 require_relative 'application_controller.rb'
+require 'date'
+require 'pry'
+
+
 
 class CalendarsController < ApplicationController
   set :views, [File.expand_path('../../views/calendars', __FILE__),
@@ -24,11 +28,19 @@ class CalendarsController < ApplicationController
   end
 
   post '/calendar/new' do  # Need to work on this/maybe get rid of it
-      start_day = params[:start_date] # params[:start_day]
-      end_day = params[:end_date] # params[:end_day]
-      calendar = generate_calendar(start_day, end_day)
-      @database.add_calendar(calendar)
+      start_day = params[:start_date] # format - "YYYY-MM-DD"
+      end_day = params[:end_date]
+      dates_array = generate_dates(start_day, end_day)
+
+      @database.add_calendar(dates_array)
 
       redirect '/calendar'
   end
+
+  private
+    def generate_dates(start_day, end_day)
+      start_day = Date.parse(start_day)
+      end_day = Date.parse(end_day)
+      camp_dates = start_day.step(end_day).to_a
+    end
 end
