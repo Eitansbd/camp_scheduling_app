@@ -18,7 +18,11 @@ class Activity
   end
 
   def for_division?(division)
-    @division[:age] >= @youngest_age && @division[:age] <= @oldest_age
+    # division param is coming from bunk.division which only contains the 
+    # name of the division. We might need to have the bunk have total access 
+    # to the division in order for it to work properly
+    #division[:age] >= @youngest_age && division[:age] <= @oldest_age
+    true
   end
 
   def double?
