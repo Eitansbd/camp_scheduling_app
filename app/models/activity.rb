@@ -18,8 +18,8 @@ class Activity
   end
 
   def for_division?(division)
-    # division param is coming from bunk.division which only contains the 
-    # name of the division. We might need to have the bunk have total access 
+    # division param is coming from bunk.division which only contains the
+    # name of the division. We might need to have the bunk have total access
     # to the division in order for it to work properly
     #division[:age] >= @youngest_age && division[:age] <= @oldest_age
     true
@@ -77,8 +77,8 @@ module ActivityData
     sql = <<~SQL
         UPDATE activities
         SET name = $1, location = $2,
-            youngest_division_age = $3,
-            oldest_division_age = $4,
+            youngest_age = $3,
+            oldest_age = $4,
             max_bunks = $5, double = $6, auto_schedule = $7
         WHERE id = $8;
       SQL

@@ -54,7 +54,7 @@ class ActivitiesController < ApplicationController
     activity.set_activity_parameters(params[:max_bunks].to_i, params[:youngest_division_age].to_i,
                                      params[:oldest_division_age].to_i, params[:double],
                                      params[:auto_schedule])
-    binding.pry
+
     @database.edit_activity(activity)
     session[:message] = "Successfully changed #{activity.name}."
     redirect '/activities'
