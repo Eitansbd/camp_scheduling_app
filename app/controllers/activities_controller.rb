@@ -51,8 +51,8 @@ class ActivitiesController < ApplicationController
 
   post '/activities/:activity_id/edit' do  # Works
     activity = Activity.new(params[:name], params[:location], params[:activity_id].to_i)
-    activity.set_activity_parameters(params[:max_bunks].to_i,params[:youngest_division_age],
-                                     params[:oldest_division_age], params[:double],
+    activity.set_activity_parameters(params[:max_bunks].to_i, params[:youngest_division_age].to_i,
+                                     params[:oldest_division_age].to_i, params[:double],
                                      params[:auto_schedule])
     binding.pry
     @database.edit_activity(activity)
