@@ -24,8 +24,8 @@
       </thead>
       <tbody>
         <% @daily_schedule.bunks.each do |bunk| %>
-          <tr class="bunk-schedule">
-            <th class="bunk-name" id="bunk-row-<%=bunk.id%>">
+          <tr class>
+            <th class="bunk-name" id="bunk-name-<%=bunk.id%>">
               <%= bunk.name %>
             </th>
             <% @daily_schedule.time_slots.each do |time_slot_id, (start_time, end_time)| %>

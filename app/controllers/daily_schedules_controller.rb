@@ -46,7 +46,7 @@ class DailySchdulesController < ApplicationController
     activities = @database.all_activities
 
     @daily_schedule = DailySchedule.new(day_id, time_slots, activities, bunks)
-
+    
     params.each do |key, value|
       next unless (key.match(/^\d+,\d+$/) && value != "")
       bunk_id, time_slot_id = key.split(',').map(&:to_i)
